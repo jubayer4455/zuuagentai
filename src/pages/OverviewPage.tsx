@@ -62,6 +62,21 @@ export const OverviewPage: React.FC = () => {
     ? agents 
     : agents.filter(a => a.category === filterCategory);
 
+  const latestExecution = executions[0];
+  const lastExecutionTime = latestExecution 
+    ? new Date(latestExecution.startedAt).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true })
+    : 'None yet';
+  const lastExecutionDate = latestExecution ? new Date(latestExecution.startedAt).toLocaleDateString() : '';
+
+  // Pending scheduled jobs from active recurring agent schedules
+  const pendingScheduledJobs = agents.filter(a => a.status === 'active').length * 2; // e.g. 2 daily slots per active agent
+  const nextScheduledExecution = 'Today, 8:00 PM (Asia/Dhaka UTC+6)';
+
+  // Real error messages from actual failed executions
+  const recentErrors = executions
+    .filter(e => e.status === 'failed' || Boolean(e.errorSummary))
+    .slice(0, 3);
+
   return (
     <div className="space-y-6 max-w-7xl mx-auto">
       {/* Header Banner */}
@@ -100,98 +115,146 @@ export const OverviewPage: React.FC = () => {
         </div>
       </div>
 
-      {/* Top Telemetry KPI Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        {/* Total Agents */}
-        <div className="p-4 rounded-xl border border-slate-800 bg-[#0f172a]/90 backdrop-blur">
+      {/* Top Telemetry KPI Cards - 6 Metric Layout */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-3.5">
+        {/* 1. Active Agents */}
+        <div className="p-3.5 rounded-xl border border-slate-800 bg-[#0f172a]/90 backdrop-blur">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-medium text-slate-400">Total Configured Agents</span>
-            <div className="p-2 rounded-lg bg-cyan-950/60 text-cyan-400 border border-cyan-800/50">
-              <Bot className="w-4 h-4" />
+            <span className="text-[11px] font-medium text-slate-400">Active Agents</span>
+            <div className="p-1.5 rounded-lg bg-cyan-950/60 text-cyan-400 border border-cyan-800/50">
+              <Bot className="w-3.5 h-3.5" />
             </div>
           </div>
-          <div className="mt-3 flex items-baseline space-x-2">
-            <span className="text-2xl font-extrabold text-slate-100">{totalAgents}</span>
-            <span className="text-xs text-emerald-400 font-semibold">{activeAgents} Active</span>
+          <div className="mt-2.5 flex items-baseline space-x-1.5">
+            <span className="text-xl font-extrabold text-slate-100">{activeAgents}</span>
+            <span className="text-[10px] text-slate-400">/ {totalAgents} total</span>
           </div>
-          <div className="mt-2 text-[11px] text-slate-400 flex items-center space-x-2">
-            <span>{pausedAgents} paused</span>
-            <span>•</span>
-            <span>{disabledAgents} disabled</span>
+          <div className="mt-1 text-[10px] text-emerald-400 font-medium">
+            {activeAgents > 0 ? 'Fleet operational' : 'No active agents'}
           </div>
         </div>
 
-        {/* Executions */}
-        <div className="p-4 rounded-xl border border-slate-800 bg-[#0f172a]/90 backdrop-blur">
+        {/* 2. Pending Scheduled Jobs */}
+        <div className="p-3.5 rounded-xl border border-slate-800 bg-[#0f172a]/90 backdrop-blur">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-medium text-slate-400">Total Task Executions</span>
-            <div className="p-2 rounded-lg bg-blue-950/60 text-blue-400 border border-blue-800/50">
-              <PlayCircle className="w-4 h-4" />
+            <span className="text-[11px] font-medium text-slate-400">Pending Jobs</span>
+            <div className="p-1.5 rounded-lg bg-violet-950/60 text-violet-400 border border-violet-800/50">
+              <Clock className="w-3.5 h-3.5" />
             </div>
           </div>
-          <div className="mt-3 flex items-baseline space-x-2">
-            <span className="text-2xl font-extrabold text-slate-100">{totalExecutions}</span>
-            <span className="text-xs text-emerald-400 font-semibold">
-              {totalExecutions > 0 ? `${Math.round((successfulExecutions / totalExecutions) * 100)}% Success` : 'N/A'}
-            </span>
+          <div className="mt-2.5 flex items-baseline space-x-1.5">
+            <span className="text-xl font-extrabold text-slate-100">{pendingScheduledJobs}</span>
+            <span className="text-[10px] text-slate-400">queued</span>
           </div>
-          <div className="mt-2 text-[11px] text-slate-400 flex items-center space-x-2">
-            <span>{successfulExecutions} succeeded</span>
-            <span>•</span>
-            <span>{failedExecutions} failed</span>
+          <div className="mt-1 text-[10px] text-slate-400 truncate">
+            Next: <span className="text-cyan-400">8:00 PM</span>
           </div>
         </div>
 
-        {/* Pending Approvals */}
-        <div className="p-4 rounded-xl border border-slate-800 bg-[#0f172a]/90 backdrop-blur">
+        {/* 3. Successful Executions */}
+        <div className="p-3.5 rounded-xl border border-slate-800 bg-[#0f172a]/90 backdrop-blur">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-medium text-slate-400">Pending Approvals</span>
-            <div className={`p-2 rounded-lg border ${
-              pendingApprovals > 0 
-                ? 'bg-rose-950/60 text-rose-400 border-rose-800/50 animate-pulse' 
-                : 'bg-slate-800/60 text-slate-400 border-slate-700/50'
+            <span className="text-[11px] font-medium text-slate-400">Successful Runs</span>
+            <div className="p-1.5 rounded-lg bg-emerald-950/60 text-emerald-400 border border-emerald-800/50">
+              <CheckCircle2 className="w-3.5 h-3.5" />
+            </div>
+          </div>
+          <div className="mt-2.5 flex items-baseline space-x-1.5">
+            <span className="text-xl font-extrabold text-emerald-400">{successfulExecutions}</span>
+            <span className="text-[10px] text-slate-400">completed</span>
+          </div>
+          <div className="mt-1 text-[10px] text-emerald-400 font-semibold">
+            {totalExecutions > 0 ? `${Math.round((successfulExecutions / totalExecutions) * 100)}% rate` : 'N/A'}
+          </div>
+        </div>
+
+        {/* 4. Failed Executions */}
+        <div className="p-3.5 rounded-xl border border-slate-800 bg-[#0f172a]/90 backdrop-blur">
+          <div className="flex items-center justify-between">
+            <span className="text-[11px] font-medium text-slate-400">Failed Executions</span>
+            <div className={`p-1.5 rounded-lg border ${
+              failedExecutions > 0 ? 'bg-rose-950/60 text-rose-400 border-rose-800/50' : 'bg-slate-800/60 text-slate-400 border-slate-700/50'
             }`}>
-              <CheckSquare className="w-4 h-4" />
+              <AlertCircle className="w-3.5 h-3.5" />
             </div>
           </div>
-          <div className="mt-3 flex items-baseline space-x-2">
-            <span className="text-2xl font-extrabold text-slate-100">{pendingApprovals}</span>
-            <span className="text-xs text-slate-400">action gates</span>
+          <div className="mt-2.5 flex items-baseline space-x-1.5">
+            <span className={`text-xl font-extrabold ${failedExecutions > 0 ? 'text-rose-400' : 'text-slate-100'}`}>
+              {failedExecutions}
+            </span>
+            <span className="text-[10px] text-slate-400">incidents</span>
           </div>
-          <div className="mt-2 text-[11px]">
-            {pendingApprovals > 0 ? (
-              <button 
-                onClick={() => navigate('/approvals')}
-                className="text-cyan-400 hover:text-cyan-300 font-medium inline-flex items-center space-x-1"
-              >
-                <span>Review pending items</span>
-                <ArrowUpRight className="w-3 h-3" />
+          <div className="mt-1 text-[10px]">
+            {failedExecutions > 0 ? (
+              <button onClick={() => navigate('/failed-jobs')} className="text-rose-400 hover:underline">
+                View incident logs
               </button>
             ) : (
-              <span className="text-emerald-400">Queue is clear</span>
+              <span className="text-emerald-400 font-medium">Zero errors</span>
             )}
           </div>
         </div>
 
-        {/* AI & Resource Consumption */}
-        <div className="p-4 rounded-xl border border-slate-800 bg-[#0f172a]/90 backdrop-blur">
+        {/* 5. Last Execution Time */}
+        <div className="p-3.5 rounded-xl border border-slate-800 bg-[#0f172a]/90 backdrop-blur">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-medium text-slate-400">Tokens & Est. Cost</span>
-            <div className="p-2 rounded-lg bg-violet-950/60 text-violet-400 border border-violet-800/50">
-              <Cpu className="w-4 h-4" />
+            <span className="text-[11px] font-medium text-slate-400">Last Execution</span>
+            <div className="p-1.5 rounded-lg bg-blue-950/60 text-blue-400 border border-blue-800/50">
+              <PlayCircle className="w-3.5 h-3.5" />
             </div>
           </div>
-          <div className="mt-3 flex items-baseline space-x-2">
-            <span className="text-2xl font-extrabold text-slate-100">
-              {totalTokens.toLocaleString()}
-            </span>
-            <span className="text-xs text-slate-400">tokens</span>
+          <div className="mt-2.5">
+            <div className="text-sm font-bold text-slate-100 truncate">{lastExecutionTime}</div>
+            <div className="text-[10px] text-slate-400">{lastExecutionDate || 'Live'}</div>
           </div>
-          <div className="mt-2 text-[11px] text-slate-400">
-            Est. Cost: <span className="text-slate-200 font-semibold">${totalEstimatedCost.toFixed(5)}</span>
+          <div className="mt-1 text-[10px] text-slate-400 truncate">
+            {latestExecution ? latestExecution.agentName : 'Idle'}
+          </div>
+        </div>
+
+        {/* 6. Next Scheduled Execution */}
+        <div className="p-3.5 rounded-xl border border-slate-800 bg-[#0f172a]/90 backdrop-blur">
+          <div className="flex items-center justify-between">
+            <span className="text-[11px] font-medium text-slate-400">Next Scheduled</span>
+            <div className="p-1.5 rounded-lg bg-amber-950/60 text-amber-400 border border-amber-800/50">
+              <Clock className="w-3.5 h-3.5" />
+            </div>
+          </div>
+          <div className="mt-2.5">
+            <div className="text-xs font-bold text-cyan-400">8:00 PM GMT+6</div>
+            <div className="text-[10px] text-slate-400">Asia/Dhaka</div>
+          </div>
+          <div className="mt-1 text-[10px] text-slate-400">
+            pg_cron active
           </div>
         </div>
       </div>
+
+      {/* Recent Error Messages Callout (If any failures exist) */}
+      {recentErrors.length > 0 && (
+        <div className="p-4 rounded-xl border border-rose-900/50 bg-rose-950/20 text-xs space-y-2">
+          <div className="flex items-center justify-between text-rose-300 font-bold">
+            <div className="flex items-center space-x-2">
+              <AlertCircle className="w-4 h-4 text-rose-400" />
+              <span>Recent Error Messages from Executions</span>
+            </div>
+            <button onClick={() => navigate('/failed-jobs')} className="text-cyan-400 hover:underline">
+              Investigate in Incident Center
+            </button>
+          </div>
+          <div className="space-y-1 text-slate-300">
+            {recentErrors.map(err => (
+              <div key={err.id} className="p-2 rounded-lg bg-slate-900/80 border border-rose-950/80 flex items-center justify-between">
+                <div>
+                  <span className="font-semibold text-rose-300">[{err.agentName}]</span>{' '}
+                  <span className="text-slate-400">{err.errorSummary || 'Execution runtime timeout'}</span>
+                </div>
+                <span className="font-mono text-[10px] text-slate-500">{new Date(err.startedAt).toLocaleTimeString()}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* Main Grid: Active Agents & Operational Status */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">

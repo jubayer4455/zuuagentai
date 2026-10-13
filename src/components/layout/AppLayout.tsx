@@ -36,11 +36,13 @@ import {
   ChevronRight,
   ShieldCheck,
   AlertTriangle,
-  ExternalLink
+  ExternalLink,
+  FileSpreadsheet
 } from 'lucide-react';
 import { useAuthStore, Permission } from '../../store/useAuthStore';
 import { useSystemStore } from '../../store/useSystemStore';
 import { useApprovalStore } from '../../store/useApprovalStore';
+import { useExecutionStore } from '../../store/useExecutionStore';
 import { UserRole } from '../../types';
 import { AuthModal } from '../auth/AuthModal';
 
@@ -68,19 +70,40 @@ export const AppLayout: React.FC = () => {
   const { currentUser, setCurrentRole, hasPermission, needsBootstrap, signOut } = useAuthStore();
   const { theme, toggleTheme, isDryRunGlobal, setDryRunGlobal, notifications, markNotificationAsRead } = useSystemStore();
   const { approvals } = useApprovalStore();
+  const { executions } = useExecutionStore();
   const navigate = useNavigate();
 
   const pendingApprovalsCount = approvals.filter(a => a.status === 'pending').length;
+  const failedJobsCount = executions.filter(e => e.status === 'failed' || Boolean(e.errorSummary)).length;
   const unreadNotificationsCount = notifications.filter(n => !n.isRead).length;
 
   const navigationGroups: NavGroup[] = [
     {
-      groupName: 'Automation Engine',
+      groupName: 'Platform Navigation',
       items: [
-        { id: 'workflows', name: 'Workflows & Canvas', path: '/workflows', icon: GitFork },
-        { id: 'credentials', name: 'Credentials & Connections', path: '/integrations', icon: Key },
-        { id: 'tasks', name: 'Executions & History', path: '/tasks', icon: PlayCircle },
-        { id: 'content-calendar', name: 'Content Calendar & Studio', path: '/content-calendar', icon: Calendar },
+        { id: 'overview', name: 'Overview', path: '/overview', icon: LayoutDashboard },
+        { id: 'agents', name: 'AI Agents', path: '/agents', icon: Bot },
+        { id: 'create-agent', name: 'Create Agent', path: '/agents/new', icon: PlusCircle },
+        { id: 'workflows', name: 'Workflow Configuration', path: '/workflows', icon: GitFork },
+        { id: 'schedules', name: 'Scheduler', path: '/schedules', icon: Clock },
+        { id: 'content', name: 'Generated Content', path: '/content', icon: FileText },
+        { id: 'facebook-pages', name: 'Facebook Pages', path: '/facebook-pages', icon: Share2 },
+        { id: 'google-sheets', name: 'Google Sheets Integration', path: '/google-sheets', icon: FileSpreadsheet },
+        { id: 'executions', name: 'Execution History', path: '/executions', icon: PlayCircle },
+        { 
+          id: 'failed-jobs', 
+          name: 'Failed Jobs', 
+          path: '/failed-jobs', 
+          icon: ShieldAlert,
+          badge: () => failedJobsCount > 0 ? failedJobsCount : null
+        },
+        { id: 'credentials', name: 'API Connections', path: '/integrations', icon: Key },
+        { id: 'settings', name: 'Settings', path: '/settings', icon: Settings, permission: 'settings.edit' }
+      ]
+    },
+    {
+      groupName: 'Governance & Intelligence',
+      items: [
         { 
           id: 'approvals', 
           name: 'Approval Center', 
@@ -88,25 +111,11 @@ export const AppLayout: React.FC = () => {
           icon: CheckSquare, 
           permission: 'approvals.decide',
           badge: () => pendingApprovalsCount > 0 ? pendingApprovalsCount : null 
-        }
-      ]
-    },
-    {
-      groupName: 'AI & Intelligence',
-      items: [
-        { id: 'agents', name: 'AI Agents & Personas', path: '/agents', icon: Bot },
+        },
+        { id: 'content-calendar', name: 'Content Calendar & Studio', path: '/content-calendar', icon: Calendar },
         { id: 'memory', name: 'Memory & Knowledge', path: '/memory', icon: BrainCircuit, permission: 'memory.manage' },
-        { id: 'prompts', name: 'Prompt Library', path: '/prompts', icon: Terminal, permission: 'prompts.edit' },
-        { id: 'tools', name: 'Tool Registry', path: '/tools', icon: Wrench }
-      ]
-    },
-    {
-      groupName: 'System & Platform',
-      items: [
-        { id: 'overview', name: 'System Analytics', path: '/analytics', icon: BarChart3 },
-        { id: 'health', name: 'Health & Diagnostics', path: '/health', icon: Activity },
-        { id: 'backup-restore', name: 'Backup & Restore', path: '/backup-restore', permission: 'settings.edit', icon: DatabaseBackup },
-        { id: 'settings', name: 'General Settings', path: '/settings', icon: Settings, permission: 'settings.edit' }
+        { id: 'providers', name: 'AI Providers & Models', path: '/providers', icon: Cpu },
+        { id: 'health', name: 'System Diagnostics', path: '/health', icon: Activity }
       ]
     }
   ];

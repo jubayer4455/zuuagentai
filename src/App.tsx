@@ -12,6 +12,10 @@ import { WorkflowBuilderPage } from './pages/WorkflowBuilderPage';
 import { SchedulesPage } from './pages/SchedulesPage';
 import { ApprovalsPage } from './pages/ApprovalsPage';
 import { ContentCalendarPage } from './pages/ContentCalendarPage';
+import { FacebookPagesPage } from './pages/FacebookPagesPage';
+import { GoogleSheetsPage } from './pages/GoogleSheetsPage';
+import { FailedJobsPage } from './pages/FailedJobsPage';
+import { GeneratedContentPage } from './pages/GeneratedContentPage';
 import { ProvidersPage } from './pages/ProvidersPage';
 import { IntegrationsPage } from './pages/IntegrationsPage';
 import { ToolRegistryPage } from './pages/ToolRegistryPage';
@@ -34,20 +38,30 @@ export const App: React.FC = () => {
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<AppLayout />}>
-          <Route index element={<WorkflowBuilderPage />} />
+          {/* Core 12 Dashboard Sections */}
+          <Route index element={<OverviewPage />} />
           <Route path="overview" element={<OverviewPage />} />
           <Route path="agents" element={<AllAgentsPage />} />
           <Route path="agents/new" element={<AgentBuilderPage />} />
           <Route path="agents/:id" element={<AgentWorkspacePage />} />
-          <Route path="templates" element={<AgentTemplatesPage />} />
-          <Route path="marketplace" element={<AgentMarketplacePage />} />
-          <Route path="tasks" element={<TasksPage />} />
           <Route path="workflows" element={<WorkflowBuilderPage />} />
           <Route path="schedules" element={<SchedulesPage />} />
+          <Route path="content" element={<GeneratedContentPage />} />
+          <Route path="facebook-pages" element={<FacebookPagesPage />} />
+          <Route path="google-sheets" element={<GoogleSheetsPage />} />
+          <Route path="executions" element={<TasksPage />} />
+          <Route path="tasks" element={<TasksPage />} />
+          <Route path="failed-jobs" element={<FailedJobsPage />} />
+          <Route path="integrations" element={<IntegrationsPage />} />
+          <Route path="connections" element={<IntegrationsPage />} />
+          <Route path="settings" element={<GeneralSettingsPage />} />
+
+          {/* Ancillary Platform Tools */}
           <Route path="approvals" element={<ApprovalsPage />} />
           <Route path="content-calendar" element={<ContentCalendarPage />} />
+          <Route path="templates" element={<AgentTemplatesPage />} />
+          <Route path="marketplace" element={<AgentMarketplacePage />} />
           <Route path="providers" element={<ProvidersPage />} />
-          <Route path="integrations" element={<IntegrationsPage />} />
           <Route path="tools" element={<ToolRegistryPage />} />
           <Route path="prompts" element={<PromptLibraryPage />} />
           <Route path="memory" element={<MemoryPage />} />
@@ -60,7 +74,6 @@ export const App: React.FC = () => {
           <Route path="audit-logs" element={<SecurityAuditPage />} />
           <Route path="backup-restore" element={<BackupRestorePage />} />
           <Route path="import-export" element={<ImportExportPage />} />
-          <Route path="settings" element={<GeneralSettingsPage />} />
           <Route path="notifications" element={<NotificationsPage />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Route>

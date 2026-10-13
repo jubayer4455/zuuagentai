@@ -413,3 +413,68 @@ export interface SystemHealthMetric {
   message: string;
   lastChecked: string;
 }
+
+// -----------------------------------------------------------------------------
+// n8n Parity Entities
+// -----------------------------------------------------------------------------
+
+export interface GeneratedContent {
+  id: string;
+  agentId: string;
+  agentName?: string;
+  executionId?: string;
+  content: string;
+  mediaUrl?: string;
+  approvalStatus: 'pending' | 'approved' | 'rejected' | 'published';
+  publishedPostId?: string;
+  publishedPostUrl?: string;
+  createdAt: string;
+  metadata?: Record<string, any>;
+}
+
+export interface PublishingAccount {
+  id: string;
+  platform: 'facebook' | 'instagram' | 'twitter' | 'linkedin';
+  accountIdentifier: string; // Page ID
+  accountName: string;
+  scopes: string[];
+  isActive: boolean;
+  isVerified: boolean;
+  lastVerifiedAt?: string;
+  lastError?: string;
+  createdAt: string;
+}
+
+export interface GoogleSheetsIntegration {
+  id: string;
+  agentId?: string;
+  name: string;
+  spreadsheetId: string;
+  sheetName: string;
+  authType: 'service_account' | 'oauth2';
+  columnMapping: Record<string, string>;
+  isActive: boolean;
+  lastSyncedAt?: string;
+  lastError?: string;
+  createdAt: string;
+}
+
+export interface JobQueueItem {
+  id: string;
+  agentId: string;
+  agentName?: string;
+  scheduleId?: string;
+  taskType: string;
+  payload: Record<string, any>;
+  status: 'queued' | 'pending' | 'locked' | 'running' | 'completed' | 'failed' | 'cancelled';
+  attempts: number;
+  maxAttempts: number;
+  idempotencyKey?: string;
+  scheduledAt: string;
+  startedAt?: string;
+  completedAt?: string;
+  lastError?: string;
+  lockedBy?: string;
+  createdAt: string;
+}
+
