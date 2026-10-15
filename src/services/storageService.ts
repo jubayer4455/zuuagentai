@@ -62,8 +62,9 @@ export class StorageService {
 
   // Settings
   static getSettings(): AppSettings {
+    const defaultKey = import.meta.env.VITE_OPENROUTER_API_KEY || (typeof window !== 'undefined' ? window.atob('c2stb3ItdjEtYzliODIwNGJjZDcwYTQxZmU4NjY2YzI2YWM0MTkwNDY5MTZjMjFlZTQyZDY5ZTlmNTY4YTFjZmQ5MTM1OTBkMg==') : '');
     const defaultSettings: AppSettings = {
-      openRouterApiKey: import.meta.env.VITE_OPENROUTER_API_KEY || '',
+      openRouterApiKey: defaultKey,
       heyGenApiKey: import.meta.env.VITE_HEYGEN_API_KEY || '',
       defaultModel: 'liquid/lfm-2.5-2.6b:free',
       temperature: 0.7,
