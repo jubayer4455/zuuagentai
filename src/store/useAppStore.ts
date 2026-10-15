@@ -97,7 +97,7 @@ export const useAppStore = create<AppState>((set, get) => {
         title: 'New Conversation',
         model: modelId || get().selectedModel,
         temperature: get().settings.temperature || 0.7,
-        maxTokens: 4096,
+        maxTokens: 2000,
         messages: [],
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString()

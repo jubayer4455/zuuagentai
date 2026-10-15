@@ -187,7 +187,7 @@ export class OpenRouterService {
     messages,
     systemPrompt,
     temperature = 0.7,
-    maxTokens = 4096,
+    maxTokens = 2000,
     onChunk
   }: {
     apiKey?: string;
@@ -227,12 +227,12 @@ export class OpenRouterService {
 
     let activeModel = model || 'liquid/lfm-2.5-2.6b:free';
 
-    const executeRequest = async (targetModel: string) => {
+    const executeRequest = async (targetModel: string, customTokens?: number) => {
       const payload = {
         model: targetModel,
         messages: formattedMessages,
         temperature,
-        max_tokens: maxTokens,
+        max_tokens: customTokens !== undefined ? customTokens : maxTokens,
         stream: Boolean(onChunk)
       };
 
@@ -263,13 +263,27 @@ export class OpenRouterService {
 
     let response = await executeRequest(activeModel);
 
-    // Automatic fallback if model is 404 (deprecated slug) or 402 (insufficient credits) or 429
+    // 1. Check if error is affordable tokens limitation (HTTP 402 with 'can only afford X')
+    if (!response.ok && response.status === 402) {
+      try {
+        const errClone = response.clone();
+        const errText = await errClone.text();
+        const affordMatch = errText.match(/can only afford (\d+)/i);
+        if (affordMatch) {
+          const affordableTokens = Math.max(250, Math.floor(parseInt(affordMatch[1], 10) * 0.95));
+          console.log(`Auto-adjusting max_tokens to affordable limit: ${affordableTokens}`);
+          response = await executeRequest(activeModel, affordableTokens);
+        }
+      } catch {}
+    }
+
+    // 2. Automatic fallback if model is 404 (deprecated slug) or still 402 or 429
     if (!response.ok && (response.status === 404 || response.status === 402 || response.status === 429 || response.status === 403)) {
       console.warn(`Model ${activeModel} returned ${response.status}. Attempting free fallback...`);
       for (const fallbackModel of RELIABLE_FREE_FALLBACKS) {
         if (fallbackModel !== activeModel) {
           activeModel = fallbackModel;
-          response = await executeRequest(activeModel);
+          response = await executeRequest(activeModel, 1500);
           if (response.ok) {
             if (onChunk) {
               onChunk(`*(Note: Auto-switched to verified free model **${activeModel}**)*\n\n`);

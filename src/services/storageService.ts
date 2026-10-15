@@ -76,6 +76,10 @@ export class StorageService {
       loaded.openRouterApiKey = defaultKey;
       this.setLocal(STORAGE_KEYS.SETTINGS, loaded);
     }
+    if (loaded.defaultModel && (loaded.defaultModel.includes('deepseek-r1:free') || loaded.defaultModel.includes('deepseek-chat:free'))) {
+      loaded.defaultModel = 'liquid/lfm-2.5-2.6b:free';
+      this.setLocal(STORAGE_KEYS.SETTINGS, loaded);
+    }
     return loaded;
   }
 
