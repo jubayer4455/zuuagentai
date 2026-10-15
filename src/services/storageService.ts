@@ -71,7 +71,12 @@ export class StorageService {
       autoSaveSupabase: true,
       theme: 'dark'
     };
-    return this.getLocal<AppSettings>(STORAGE_KEYS.SETTINGS, defaultSettings);
+    const loaded = this.getLocal<AppSettings>(STORAGE_KEYS.SETTINGS, defaultSettings);
+    if (!loaded.openRouterApiKey || !loaded.openRouterApiKey.trim() || loaded.openRouterApiKey.length < 15) {
+      loaded.openRouterApiKey = defaultKey;
+      this.setLocal(STORAGE_KEYS.SETTINGS, loaded);
+    }
+    return loaded;
   }
 
   static saveSettings(settings: AppSettings): void {

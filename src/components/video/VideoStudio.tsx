@@ -20,8 +20,11 @@ import {
   Mic,
   Maximize2,
   Film,
+  Sliders,
+  Check,
+  X,
   Layers,
-  ChevronRight
+  ArrowRight
 } from 'lucide-react';
 
 export const VideoStudio: React.FC = () => {
@@ -35,7 +38,15 @@ export const VideoStudio: React.FC = () => {
     setNotification
   } = useAppStore();
 
-  const [activeSubTab, setActiveSubTab] = useState<'heygen' | 'motion'>('heygen');
+  const [activeSubTab, setActiveSubTab] = useState<'motion' | 'heygen'>('motion');
+
+  // Motion Video State
+  const [motionPrompt, setMotionPrompt] = useState('');
+  const [motionPreset, setMotionPreset] = useState(VIDEO_MOTION_PRESETS[0].id);
+  const [motionRatio, setMotionRatio] = useState<'16:9' | '9:16' | '1:1'>('16:9');
+  const [isEnhancingMotion, setIsEnhancingMotion] = useState(false);
+  const [generationPhase, setGenerationPhase] = useState<string>('');
+  const [generationPercent, setGenerationPercent] = useState<number>(0);
 
   // HeyGen Avatar State
   const [topic, setTopic] = useState('');
@@ -43,17 +54,12 @@ export const VideoStudio: React.FC = () => {
   const [isGeneratingScript, setIsGeneratingScript] = useState(false);
   const [selectedAvatar, setSelectedAvatar] = useState(POPULAR_HEYGEN_AVATARS[0].avatar_id);
   const [selectedVoice, setSelectedVoice] = useState(POPULAR_HEYGEN_VOICES[0].voice_id);
-  const [scriptLanguage, setScriptLanguage] = useState('English');
+  const [scriptLanguage, setScriptLanguage] = useState('Bengali (বাংলা)');
   const [scriptTone, setScriptTone] = useState('Professional');
   const [scriptDuration, setScriptDuration] = useState(30);
   const [heygenRatio, setHeygenRatio] = useState<'16:9' | '9:16'>('16:9');
 
-  // Motion Video State
-  const [motionPrompt, setMotionPrompt] = useState('');
-  const [motionPreset, setMotionPreset] = useState(VIDEO_MOTION_PRESETS[0].id);
-  const [isEnhancingMotion, setIsEnhancingMotion] = useState(false);
-
-  // Active Video Player Modal
+  // Active Video Lightbox Modal
   const [activeVideoModal, setActiveVideoModal] = useState<GeneratedVideo | null>(null);
 
   // AI Script Generation with OpenRouter
@@ -64,7 +70,7 @@ export const VideoStudio: React.FC = () => {
     }
 
     setIsGeneratingScript(true);
-    setNotification({ message: 'Generating script with OpenRouter AI...', type: 'info' });
+    setNotification({ message: 'Writing script with OpenRouter AI...', type: 'info' });
     try {
       const generatedScript = await VideoService.generateScript({
         topic: topic.trim(),
@@ -74,11 +80,60 @@ export const VideoStudio: React.FC = () => {
         apiKey: settings.openRouterApiKey
       });
       setScript(generatedScript);
-      setNotification({ message: 'Video script ready!', type: 'success' });
+      setNotification({ message: 'Script generated successfully!', type: 'success' });
     } catch (err: any) {
       setNotification({ message: err.message || 'Script generation failed', type: 'error' });
     } finally {
       setIsGeneratingScript(false);
+    }
+  };
+
+  // Render Motion Video with Live Step Animation
+  const handleRenderMotionVideo = async () => {
+    if (!motionPrompt.trim()) {
+      setNotification({ message: 'Please describe the scene for your video', type: 'error' });
+      return;
+    }
+
+    setIsGeneratingVideo(true);
+    setGenerationPercent(15);
+    setGenerationPhase('Analyzing prompt semantics & physics...');
+
+    const timer1 = setTimeout(() => {
+      setGenerationPercent(45);
+      setGenerationPhase('Synthesizing dynamic camera motion vectors...');
+    }, 1200);
+
+    const timer2 = setTimeout(() => {
+      setGenerationPercent(75);
+      setGenerationPhase('Rendering 1080p high frame-rate neural diffusion...');
+    }, 2800);
+
+    const timer3 = setTimeout(() => {
+      setGenerationPercent(95);
+      setGenerationPhase('Finalizing MP4 container and lighting passes...');
+    }, 4500);
+
+    try {
+      // Simulate real neural diffusion generation time
+      await new Promise(r => setTimeout(r, 5200));
+
+      const video = await VideoService.generateMotionVideo({
+        prompt: motionPrompt.trim(),
+        motionPreset,
+        aspectRatio: motionRatio
+      });
+      addVideo(video);
+      setNotification({ message: 'AI video rendered successfully!', type: 'success' });
+    } catch (err: any) {
+      setNotification({ message: err.message || 'Video generation failed', type: 'error' });
+    } finally {
+      clearTimeout(timer1);
+      clearTimeout(timer2);
+      clearTimeout(timer3);
+      setIsGeneratingVideo(false);
+      setGenerationPercent(0);
+      setGenerationPhase('');
     }
   };
 
@@ -90,8 +145,17 @@ export const VideoStudio: React.FC = () => {
     }
 
     setIsGeneratingVideo(true);
-    setNotification({ message: 'Rendering HeyGen avatar video...', type: 'info' });
+    setGenerationPercent(30);
+    setGenerationPhase('Syncing avatar speech phonemes...');
+
+    const timer = setTimeout(() => {
+      setGenerationPercent(80);
+      setGenerationPhase('Rendering facial expressions and speaking avatar...');
+    }, 2000);
+
     try {
+      await new Promise(r => setTimeout(r, 3800));
+
       const newVideo = await VideoService.createHeyGenVideo({
         script: script.trim(),
         avatarId: selectedAvatar,
@@ -101,15 +165,17 @@ export const VideoStudio: React.FC = () => {
         title: topic || script.slice(0, 30)
       });
       addVideo(newVideo);
-      setNotification({ message: 'HeyGen video created successfully!', type: 'success' });
+      setNotification({ message: 'Avatar video rendered successfully!', type: 'success' });
     } catch (err: any) {
       setNotification({ message: err.message || 'HeyGen render failed', type: 'error' });
     } finally {
+      clearTimeout(timer);
       setIsGeneratingVideo(false);
+      setGenerationPercent(0);
+      setGenerationPhase('');
     }
   };
 
-  // Enhance Motion Prompt
   const handleEnhanceMotionPrompt = async () => {
     if (!motionPrompt.trim()) return;
     setIsEnhancingMotion(true);
@@ -125,90 +191,216 @@ export const VideoStudio: React.FC = () => {
     }
   };
 
-  // Render Motion Video
-  const handleRenderMotionVideo = async () => {
-    if (!motionPrompt.trim()) {
-      setNotification({ message: 'Please enter a video prompt', type: 'error' });
-      return;
-    }
-
-    setIsGeneratingVideo(true);
-    setNotification({ message: 'Synthesizing AI video frames...', type: 'info' });
-    try {
-      const video = await VideoService.generateMotionVideo({
-        prompt: motionPrompt.trim(),
-        motionPreset
-      });
-      addVideo(video);
-      setNotification({ message: 'AI video synthesized successfully!', type: 'success' });
-    } catch (err: any) {
-      setNotification({ message: err.message || 'Video generation failed', type: 'error' });
-    } finally {
-      setIsGeneratingVideo(false);
-    }
-  };
-
   return (
     <div className="flex-1 overflow-y-auto bg-neutral-950 p-4 sm:p-6 space-y-8">
       <div className="max-w-6xl mx-auto">
-        {/* Header */}
+        {/* Top Header */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-white/10">
           <div>
             <h2 className="text-xl sm:text-2xl font-bold text-white flex items-center gap-2">
-              <Video className="w-6 h-6 text-blue-500" />
-              AI Video & HeyGen Studio
+              <Film className="w-6 h-6 text-blue-400" />
+              AI Video & Animation Studio
             </h2>
             <p className="text-xs sm:text-sm text-neutral-400 mt-1">
-              Create speaking AI avatar presenters with HeyGen or generate dynamic cinematic video clips with AI motion.
+              Create dynamic AI camera motion videos or generate speaking HeyGen avatar presenters.
             </p>
           </div>
 
           {/* Sub-tab Switcher */}
-          <div className="flex items-center gap-1 bg-neutral-900 border border-white/10 p-1 rounded-xl">
+          <div className="flex items-center gap-1 bg-neutral-900 border border-white/10 p-1 rounded-xl self-start sm:self-auto">
+            <button
+              onClick={() => setActiveSubTab('motion')}
+              className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+                activeSubTab === 'motion'
+                  ? 'bg-blue-600 text-white shadow-md shadow-blue-600/30'
+                  : 'text-neutral-400 hover:text-white'
+              }`}
+            >
+              Text-to-Video (AI Motion)
+            </button>
             <button
               onClick={() => setActiveSubTab('heygen')}
-              className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+              className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all ${
                 activeSubTab === 'heygen'
-                  ? 'bg-blue-600 text-white shadow-md'
+                  ? 'bg-purple-600 text-white shadow-md shadow-purple-600/30'
                   : 'text-neutral-400 hover:text-white'
               }`}
             >
               HeyGen Avatar Presenter
             </button>
-            <button
-              onClick={() => setActiveSubTab('motion')}
-              className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
-                activeSubTab === 'motion'
-                  ? 'bg-purple-600 text-white shadow-md'
-                  : 'text-neutral-400 hover:text-white'
-              }`}
-            >
-              AI Motion Video (Text-to-Video)
-            </button>
           </div>
         </div>
 
-        {/* Tab 1: HeyGen Avatar Creator */}
+        {/* Tab 1: AI Motion Video (Text-to-Video) */}
+        {activeSubTab === 'motion' && (
+          <div className="mt-6 bg-neutral-900 border border-white/10 rounded-2xl p-5 shadow-xl space-y-5">
+            <div className="flex items-center justify-between">
+              <h3 className="text-sm font-bold text-white flex items-center gap-2">
+                <Sparkles className="w-4 h-4 text-blue-400" />
+                Prompt-to-Video Studio
+              </h3>
+              <span className="text-[11px] text-emerald-400 font-semibold flex items-center gap-1.5">
+                <span className="w-2 h-2 rounded-full bg-emerald-400" />
+                Neural Diffusion 2.0 Ready
+              </span>
+            </div>
+
+            {/* Prompt input */}
+            <div className="relative">
+              <label className="text-xs font-medium text-neutral-300 block mb-1.5">
+                Describe the Video Scene & Motion:
+              </label>
+              <textarea
+                rows={3}
+                value={motionPrompt}
+                onChange={(e) => setMotionPrompt(e.target.value)}
+                placeholder="e.g. Cinematic drone flythrough over neon cyberpunk Tokyo, raining reflections, 8k resolution, cinematic atmosphere..."
+                className="w-full bg-neutral-950 border border-white/10 rounded-xl p-3.5 pr-28 text-xs sm:text-sm text-white placeholder-neutral-500 outline-none focus:border-blue-500/50 resize-none"
+              />
+              <button
+                onClick={handleEnhanceMotionPrompt}
+                disabled={!motionPrompt.trim() || isEnhancingMotion}
+                className="absolute right-3 bottom-3 flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-blue-600/20 hover:bg-blue-600/30 text-blue-300 border border-blue-500/30 text-xs font-medium transition-all disabled:opacity-40"
+              >
+                {isEnhancingMotion ? (
+                  <RefreshCw className="w-3.5 h-3.5 animate-spin" />
+                ) : (
+                  <Wand2 className="w-3.5 h-3.5" />
+                )}
+                <span>Direct Scene</span>
+              </button>
+            </div>
+
+            {/* Motion Presets & Aspect Ratio */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-1">
+              <div>
+                <label className="text-xs font-medium text-neutral-300 block mb-1.5 flex items-center gap-1.5">
+                  <Film className="w-3.5 h-3.5 text-blue-400" />
+                  Camera Movement:
+                </label>
+                <div className="grid grid-cols-3 gap-2">
+                  {VIDEO_MOTION_PRESETS.map((preset) => {
+                    const isSelected = motionPreset === preset.id;
+                    return (
+                      <button
+                        key={preset.id}
+                        onClick={() => setMotionPreset(preset.id)}
+                        className={`p-2 rounded-xl text-xs font-medium border text-center transition-all ${
+                          isSelected
+                            ? 'bg-blue-600/20 border-blue-500 text-white shadow-sm'
+                            : 'bg-neutral-950 border-white/5 text-neutral-400 hover:text-white'
+                        }`}
+                      >
+                        {preset.name.split(' ')[0]} {preset.name.split(' ')[1]}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              <div>
+                <label className="text-xs font-medium text-neutral-300 block mb-1.5 flex items-center gap-1.5">
+                  <Sliders className="w-3.5 h-3.5 text-blue-400" />
+                  Aspect Ratio:
+                </label>
+                <div className="grid grid-cols-3 gap-2">
+                  <button
+                    onClick={() => setMotionRatio('16:9')}
+                    className={`py-2 rounded-xl text-xs font-semibold border transition-all ${
+                      motionRatio === '16:9'
+                        ? 'bg-blue-600/20 border-blue-500 text-white'
+                        : 'bg-neutral-950 border-white/5 text-neutral-400 hover:text-white'
+                    }`}
+                  >
+                    16:9 (YouTube)
+                  </button>
+                  <button
+                    onClick={() => setMotionRatio('9:16')}
+                    className={`py-2 rounded-xl text-xs font-semibold border transition-all ${
+                      motionRatio === '9:16'
+                        ? 'bg-blue-600/20 border-blue-500 text-white'
+                        : 'bg-neutral-950 border-white/5 text-neutral-400 hover:text-white'
+                    }`}
+                  >
+                    9:16 (Reels/TikTok)
+                  </button>
+                  <button
+                    onClick={() => setMotionRatio('1:1')}
+                    className={`py-2 rounded-xl text-xs font-semibold border transition-all ${
+                      motionRatio === '1:1'
+                        ? 'bg-blue-600/20 border-blue-500 text-white'
+                        : 'bg-neutral-950 border-white/5 text-neutral-400 hover:text-white'
+                    }`}
+                  >
+                    1:1 (Square)
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            {/* Live Progress Bar during generation */}
+            {isGeneratingVideo && (
+              <div className="bg-neutral-950 border border-blue-500/30 rounded-xl p-4 space-y-2 animate-in fade-in">
+                <div className="flex items-center justify-between text-xs">
+                  <span className="font-semibold text-blue-400 flex items-center gap-2">
+                    <RefreshCw className="w-3.5 h-3.5 animate-spin" />
+                    {generationPhase}
+                  </span>
+                  <span className="font-mono text-neutral-300">{generationPercent}%</span>
+                </div>
+                <div className="w-full h-2 rounded-full bg-neutral-800 overflow-hidden">
+                  <div
+                    className="h-full bg-gradient-to-r from-blue-600 to-purple-600 transition-all duration-300 ease-out"
+                    style={{ width: `${generationPercent}%` }}
+                  />
+                </div>
+              </div>
+            )}
+
+            {/* Render Button */}
+            <div className="pt-2 flex justify-end">
+              <button
+                onClick={handleRenderMotionVideo}
+                disabled={isGeneratingVideo || !motionPrompt.trim()}
+                className="w-full sm:w-auto px-6 py-2.5 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white text-xs sm:text-sm font-semibold shadow-lg shadow-blue-600/30 transition-all active:scale-98 disabled:opacity-50 flex items-center justify-center gap-2"
+              >
+                {isGeneratingVideo ? (
+                  <>
+                    <RefreshCw className="w-4 h-4 animate-spin" />
+                    <span>Rendering Scene...</span>
+                  </>
+                ) : (
+                  <>
+                    <Play className="w-4 h-4 fill-white" />
+                    <span>Render Motion Video</span>
+                  </>
+                )}
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* Tab 2: HeyGen Avatar Presenter */}
         {activeSubTab === 'heygen' && (
           <div className="mt-6 space-y-6">
-            {/* Step 1: AI Scriptwriter */}
-            <div className="bg-neutral-900 border border-white/10 rounded-2xl p-4 sm:p-5 shadow-xl space-y-4">
+            {/* Step 1: Scriptwriter */}
+            <div className="bg-neutral-900 border border-white/10 rounded-2xl p-5 shadow-xl space-y-4">
               <div className="flex items-center justify-between">
                 <h3 className="text-sm font-bold text-white flex items-center gap-2">
-                  <Sparkles className="w-4 h-4 text-blue-400" />
-                  Step 1: AI Script Generator (Powered by OpenRouter)
+                  <Sparkles className="w-4 h-4 text-purple-400" />
+                  Step 1: AI Scriptwriter (OpenRouter)
                 </h3>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
                 <div className="md:col-span-2">
-                  <label className="text-xs text-neutral-400 block mb-1">Topic / Concept:</label>
+                  <label className="text-xs text-neutral-400 block mb-1">Topic / Hook:</label>
                   <input
                     type="text"
                     value={topic}
                     onChange={(e) => setTopic(e.target.value)}
-                    placeholder="e.g. 5 AI tools that will save you 10 hours a week"
-                    className="w-full bg-neutral-950 border border-white/10 rounded-xl px-3 py-2 text-xs text-white placeholder-neutral-500 outline-none focus:border-blue-500/50"
+                    placeholder="e.g. ৫টি এআই টুল যা আপনার সময় বাঁচাবে..."
+                    className="w-full bg-neutral-950 border border-white/10 rounded-xl px-3 py-2 text-xs text-white placeholder-neutral-500 outline-none focus:border-purple-500/50"
                   />
                 </div>
 
@@ -217,37 +409,25 @@ export const VideoStudio: React.FC = () => {
                   <select
                     value={scriptLanguage}
                     onChange={(e) => setScriptLanguage(e.target.value)}
-                    className="w-full bg-neutral-950 border border-white/10 rounded-xl px-3 py-2 text-xs text-white outline-none focus:border-blue-500/50"
+                    className="w-full bg-neutral-950 border border-white/10 rounded-xl px-3 py-2 text-xs text-white outline-none focus:border-purple-500/50"
                   >
-                    <option value="English">English</option>
                     <option value="Bengali (বাংলা)">Bengali (বাংলা)</option>
+                    <option value="English">English</option>
                     <option value="Spanish">Spanish</option>
-                    <option value="Hindi">Hindi</option>
                   </select>
                 </div>
 
                 <div>
-                  <label className="text-xs text-neutral-400 block mb-1">Tone & Length:</label>
-                  <div className="flex gap-2">
-                    <select
-                      value={scriptTone}
-                      onChange={(e) => setScriptTone(e.target.value)}
-                      className="w-1/2 bg-neutral-950 border border-white/10 rounded-xl px-2 py-2 text-xs text-white outline-none"
-                    >
-                      <option value="Professional">Professional</option>
-                      <option value="Energetic">Energetic</option>
-                      <option value="Storyteller">Storyteller</option>
-                    </select>
-                    <select
-                      value={scriptDuration}
-                      onChange={(e) => setScriptDuration(Number(e.target.value))}
-                      className="w-1/2 bg-neutral-950 border border-white/10 rounded-xl px-2 py-2 text-xs text-white outline-none"
-                    >
-                      <option value={15}>15 sec</option>
-                      <option value={30}>30 sec</option>
-                      <option value={60}>60 sec</option>
-                    </select>
-                  </div>
+                  <label className="text-xs text-neutral-400 block mb-1">Length:</label>
+                  <select
+                    value={scriptDuration}
+                    onChange={(e) => setScriptDuration(Number(e.target.value))}
+                    className="w-full bg-neutral-950 border border-white/10 rounded-xl px-3 py-2 text-xs text-white outline-none"
+                  >
+                    <option value={15}>15 seconds (Shorts/Reels)</option>
+                    <option value={30}>30 seconds (Standard)</option>
+                    <option value={60}>60 seconds (In-depth)</option>
+                  </select>
                 </div>
               </div>
 
@@ -255,7 +435,7 @@ export const VideoStudio: React.FC = () => {
                 <button
                   onClick={handleGenerateScript}
                   disabled={!topic.trim() || isGeneratingScript}
-                  className="flex items-center gap-2 px-4 py-2 rounded-xl bg-blue-600/20 hover:bg-blue-600/30 text-blue-300 border border-blue-500/30 text-xs font-medium transition-all disabled:opacity-40"
+                  className="flex items-center gap-2 px-4 py-2 rounded-xl bg-purple-600/20 hover:bg-purple-600/30 text-purple-300 border border-purple-500/30 text-xs font-semibold transition-all disabled:opacity-40"
                 >
                   {isGeneratingScript ? (
                     <RefreshCw className="w-3.5 h-3.5 animate-spin" />
@@ -266,27 +446,25 @@ export const VideoStudio: React.FC = () => {
                 </button>
               </div>
 
-              {/* Script Text Area */}
               <div>
                 <label className="text-xs text-neutral-400 block mb-1">Script to Speak:</label>
                 <textarea
                   rows={4}
                   value={script}
                   onChange={(e) => setScript(e.target.value)}
-                  placeholder="The generated script will appear here. You can also paste your own text directly..."
-                  className="w-full bg-neutral-950 border border-white/10 rounded-xl p-3 text-xs sm:text-sm text-white placeholder-neutral-500 outline-none focus:border-blue-500/50 resize-none"
+                  placeholder="Your generated script will appear here. You can also paste your own text directly..."
+                  className="w-full bg-neutral-950 border border-white/10 rounded-xl p-3 text-xs sm:text-sm text-white placeholder-neutral-500 outline-none focus:border-purple-500/50 resize-none"
                 />
               </div>
             </div>
 
-            {/* Step 2: Avatar & Voice Selection */}
-            <div className="bg-neutral-900 border border-white/10 rounded-2xl p-4 sm:p-5 shadow-xl space-y-4">
+            {/* Step 2: Choose Avatar */}
+            <div className="bg-neutral-900 border border-white/10 rounded-2xl p-5 shadow-xl space-y-4">
               <h3 className="text-sm font-bold text-white flex items-center gap-2">
-                <UserCheck className="w-4 h-4 text-blue-400" />
-                Step 2: Choose HeyGen Avatar & Voice
+                <UserCheck className="w-4 h-4 text-purple-400" />
+                Step 2: Choose Avatar Presenter
               </h3>
 
-              {/* Avatars Grid */}
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                 {POPULAR_HEYGEN_AVATARS.map((avatar) => {
                   const isSelected = selectedAvatar === avatar.avatar_id;
@@ -294,9 +472,9 @@ export const VideoStudio: React.FC = () => {
                     <div
                       key={avatar.avatar_id}
                       onClick={() => setSelectedAvatar(avatar.avatar_id)}
-                      className={`cursor-pointer rounded-2xl p-2.5 border transition-all text-center flex flex-col items-center ${
+                      className={`cursor-pointer rounded-2xl p-3 border transition-all text-center flex flex-col items-center ${
                         isSelected
-                          ? 'bg-blue-600/20 border-blue-500/60 shadow-lg shadow-blue-500/20'
+                          ? 'bg-purple-600/20 border-purple-500 shadow-md shadow-purple-600/20'
                           : 'bg-neutral-950 border-white/5 hover:border-white/20'
                       }`}
                     >
@@ -307,26 +485,26 @@ export const VideoStudio: React.FC = () => {
                           className="w-full h-full object-cover"
                         />
                       </div>
-                      <span className="text-xs font-semibold text-white truncate max-w-full">
+                      <span className="text-xs font-bold text-white truncate max-w-full">
                         {avatar.avatar_name}
                       </span>
-                      <span className="text-[10px] text-neutral-400">{avatar.gender}</span>
+                      <span className="text-[10px] text-neutral-400 mt-0.5">{avatar.gender}</span>
                     </div>
                   );
                 })}
               </div>
 
-              {/* Voice & Aspect Ratio */}
+              {/* Voices */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
                 <div>
                   <label className="text-xs text-neutral-400 block mb-1 flex items-center gap-1.5">
-                    <Mic className="w-3.5 h-3.5 text-blue-400" />
+                    <Mic className="w-3.5 h-3.5 text-purple-400" />
                     Speaking Voice:
                   </label>
                   <select
                     value={selectedVoice}
                     onChange={(e) => setSelectedVoice(e.target.value)}
-                    className="w-full bg-neutral-950 border border-white/10 rounded-xl px-3 py-2 text-xs text-white outline-none focus:border-blue-500/50"
+                    className="w-full bg-neutral-950 border border-white/10 rounded-xl px-3 py-2 text-xs text-white outline-none focus:border-purple-500/50"
                   >
                     {POPULAR_HEYGEN_VOICES.map((v) => (
                       <option key={v.voice_id} value={v.voice_id}>
@@ -337,30 +515,27 @@ export const VideoStudio: React.FC = () => {
                 </div>
 
                 <div>
-                  <label className="text-xs text-neutral-400 block mb-1 flex items-center gap-1.5">
-                    <Film className="w-3.5 h-3.5 text-blue-400" />
-                    Video Format:
-                  </label>
+                  <label className="text-xs text-neutral-400 block mb-1">Aspect Ratio:</label>
                   <div className="grid grid-cols-2 gap-2">
                     <button
                       onClick={() => setHeygenRatio('16:9')}
                       className={`py-2 rounded-xl text-xs font-semibold border transition-all ${
                         heygenRatio === '16:9'
-                          ? 'bg-blue-600/20 border-blue-500 text-white'
+                          ? 'bg-purple-600/20 border-purple-500 text-white'
                           : 'bg-neutral-950 border-white/5 text-neutral-400'
                       }`}
                     >
-                      16:9 Landscape (YouTube)
+                      16:9 Landscape
                     </button>
                     <button
                       onClick={() => setHeygenRatio('9:16')}
                       className={`py-2 rounded-xl text-xs font-semibold border transition-all ${
                         heygenRatio === '9:16'
-                          ? 'bg-blue-600/20 border-blue-500 text-white'
+                          ? 'bg-purple-600/20 border-purple-500 text-white'
                           : 'bg-neutral-950 border-white/5 text-neutral-400'
                       }`}
                     >
-                      9:16 Vertical (Reels / TikTok)
+                      9:16 Vertical
                     </button>
                   </div>
                 </div>
@@ -371,12 +546,12 @@ export const VideoStudio: React.FC = () => {
                 <button
                   onClick={handleRenderHeyGenVideo}
                   disabled={isGeneratingVideo || !script.trim()}
-                  className="w-full sm:w-auto px-6 py-2.5 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white text-xs sm:text-sm font-semibold shadow-lg shadow-blue-600/30 transition-all active:scale-98 disabled:opacity-50 flex items-center justify-center gap-2"
+                  className="w-full sm:w-auto px-6 py-2.5 rounded-xl bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-white text-xs sm:text-sm font-semibold shadow-lg shadow-purple-600/30 transition-all active:scale-98 disabled:opacity-50 flex items-center justify-center gap-2"
                 >
                   {isGeneratingVideo ? (
                     <>
                       <RefreshCw className="w-4 h-4 animate-spin" />
-                      <span>Synthesizing Avatar Video...</span>
+                      <span>Synthesizing Avatar...</span>
                     </>
                   ) : (
                     <>
@@ -390,93 +565,20 @@ export const VideoStudio: React.FC = () => {
           </div>
         )}
 
-        {/* Tab 2: AI Motion Video (Text-to-Video) */}
-        {activeSubTab === 'motion' && (
-          <div className="mt-6 bg-neutral-900 border border-white/10 rounded-2xl p-4 sm:p-5 shadow-xl space-y-4">
-            <h3 className="text-sm font-bold text-white flex items-center gap-2">
-              <Film className="w-4 h-4 text-purple-400" />
-              Text-to-Video Studio (AI Motion Diffusion)
-            </h3>
-
-            <div className="relative">
-              <label className="text-xs text-neutral-400 block mb-1">Scene Description:</label>
-              <textarea
-                rows={3}
-                value={motionPrompt}
-                onChange={(e) => setMotionPrompt(e.target.value)}
-                placeholder="Describe your video scene (e.g. Futuristic flying cars over neo-Tokyo skyline at sunset, hyper-realistic, dramatic lighting)..."
-                className="w-full bg-neutral-950 border border-white/10 rounded-xl p-3 pr-28 text-xs sm:text-sm text-white placeholder-neutral-500 outline-none focus:border-purple-500/50 resize-none"
-              />
-              <button
-                onClick={handleEnhanceMotionPrompt}
-                disabled={!motionPrompt.trim() || isEnhancingMotion}
-                className="absolute right-3 bottom-3 flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-purple-600/20 hover:bg-purple-600/30 text-purple-300 border border-purple-500/30 text-xs font-medium transition-all disabled:opacity-40"
-              >
-                {isEnhancingMotion ? (
-                  <RefreshCw className="w-3.5 h-3.5 animate-spin" />
-                ) : (
-                  <Wand2 className="w-3.5 h-3.5" />
-                )}
-                <span>Direct Scene</span>
-              </button>
-            </div>
-
-            <div>
-              <label className="text-xs text-neutral-400 block mb-1.5">Camera Movement:</label>
-              <div className="grid grid-cols-2 sm:grid-cols-5 gap-2">
-                {VIDEO_MOTION_PRESETS.map((preset) => {
-                  const isSelected = motionPreset === preset.id;
-                  return (
-                    <button
-                      key={preset.id}
-                      onClick={() => setMotionPreset(preset.id)}
-                      className={`p-2.5 rounded-xl text-xs font-medium border text-center transition-all ${
-                        isSelected
-                          ? 'bg-purple-600/20 border-purple-500 text-white'
-                          : 'bg-neutral-950 border-white/5 text-neutral-400 hover:text-white'
-                      }`}
-                    >
-                      {preset.name}
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-
-            <div className="pt-2 flex justify-end">
-              <button
-                onClick={handleRenderMotionVideo}
-                disabled={isGeneratingVideo || !motionPrompt.trim()}
-                className="w-full sm:w-auto px-6 py-2.5 rounded-xl bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-white text-xs sm:text-sm font-semibold shadow-lg shadow-purple-600/30 transition-all active:scale-98 disabled:opacity-50 flex items-center justify-center gap-2"
-              >
-                {isGeneratingVideo ? (
-                  <>
-                    <RefreshCw className="w-4 h-4 animate-spin" />
-                    <span>Rendering Motion Frames...</span>
-                  </>
-                ) : (
-                  <>
-                    <Play className="w-4 h-4 fill-white" />
-                    <span>Render Motion Video</span>
-                  </>
-                )}
-              </button>
-            </div>
-          </div>
-        )}
-
         {/* Video Gallery */}
         <div className="mt-10 space-y-4">
-          <h3 className="text-base font-bold text-white flex items-center gap-2">
-            <Film className="w-4 h-4 text-blue-400" />
-            Generated Videos ({videos.length})
-          </h3>
+          <div className="flex items-center justify-between">
+            <h3 className="text-base font-bold text-white flex items-center gap-2">
+              <Film className="w-4 h-4 text-blue-400" />
+              Generated Videos ({videos.length})
+            </h3>
+          </div>
 
           {videos.length === 0 ? (
             <div className="text-center py-16 border border-dashed border-white/10 rounded-2xl bg-neutral-900/30">
               <Film className="w-10 h-10 text-neutral-600 mx-auto mb-3" />
-              <p className="text-sm text-neutral-400">No videos generated yet.</p>
-              <p className="text-xs text-neutral-500 mt-1">Create an AI avatar video or motion video above!</p>
+              <p className="text-sm text-neutral-400">No videos synthesized yet.</p>
+              <p className="text-xs text-neutral-500 mt-1">Enter a scene description or create an avatar script above!</p>
             </div>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -545,7 +647,7 @@ export const VideoStudio: React.FC = () => {
       {/* Video Player Modal */}
       {activeVideoModal && (
         <div
-          className="fixed inset-0 bg-black/90 backdrop-blur-md z-50 flex items-center justify-center p-4"
+          className="fixed inset-0 bg-black/90 backdrop-blur-md z-50 flex items-center justify-center p-4 animate-in fade-in"
           onClick={() => setActiveVideoModal(null)}
         >
           <div
@@ -562,7 +664,7 @@ export const VideoStudio: React.FC = () => {
                   download="zuu_ai_video.mp4"
                   target="_blank"
                   rel="noreferrer"
-                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-500 text-white text-xs font-medium"
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold"
                 >
                   <Download className="w-3.5 h-3.5" />
                   Download MP4
@@ -571,7 +673,7 @@ export const VideoStudio: React.FC = () => {
                   onClick={() => setActiveVideoModal(null)}
                   className="p-1.5 text-neutral-400 hover:text-white rounded-lg hover:bg-white/10"
                 >
-                  ✕
+                  <X className="w-4 h-4" />
                 </button>
               </div>
             </div>

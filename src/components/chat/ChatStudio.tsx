@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { useAppStore } from '../../store/useAppStore';
 import { OpenRouterService } from '../../services/openrouter';
 import { ChatMessage } from '../../types';
+import { ModelSelectorModal } from './ModelSelectorModal';
 import {
   Send,
   Paperclip,
@@ -15,30 +16,31 @@ import {
   BrainCircuit,
   Sliders,
   X,
-  Search,
   RefreshCw,
-  Image as ImageIcon
+  Mic,
+  MicOff,
+  Code2,
+  Terminal,
+  CornerDownLeft
 } from 'lucide-react';
 
 const SYSTEM_PRESETS = [
-  { name: 'General Assistant', prompt: 'You are ZUU AI, a world-class helpful, accurate, and insightful AI assistant.' },
-  { name: 'Full-Stack Coder', prompt: 'You are an elite senior full-stack engineer and software architect. Write clean, production-ready, type-safe code with comments and explanation.' },
-  { name: 'Bengali & English Specialist', prompt: 'You are a bilingual AI expert fluent in both Bengali (বাংলা) and English. Answer naturally in the user requested language.' },
-  { name: 'Video Scriptwriter', prompt: 'You are an award-winning YouTube and TikTok scriptwriter. Write catchy hooks, engaging storytelling, and visual directions.' },
-  { name: 'Creative Storyteller', prompt: 'You are a master storyteller and creative novelist with vivid descriptions, compelling dialogue, and rich world-building.' }
+  { name: 'General Assistant', prompt: 'You are ZUU AI, an elite, accurate, and insightful AI assistant.' },
+  { name: 'Full-Stack Architect', prompt: 'You are a senior full-stack software engineer and cloud architect. Write clean, production-ready, type-safe code with comments.' },
+  { name: 'Bengali & English Specialist', prompt: 'You are a bilingual AI expert fluent in Bengali (বাংলা) and English. Answer naturally in the requested language.' },
+  { name: 'Viral Video Scriptwriter', prompt: 'You are an award-winning YouTube and TikTok scriptwriter. Write catchy hooks, engaging storytelling, and visual directions.' },
+  { name: 'Creative Storyteller', prompt: 'You are a master novelist with vivid sensory descriptions and compelling dialogue.' }
 ];
 
 export const ChatStudio: React.FC = () => {
   const {
-    conversations,
-    activeConversationId,
     activeConversation,
+    activeConversationId,
     createConversation,
     addMessageToActive,
     updateLastMessageChunk,
     models,
     selectedModel,
-    setSelectedModel,
     settings,
     setNotification
   } = useAppStore();
@@ -46,12 +48,12 @@ export const ChatStudio: React.FC = () => {
   const [input, setInput] = useState('');
   const [isSending, setIsSending] = useState(false);
   const [attachedImage, setAttachedImage] = useState<string | null>(null);
-  const [showModelPicker, setShowModelPicker] = useState(false);
-  const [modelSearch, setModelSearch] = useState('');
+  const [isModelModalOpen, setIsModelModalOpen] = useState(false);
   const [showSystemModal, setShowSystemModal] = useState(false);
   const [systemPrompt, setSystemPrompt] = useState('');
   const [expandedReasoning, setExpandedReasoning] = useState<Record<string, boolean>>({});
   const [copiedId, setCopiedId] = useState<string | null>(null);
+  const [isListening, setIsListening] = useState(false);
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -59,17 +61,59 @@ export const ChatStudio: React.FC = () => {
 
   const currentConv = activeConversation();
 
-  // Scroll to bottom on message updates
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [currentConv?.messages, isSending]);
 
-  // Sync active system prompt
   useEffect(() => {
     if (currentConv?.systemPrompt) {
       setSystemPrompt(currentConv.systemPrompt);
     }
   }, [currentConv?.id]);
+
+  // Speech Recognition (Mic Input)
+  const toggleListening = () => {
+    const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+    if (!SpeechRecognition) {
+      setNotification({ message: 'Speech recognition is not supported in this browser.', type: 'info' });
+      return;
+    }
+
+    if (isListening) {
+      setIsListening(false);
+      return;
+    }
+
+    try {
+      const recognition = new SpeechRecognition();
+      recognition.lang = 'bn-BD, en-US';
+      recognition.interimResults = false;
+      recognition.maxAlternatives = 1;
+
+      recognition.onstart = () => {
+        setIsListening(true);
+        setNotification({ message: 'Listening... Speak in Bengali or English', type: 'info' });
+      };
+
+      recognition.onresult = (event: any) => {
+        const transcript = event.results[0][0].transcript;
+        setInput((prev) => (prev ? prev + ' ' + transcript : transcript));
+        setIsListening(false);
+      };
+
+      recognition.onerror = () => {
+        setIsListening(false);
+      };
+
+      recognition.onend = () => {
+        setIsListening(false);
+      };
+
+      recognition.start();
+    } catch {
+      setIsListening(false);
+    }
+  };
 
   const handleSendMessage = async (textToSend?: string) => {
     const messageContent = (textToSend !== undefined ? textToSend : input).trim();
@@ -95,10 +139,8 @@ export const ChatStudio: React.FC = () => {
     setAttachedImage(null);
     setIsSending(true);
 
-    // Placeholder assistant message for streaming
-    const assistantMessageId = crypto.randomUUID();
     const assistantPlaceholder: ChatMessage = {
-      id: assistantMessageId,
+      id: crypto.randomUUID(),
       role: 'assistant',
       content: '',
       model: selectedModel,
@@ -139,8 +181,8 @@ export const ChatStudio: React.FC = () => {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    if (file.size > 8 * 1024 * 1024) {
-      alert('Image size exceeds 8MB limit.');
+    if (file.size > 10 * 1024 * 1024) {
+      alert('Image size exceeds 10MB limit.');
       return;
     }
 
@@ -161,126 +203,81 @@ export const ChatStudio: React.FC = () => {
     setExpandedReasoning((prev) => ({ ...prev, [msgId]: !prev[msgId] }));
   };
 
-  const filteredModels = models.filter((m) =>
-    m.name.toLowerCase().includes(modelSearch.toLowerCase()) ||
-    m.id.toLowerCase().includes(modelSearch.toLowerCase())
-  );
-
   const selectedModelObj = models.find((m) => m.id === selectedModel);
 
   return (
     <div className="flex-1 flex flex-col h-[calc(100vh-4rem)] bg-neutral-950 relative overflow-hidden">
-      {/* Top Chat Bar: Model Selector & Settings */}
-      <div className="h-14 border-b border-white/5 bg-neutral-900/50 backdrop-blur px-4 flex items-center justify-between z-20">
-        <div className="relative">
-          <button
-            onClick={() => setShowModelPicker(!showModelPicker)}
-            className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-neutral-800/80 hover:bg-neutral-800 border border-white/10 text-xs font-medium text-white transition-all shadow-sm"
-          >
-            <BrainCircuit className="w-4 h-4 text-purple-400" />
-            <span className="truncate max-w-[180px] sm:max-w-[260px]">
-              {selectedModelObj?.name || selectedModel}
-            </span>
-            {selectedModel.endsWith(':free') && (
-              <span className="px-1.5 py-0.2 rounded text-[10px] font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
-                FREE
-              </span>
-            )}
-            <ChevronDown className="w-3.5 h-3.5 text-neutral-400" />
-          </button>
-
-          {/* Model Picker Dropdown */}
-          {showModelPicker && (
-            <div className="absolute top-12 left-0 w-80 sm:w-96 max-h-[480px] bg-neutral-900 border border-white/15 rounded-2xl shadow-2xl z-50 flex flex-col overflow-hidden backdrop-blur-xl">
-              <div className="p-3 border-b border-white/10">
-                <div className="relative">
-                  <Search className="w-4 h-4 absolute left-3 top-2.5 text-neutral-400" />
-                  <input
-                    type="text"
-                    placeholder="Search 460+ models..."
-                    value={modelSearch}
-                    onChange={(e) => setModelSearch(e.target.value)}
-                    className="w-full bg-neutral-950 border border-white/10 rounded-xl pl-9 pr-3 py-1.5 text-xs text-white placeholder-neutral-500 outline-none focus:border-purple-500/50"
-                    autoFocus
-                  />
-                </div>
-              </div>
-
-              <div className="flex-1 overflow-y-auto p-2 space-y-1">
-                {filteredModels.slice(0, 50).map((m) => {
-                  const isSelected = m.id === selectedModel;
-                  return (
-                    <div
-                      key={m.id}
-                      onClick={() => {
-                        setSelectedModel(m.id);
-                        setShowModelPicker(false);
-                      }}
-                      className={`p-2.5 rounded-xl cursor-pointer text-xs transition-all ${
-                        isSelected
-                          ? 'bg-purple-600/20 border border-purple-500/40 text-white'
-                          : 'hover:bg-white/5 text-neutral-300'
-                      }`}
-                    >
-                      <div className="flex items-center justify-between">
-                        <span className="font-semibold truncate">{m.name}</span>
-                        {m.is_free && (
-                          <span className="text-[10px] px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
-                            FREE
-                          </span>
-                        )}
-                      </div>
-                      <div className="text-[11px] text-neutral-500 truncate mt-0.5">
-                        {m.id} • Context: {Math.round(m.context_length / 1000)}k
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-          )}
-        </div>
-
-        {/* Right: System Prompt Button */}
+      {/* Top Bar: Model Button & Controls */}
+      <div className="h-14 border-b border-white/5 bg-neutral-900/60 backdrop-blur-md px-4 sm:px-6 flex items-center justify-between z-20">
         <button
-          onClick={() => setShowSystemModal(true)}
-          className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-neutral-800/80 hover:bg-neutral-800 border border-white/10 text-xs text-neutral-300 hover:text-white transition-colors"
-          title="Configure System Prompt"
+          onClick={() => setIsModelModalOpen(true)}
+          className="flex items-center gap-2.5 px-3 py-1.5 rounded-xl bg-neutral-800/90 hover:bg-neutral-800 border border-white/10 hover:border-purple-500/40 text-xs font-semibold text-white transition-all shadow-sm active:scale-[0.98]"
         >
-          <Sliders className="w-3.5 h-3.5 text-purple-400" />
-          <span className="hidden sm:inline">System Prompt</span>
+          <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+          <span className="truncate max-w-[180px] sm:max-w-[280px]">
+            {selectedModelObj?.name || selectedModel}
+          </span>
+          {selectedModel.endsWith(':free') ? (
+            <span className="px-1.5 py-0.5 rounded text-[10px] font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
+              FREE
+            </span>
+          ) : (
+            <span className="px-1.5 py-0.5 rounded text-[10px] font-bold bg-purple-500/20 text-purple-400 border border-purple-500/30">
+              PRO
+            </span>
+          )}
+          <ChevronDown className="w-3.5 h-3.5 text-neutral-400" />
         </button>
+
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => setShowSystemModal(true)}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-neutral-800/80 hover:bg-neutral-800 border border-white/10 text-xs font-medium text-neutral-300 hover:text-white transition-all"
+            title="System Persona"
+          >
+            <Sliders className="w-3.5 h-3.5 text-purple-400" />
+            <span className="hidden sm:inline">Persona</span>
+          </button>
+        </div>
       </div>
 
-      {/* Messages Scroll Area */}
+      {/* Messages Feed */}
       <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-6">
         {(!currentConv || currentConv.messages.length === 0) ? (
-          <div className="h-full flex flex-col items-center justify-center text-center max-w-lg mx-auto py-12">
-            <div className="w-16 h-16 rounded-2xl bg-gradient-to-tr from-purple-600 via-indigo-600 to-pink-500 flex items-center justify-center shadow-xl shadow-purple-600/20 mb-4 animate-bounce">
-              <Sparkles className="w-8 h-8 text-white" />
+          <div className="h-full flex flex-col items-center justify-center text-center max-w-xl mx-auto py-12">
+            <div className="w-14 h-14 rounded-2xl bg-gradient-to-tr from-purple-600 via-indigo-600 to-pink-500 flex items-center justify-center shadow-2xl shadow-purple-600/30 mb-4 animate-in zoom-in-95 duration-200">
+              <Sparkles className="w-7 h-7 text-white" />
             </div>
             <h2 className="text-xl sm:text-2xl font-bold text-white mb-2">
-              How can ZUU AI help you today?
+              Ready to create with ZUU AI?
             </h2>
-            <p className="text-xs sm:text-sm text-neutral-400 mb-6">
-              Powered by OpenRouter 460+ models. Ask anything in English or Bengali, analyze images, or generate scripts.
+            <p className="text-xs sm:text-sm text-neutral-400 mb-8 max-w-md">
+              Ask complex questions, analyze code, translate Bengali/English, or generate video scripts using 460+ connected models.
             </p>
 
-            {/* Quick Starters */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 w-full">
+            {/* Starter Prompt Cards */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 w-full text-left">
               {[
-                'বাংলায় আমাকে একটি ভিডিও স্ক্রিপ্ট লিখে দাও',
-                'Write an optimized React TypeScript component',
-                'Create a 30s marketing pitch for a SaaS product',
-                'Explain how DeepSeek R1 reasoning works'
+                { title: 'বাংলায় ভিডিও স্ক্রিপ্ট', desc: 'একটি প্রোডাক্ট মার্কেটিং স্ক্রিপ্ট তৈরি করো', icon: '🎬' },
+                { title: 'Code Architect', desc: 'Write a full-stack Next.js or React component', icon: '💻' },
+                { title: 'Explain Deep Reasoning', desc: 'How does DeepSeek R1 solve complex logic?', icon: '🧠' },
+                { title: 'Creative Storytelling', desc: 'Craft a thrilling sci-fi narrative in neo-Tokyo', icon: '✨' }
               ].map((starter, i) => (
-                <button
+                <div
                   key={i}
-                  onClick={() => handleSendMessage(starter)}
-                  className="p-3 text-left rounded-xl bg-neutral-900/80 hover:bg-neutral-900 border border-white/5 hover:border-purple-500/30 text-xs text-neutral-300 hover:text-white transition-all active:scale-[0.98]"
+                  onClick={() => handleSendMessage(starter.title + ': ' + starter.desc)}
+                  className="group cursor-pointer p-3.5 rounded-2xl bg-neutral-900/80 hover:bg-neutral-900 border border-white/5 hover:border-purple-500/30 transition-all active:scale-[0.98] shadow-sm"
                 >
-                  {starter}
-                </button>
+                  <div className="flex items-center gap-2 mb-1">
+                    <span className="text-base">{starter.icon}</span>
+                    <h4 className="text-xs font-bold text-white group-hover:text-purple-300 transition-colors">
+                      {starter.title}
+                    </h4>
+                  </div>
+                  <p className="text-[11px] text-neutral-400 leading-relaxed">
+                    {starter.desc}
+                  </p>
+                </div>
               ))}
             </div>
           </div>
@@ -301,36 +298,36 @@ export const ChatStudio: React.FC = () => {
                   </div>
                 )}
 
-                <div className={`flex flex-col space-y-2 max-w-[85%] sm:max-w-[78%] ${isUser ? 'items-end' : 'items-start'}`}>
-                  {/* Attached Image for User */}
+                <div className={`flex flex-col space-y-2 max-w-[88%] sm:max-w-[80%] ${isUser ? 'items-end' : 'items-start'}`}>
+                  {/* Attached Image */}
                   {msg.imageUrl && (
-                    <div className="rounded-xl overflow-hidden border border-white/10 max-w-xs shadow-md">
+                    <div className="rounded-2xl overflow-hidden border border-white/10 max-w-sm shadow-md">
                       <img src={msg.imageUrl} alt="Attached" className="w-full h-auto object-cover" />
                     </div>
                   )}
 
-                  {/* Reasoning Accordion (DeepSeek R1 / o1 thinking) */}
+                  {/* Deep Reasoning Box (DeepSeek R1 / o1) */}
                   {hasReasoning && (
-                    <div className="w-full rounded-xl bg-neutral-900/90 border border-purple-500/20 overflow-hidden text-xs text-neutral-400">
+                    <div className="w-full rounded-2xl bg-neutral-900/90 border border-purple-500/20 overflow-hidden text-xs text-neutral-400">
                       <button
                         onClick={() => toggleReasoning(msg.id)}
-                        className="w-full px-3 py-2 flex items-center justify-between bg-purple-950/20 hover:bg-purple-950/30 transition-colors text-purple-300 font-medium"
+                        className="w-full px-3.5 py-2 flex items-center justify-between bg-purple-950/20 hover:bg-purple-950/30 transition-colors text-purple-300 font-semibold"
                       >
                         <div className="flex items-center gap-2">
                           <BrainCircuit className="w-3.5 h-3.5 text-purple-400" />
-                          <span>Thought Process & Reasoning</span>
+                          <span>Internal Thought & Reasoning</span>
                         </div>
-                        {isReasoningOpen ? <ChevronDown className="w-3.5 h-3.5" /> : <ChevronRight className="w-3.5 h-3.5" />}
+                        {isReasoningOpen ? <ChevronDown className="w-3.5 h-3.5" /> : <ChevronRight className="w-3.5 h-3.5 text-neutral-500" />}
                       </button>
                       {isReasoningOpen && (
-                        <div className="p-3 bg-neutral-950/40 font-mono text-[11px] leading-relaxed whitespace-pre-wrap border-t border-purple-500/10 text-neutral-300">
+                        <div className="p-3.5 bg-neutral-950/60 font-mono text-[11px] leading-relaxed whitespace-pre-wrap border-t border-purple-500/10 text-neutral-300">
                           {msg.reasoning}
                         </div>
                       )}
                     </div>
                   )}
 
-                  {/* Main Bubble */}
+                  {/* Message Bubble */}
                   <div
                     className={`px-4 py-3 rounded-2xl text-xs sm:text-sm leading-relaxed ${
                       isUser
@@ -338,18 +335,18 @@ export const ChatStudio: React.FC = () => {
                         : 'bg-neutral-900 text-neutral-100 border border-white/10 rounded-bl-none shadow-sm'
                     }`}
                   >
-                    <div className="whitespace-pre-wrap">{msg.content || (isSending && !isUser ? 'Thinking...' : '')}</div>
+                    <div className="whitespace-pre-wrap">{msg.content || (isSending && !isUser ? 'Generating response...' : '')}</div>
                   </div>
 
-                  {/* Action buttons (Copy, model badge) */}
+                  {/* Footer actions */}
                   {!isUser && msg.content && (
-                    <div className="flex items-center gap-2 text-[10px] text-neutral-500 px-1">
+                    <div className="flex items-center gap-2.5 text-[10px] text-neutral-500 px-1">
                       <span>{msg.model?.split('/').pop() || selectedModel.split('/').pop()}</span>
                       <span>•</span>
                       <button
                         onClick={() => handleCopy(msg.content, msg.id)}
                         className="flex items-center gap-1 hover:text-white transition-colors"
-                        title="Copy message"
+                        title="Copy text"
                       >
                         {copiedId === msg.id ? (
                           <>
@@ -379,16 +376,16 @@ export const ChatStudio: React.FC = () => {
         <div ref={messagesEndRef} />
       </div>
 
-      {/* Input Box Area */}
+      {/* Input Area */}
       <div className="p-3 sm:p-4 border-t border-white/10 bg-neutral-950/80 backdrop-blur-md">
         <div className="max-w-4xl mx-auto">
-          {/* Attached Image Preview */}
+          {/* Image preview */}
           {attachedImage && (
             <div className="relative inline-block mb-2">
               <img src={attachedImage} alt="Attachment" className="h-16 w-16 object-cover rounded-xl border border-white/20 shadow-md" />
               <button
                 onClick={() => setAttachedImage(null)}
-                className="absolute -top-1.5 -right-1.5 w-5 h-5 bg-rose-600 hover:bg-rose-500 text-white rounded-full flex items-center justify-center shadow"
+                className="absolute -top-1.5 -right-1.5 w-5 h-5 bg-rose-600 text-white rounded-full flex items-center justify-center shadow"
               >
                 <X className="w-3 h-3" />
               </button>
@@ -396,7 +393,6 @@ export const ChatStudio: React.FC = () => {
           )}
 
           <div className="relative flex items-center bg-neutral-900 border border-white/10 focus-within:border-purple-500/50 rounded-2xl px-3 py-2 shadow-xl transition-all">
-            {/* Attachment Button */}
             <input
               type="file"
               ref={fileInputRef}
@@ -406,17 +402,30 @@ export const ChatStudio: React.FC = () => {
             />
             <button
               onClick={() => fileInputRef.current?.click()}
-              className="p-1.5 rounded-lg text-neutral-400 hover:text-white hover:bg-white/5 transition-colors"
+              className="p-2 rounded-xl text-neutral-400 hover:text-white hover:bg-white/5 transition-colors"
               title="Attach Image (Vision AI)"
             >
               <Paperclip className="w-4 h-4" />
             </button>
 
-            {/* AI Enhance Button */}
+            {/* Mic Input */}
+            <button
+              onClick={toggleListening}
+              className={`p-2 rounded-xl transition-colors ${
+                isListening
+                  ? 'bg-rose-600 text-white animate-pulse'
+                  : 'text-neutral-400 hover:text-white hover:bg-white/5'
+              }`}
+              title="Speak with Voice"
+            >
+              {isListening ? <MicOff className="w-4 h-4" /> : <Mic className="w-4 h-4" />}
+            </button>
+
+            {/* AI Enhance */}
             <button
               onClick={handleEnhanceInput}
               disabled={!input.trim()}
-              className="p-1.5 rounded-lg text-neutral-400 hover:text-purple-400 hover:bg-white/5 transition-colors disabled:opacity-40"
+              className="p-2 rounded-xl text-neutral-400 hover:text-purple-400 hover:bg-white/5 transition-colors disabled:opacity-40"
               title="Enhance prompt with AI"
             >
               <Sparkles className="w-4 h-4" />
@@ -433,16 +442,16 @@ export const ChatStudio: React.FC = () => {
                   handleSendMessage();
                 }
               }}
-              placeholder="Ask anything or attach an image (Enter to send, Shift+Enter for new line)..."
+              placeholder="Ask anything or speak (Enter to send, Shift+Enter for new line)..."
               rows={1}
-              className="flex-1 bg-transparent border-0 outline-none px-3 py-1 text-xs sm:text-sm text-white placeholder-neutral-500 resize-none max-h-32 scrollbar-none"
+              className="flex-1 bg-transparent border-0 outline-none px-3 py-1.5 text-xs sm:text-sm text-white placeholder-neutral-500 resize-none max-h-32 scrollbar-none"
             />
 
-            {/* Send Button */}
+            {/* Send */}
             <button
               onClick={() => handleSendMessage()}
               disabled={(!input.trim() && !attachedImage) || isSending}
-              className="p-2 rounded-xl bg-purple-600 hover:bg-purple-500 text-white disabled:opacity-40 disabled:hover:bg-purple-600 shadow-md shadow-purple-600/30 transition-all active:scale-95"
+              className="p-2.5 rounded-xl bg-purple-600 hover:bg-purple-500 text-white disabled:opacity-40 shadow-md shadow-purple-600/30 transition-all active:scale-95"
             >
               {isSending ? (
                 <RefreshCw className="w-4 h-4 animate-spin" />
@@ -451,14 +460,16 @@ export const ChatStudio: React.FC = () => {
               )}
             </button>
           </div>
-
-          <div className="mt-2 text-center text-[10px] text-neutral-500">
-            ZUU AI Studio • Direct OpenRouter connection • Free models daily quota active
-          </div>
         </div>
       </div>
 
-      {/* System Prompt Modal */}
+      {/* Model Selector Modal */}
+      <ModelSelectorModal
+        isOpen={isModelModalOpen}
+        onClose={() => setIsModelModalOpen(false)}
+      />
+
+      {/* System Persona Modal */}
       {showSystemModal && (
         <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
           <div className="bg-neutral-900 border border-white/15 rounded-2xl w-full max-w-lg p-5 shadow-2xl">
