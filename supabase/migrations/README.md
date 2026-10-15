@@ -1,46 +1,16 @@
-# Supabase Database Migrations & Schema Architecture
+# ZUU AI Studio Database Migrations
 
-This directory contains the sequential SQL migrations for **Zuu Agent — Universal Multi-Agent AI Automation Platform**.
+This folder contains the database migrations for **ZUU AI Studio** on Supabase.
 
----
+## Tables Included:
+- `system_settings`: JSON Key-Value store for cloud syncing user preferences, active models, and cached states.
+- `chat_conversations`: Multi-turn chat sessions with system prompts and model configurations.
+- `chat_messages`: User and AI messages, including reasoning chain-of-thought tokens and image attachments.
+- `generated_images`: Full history of synthesized images with styles, models, and aspect ratios.
+- `generated_videos`: HeyGen and AI motion video generation logs with scripts and video URLs.
 
-## 📋 Migration Sequence
-
-Execute migrations in numerical order:
-
-| File | Description | Key Tables & Entities |
-|---|---|---|
-| `20261012000001_initial_schema.sql` | Core schema (32 tables) | `organizations`, `profiles`, `ai_providers`, `agents`, `jobs`, `executions`, `schedules`, `tool_registry` |
-| `20261012000002_rls_policies.sql` | Row Level Security policies | RBAC rules for `master_admin`, `admin`, `operator`, `reviewer`, `viewer` |
-| `20261012000003_seed_data.sql` | Base seed fixtures | Default providers (`gemini`, `openai`), default models, seed agents (`Trollogiya`) |
-| `20261012000004_auth_bootstrap_and_persistence.sql` | First-admin auto-bootstrap | Profile triggers, `handle_new_user()`, system settings persistence |
-| `20261013000005_social_posts_and_hardening.sql` | Social post tracking & deduplication | `public.social_posts`, content hashing, idempotency indexes |
-| `20261013000006_parity_tables.sql` | n8n Full Parity tables & atomic job engine | `generated_content`, `publishing_accounts`, `google_sheets_integrations`, `application_settings`, `claim_due_jobs()` |
-
----
-
-## 🚀 How to Apply Migrations
-
-### Method 1: Supabase CLI (Recommended for DevOps)
-1. Link your Supabase project:
-   ```bash
-   npx supabase link --project-ref your-project-ref
-   ```
-2. Push all pending migrations:
-   ```bash
-   npx supabase db push
-   ```
-
-### Method 2: Supabase Dashboard SQL Editor
-1. Log in to [supabase.com/dashboard](https://supabase.com/dashboard) and select your project.
-2. Navigate to **SQL Editor** -> **New Query**.
-3. Paste the contents of each file from `001` to `006` in sequential order and click **Run**.
-
----
-
-## 🔒 Security & Least Privilege
-
-- **Row Level Security (RLS)** is enabled on all tables.
-- **Service Role Key:** Only server-side Edge Functions and authenticated backend API routes run under `service_role` to claim jobs and mutate external integrations.
-- **Anon Public Access:** Restricted to read-only summary metrics on public dashboards. Sensitive secrets, tokens, and system settings are strictly blocked.
-- **Admins & Operators:** Write access to `agents`, `schedules`, `publishing_accounts`, and `google_sheets_integrations` requires an authenticated profile with `master_admin` or `admin` role.
+## How to Apply:
+1. Open the [Supabase Dashboard](https://supabase.com/dashboard).
+2. Go to your project -> **SQL Editor**.
+3. Copy the contents of `20261015000001_zuu_ai_studio_init.sql` and click **Run**.
+4. The tables and RLS policies will be created immediately.

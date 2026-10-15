@@ -1,188 +1,99 @@
-# Zuu Agent — Universal Multi-Agent AI Automation Platform
+# ZUU AI Studio — All-In-One AI Chat, Image & Video Platform
 
-![Zuu Agent Platform](public/logo.svg)
+![ZUU AI Studio](public/logo.svg)
 
-> **Zuu Agent** is an enterprise-grade, extensible, universal multi-agent AI automation platform. Create, configure, operate, monitor, and manage independent AI agents from one centralized Master Admin Control Center. Owned and fully controlled by you.
-
----
-
-## 🏗️ System Architecture & Capabilities
-
-```
-┌────────────────────────────────────────────────────────────────────────┐
-│               Zuu Agent Master Control Center (Port 3000)              │
-│     React 18 • TypeScript • Tailwind CSS • Lucide Icons • Zustand      │
-└────────────────────────────────────┬───────────────────────────────────┘
-                                     │
-           ┌─────────────────────────┴─────────────────────────┐
-           ▼                                                   ▼
-┌─────────────────────────────────────┐     ┌─────────────────────────────────────┐
-│  Serverless API Router (Port 3001)  │     │       Client Storage Engine         │
-│  Native Node.js / Vercel Serverless │     │     Dual-Write LocalStorage Cache   │
-└──────────────────┬──────────────────┘     └─────────────────────────────────────┘
-                   │
-    ┌──────────────┼──────────────┬──────────────┬──────────────┐
-    ▼              ▼              ▼              ▼              ▼
-┌───────────┐ ┌───────────┐ ┌───────────┐ ┌───────────┐ ┌───────────┐
-│ Supabase  │ │  Google   │ │   Meta    │ │  Vercel   │ │ Cryptogr. │
-│PostgreSQL │ │  Gemini   │ │ Graph API │ │Cron Worker│ │ Approvals │
-│ 32 Tables │ │2.0 Flash /│ │   v21.0   │ │DB-Locking │ │  SHA-256  │
-│Active RLS │ │ Fallback  │ │Diagnostics│ │Stale Recov│ │ Checksum  │
-└───────────┘ └───────────┘ └───────────┘ └───────────┘ └───────────┘
-```
-
-### 25-Section Master Control Navigation
-1. **Overview**: Live metrics calculated dynamically from database records.
-2. **All Agents**: Multi-agent lifecycle management (`draft`, `testing`, `active`, `paused`, `disabled`, `error`, `archived`).
-3. **Universal Agent Builder**: 9-step guided agent creation with live preview.
-4. **Agent Templates**: Out-of-the-box pre-configured agents (including Trollogiya).
-5. **Agent Marketplace**: Extensible catalog of specialized agent personas.
-6. **Tasks & Executions**: Detailed execution logs with correlation IDs and token tracking.
-7. **Workflow Builder**: Graph-based drag-and-drop workflow pipeline with persistent state.
-8. **Schedules & Triggers**: DB-backed cron dispatcher with atomic job locking.
-9. **Approval Center**: Human-in-the-loop oversight with tamper-proof SHA-256 checksums.
-10. **Content Calendar & Studio**: Dedicated Bengali social media content creator, duplicate detection, and visual asset generator.
-11. **Global AI Providers**: Google Gemini, OpenAI, Claude, OpenRouter, and local Ollama adapters.
-12. **API & Integrations**: Meta Graph API connection manager with live diagnostics.
-13. **Tool Registry**: Typed tool definitions with server-side validation.
-14. **Prompt Library**: Versioned prompts with diff viewer and rollback.
-15. **Memory Center**: Partition-scoped memory isolation (`isolated`, `shared_explicit`, `global_read`, `none`) with JSON export.
-16. **Knowledge Base**: Document indexing with agent access boundaries.
-17. **Analytics**: Real database-driven token usage and activity metrics.
-18. **Execution Logs**: Searchable, filterable execution audit trail.
-19. **System Health**: Truthful probing of DB, Auth, AI, Meta Graph API, and scheduler.
-20. **Usage & Cost Controls**: Token caps, spend limits, and cost forecasting.
-21. **Users & Permissions**: Role-Based Access Control (5 roles: `master_admin`, `admin`, `operator`, `reviewer`, `viewer`).
-22. **Security & Audit Logs**: Immutable administrative activity log.
-23. **Backup & Restore**: Zero-secret configuration snapshots with checksum validation.
-24. **Import & Export**: Interoperable JSON configuration exchange.
-25. **General Settings**: System-wide configuration and timezone settings.
+> **ZUU AI Studio** is a unified AI production studio that gives you access to 460+ AI models through OpenRouter (Claude 3.5 Sonnet, GPT-4o, DeepSeek R1/V3, Gemini 2.0 Flash, Llama 3.3, and more), high-fidelity AI Image generation (Flux 1.1 Pro & SDXL), and AI Video Generation featuring HeyGen avatar presenters and text-to-video motion.
 
 ---
 
-## 🔒 Security & Hardening Features
+## 🌟 Key Features
 
-- **Zero Secrets in Frontend**: `SUPABASE_SERVICE_ROLE_KEY` and raw AI/Meta tokens are never exposed to browser bundles.
-- **Cryptographic Approval Gate**: All mutation payloads calculate a SHA-256 hash. If content is tampered with prior to sign-off, the server rejects execution with `409 Conflict`.
-- **Duplicate Content & Similarity Protection**:
-  - Deterministic hash comparison prevents exact duplicates.
-  - Jaccard token similarity engine flags posts exceeding a 70% threshold.
-- **Timeout Reconciliation**: If a Meta Graph API call times out, the server queries the Page feed before retrying to prevent embarrassing double-posts.
-- **Atomic Job Locking**: Background workers acquire `status = 'locked'` with worker IDs and a 5-minute stale lock threshold for recovery.
+### 1. 💬 AI Chat Studio
+- **460+ OpenRouter Models**: Chat seamlessly with Anthropic (Claude 3.5 Sonnet / Opus), OpenAI (GPT-4o, o1, GPT-4o Mini), DeepSeek (R1 Reasoning, V3), Google (Gemini 2.0 Flash / Pro), Meta (Llama 3.3 70B), Mistral, Qwen, and free tier models.
+- **DeepSeek R1 & o1 Reasoning Accordion**: View the full internal chain-of-thought and thinking tokens in a collapsible dark container.
+- **Bilingual English & Bengali (বাংলা)**: Native support for conversational Bengali, translation, scriptwriting, and code generation.
+- **Multimodal Vision AI**: Drag & drop or attach images to analyze them with vision models (GPT-4o, Claude 3.5 Sonnet, Gemini Flash).
+- **Prompt Enhancer**: One-click AI prompt expansion to enrich instructions into detailed context.
+- **Markdown & Code Highlighting**: Syntax-highlighted code blocks with one-click copy buttons.
+- **Persistent Chat History**: Automatically saved locally and synchronized with Supabase.
 
----
+### 2. 🎨 AI Image Studio
+- **Flux 1.1 Pro & SDXL Engines**: State-of-the-art text-to-image synthesis powered by Pollinations AI and Flux.
+- **Style Presets**: Photorealistic 8K, Cinematic 35mm Film, Cyberpunk Neon, Anime & Manga, 3D Pixar/Unreal Engine 5, Dark Fantasy, and Minimalist Vector.
+- **Aspect Ratio Controls**: 1:1 Square, 16:9 Landscape, 9:16 Portrait / Reels, 4:3 Standard, and 21:9 Ultrawide Cinema.
+- **AI Prompt Enhancer**: Transforms raw ideas into award-winning photography and lighting prompts.
+- **Full Resolution Lightbox & Download**: Instant full-size preview and direct PNG download.
 
-## 📱 Meta Graph API & Facebook Integration
+### 3. 🎬 AI Video Studio & HeyGen Presenters
+- **HeyGen AI Avatars**: Choose from top executive, business, news anchor, and casual avatars (Wayne, Angela, Tyler, Monica).
+- **Multilingual Speaking Voices**: US English, UK English, and Bengali (Nabanita & Pradeep neural voices).
+- **AI Video Scriptwriter**: Generate high-converting 15s, 30s, or 60s video scripts with OpenRouter in seconds.
+- **AI Motion Video (Text-to-Video)**: Generate dynamic video scenes with camera movements (Cinematic Zoom In, Smooth Pan Right, 360 Orbit Camera, Aerial Drone Shot, Epic Tilt Up).
+- **Video Player & MP4 Export**: Built-in video player with looping and direct MP4 file downloads.
 
-### 1. Meta Developer App Setup
-1. Navigate to [developers.facebook.com](https://developers.facebook.com) and create an app with the **Business** app type.
-2. In the App Dashboard, add the **Facebook Pages** product.
-3. Required Permissions Checklist:
-   - `pages_manage_posts` (Publish posts, status updates, photos, and captions)
-   - `pages_read_engagement` (Read reactions, comments, and engagement)
-   - `pages_show_list` (Discover Pages managed by the admin)
+### 4. 🧠 OpenRouter Model Explorer
+- **Live Directory of 460+ Models**: Search by model name, provider, or architecture.
+- **Category Filtering**: Free Models, OpenAI, Anthropic, Google, DeepSeek, Meta, and Vision/Multimodal.
+- **Transparent Metrics**: Real-time context window sizes, input/output pricing per 1M tokens, and direct "Chat with this Model" launcher.
 
-### 2. Generate Permanent Page Access Token
-1. Open the **Graph API Explorer** in Meta Developer tools.
-2. Select your App, User Token, and grant the permissions above.
-3. Obtain your short-lived User Token, then exchange it for a Long-Lived Token:
-   ```bash
-   GET https://graph.facebook.com/v21.0/oauth/access_token?grant_type=fb_exchange_token&client_id={APP_ID}&client_secret={APP_SECRET}&fb_exchange_token={SHORT_LIVED_TOKEN}
-   ```
-4. Request the permanent Page Token:
-   ```bash
-   GET https://graph.facebook.com/v21.0/me/accounts?access_token={LONG_LIVED_USER_TOKEN}
-   ```
-5. Copy the `access_token` corresponding to your Page ID and set it as `FB_PAGE_ACCESS_TOKEN` in your `.env` file.
-
-### 3. Meta Error Classification
-| Error Code | Classification | Actionable Remedy |
-|---|---|---|
-| **190** | `OAuthException` | Token expired or invalid. Generate a new long-lived token. |
-| **200** | `PermissionsException` | Connected token lacks `pages_manage_posts`. Check Page roles. |
-| **368** | `TemporarilyBlocked` | Automated posting temporarily restricted by Meta. Pause for 24-48h. |
-| **506** | `DuplicatePost` | Exact duplicate content rejected by Meta. Alter text or punchlines. |
-| **4 / 17** | `RateLimit` | 200 calls/hour per user exceeded. Rely on scheduled intervals. |
+### 5. ⚙️ Settings & Security
+- **Configured OpenRouter Key**: Built-in default key with live connection validator, daily quota tracker, and custom key override.
+- **HeyGen API Key**: Dedicated field with test connection and avatar preview.
+- **Supabase Cloud Sync**: Effortless sync with Supabase PostgreSQL or offline localStorage fallback.
 
 ---
 
-## 🌐 Deployment Instructions
+## 🛠️ Technology Stack
+- **Frontend**: React 18, TypeScript, Vite, Tailwind CSS, Lucide Icons, Zustand.
+- **Backend & Serverless**: Vercel Serverless Functions (`/api/chat`, `/api/models`, `/api/health`).
+- **Database & Sync**: Supabase PostgreSQL + Row Level Security (RLS).
+- **AI Gateway**: OpenRouter API (`https://openrouter.ai/api/v1/`).
+- **Image Engine**: Pollinations AI (Flux 1.1 Pro, SDXL Turbo, Midjourney aesthetic).
+- **Video Engine**: HeyGen API v2 & AI Motion Video diffusion.
 
-### 1. GitHub Repository Setup
+---
+
+## 🚀 Quick Start & Deployment
+
+### 1. Local Development
 ```bash
-git clone https://github.com/jubayer4455/zuuagent.git
-cd zuuagent
+# Clone the repository
+git clone https://github.com/jubayer4455/zuuagentai.git
+cd zuuagentai
+
+# Install dependencies
 npm install
+
+# Start development server
+npm run dev
 ```
 
-### 2. Environment Configuration
-Create a `.env` file in the project root based on `.env.example`:
+### 2. Environment Variables (.env)
 ```ini
-# Supabase
-VITE_SUPABASE_URL=https://your-project.supabase.co
-VITE_SUPABASE_ANON_KEY=eyJhbGciOi...
-SUPABASE_SERVICE_ROLE_KEY=eyJhbGciOi...
+# OpenRouter API Key
+OPENROUTER_API_KEY=sk-or-v1-your-openrouter-key-here
+VITE_OPENROUTER_API_KEY=sk-or-v1-your-openrouter-key-here
 
-# AI Models
-GEMINI_API_KEY=AIzaSy...
-OPENAI_API_KEY=sk-...
+# Supabase Credentials
+VITE_SUPABASE_URL=https://zlotgghqdfrbxeuinjjy.supabase.co
+VITE_SUPABASE_ANON_KEY=your-supabase-anon-key
+SUPABASE_SERVICE_ROLE_KEY=your-supabase-service-role-key
 
-# Facebook Meta Graph API
-FB_PAGE_ID=109847291834910
-FB_PAGE_ACCESS_TOKEN=EAA...
-
-# Platform Security & Cron
-CRON_SECRET_TOKEN=your_secure_cron_token_32_chars
+# Optional: HeyGen API Key
+HEYGEN_API_KEY=your-heygen-api-key
+VITE_HEYGEN_API_KEY=your-heygen-api-key
 ```
 
-### 3. Deploying to Vercel
-1. Import repository on [vercel.com](https://vercel.com).
-2. Configure **Environment Variables** matching your `.env` file.
-3. Build Command: `npm run build`
-4. Output Directory: `dist`
-5. Vercel automatically deploys serverless functions in `/api` and executes the Cron schedule configured in `vercel.json`:
-   ```json
-   {
-     "crons": [
-       { "path": "/api/schedules/cron-worker", "schedule": "0 14 * * *" }
-     ]
-   }
-   ```
-
----
-
-## 📊 Free-Tier Constraints & Compatibility
-
-| Service | Free-Tier Limits | Zuu Agent Mitigation Strategy |
-|---|---|---|
-| **Vercel Cron** | 1 cron job / day on Hobby tier | If multiple daily runs needed, configure an external cron trigger (e.g. GitHub Actions or cron-job.org) calling `/api/schedules/cron-worker` with `Authorization: Bearer <CRON_SECRET_TOKEN>`. |
-| **Vercel Functions** | 10s default timeout (60s max) | Bounded HTTP timeouts: Meta calls (15s), Gemini calls (10s). |
-| **Supabase DB** | 500 MB DB, inactive pause after 7 days | Periodic cron worker pings keep project active. LocalStorage fallback ensures zero downtime. |
-| **Meta Graph API** | 200 requests / hour per user | Scheduling slots spaced across peak hours (e.g., 3-5 posts per day). |
-| **Google Gemini** | 15 RPM, 1500 RPD on free tier | Local request rate limiter and prompt caching. |
-
----
-
-## 🧪 Testing & Verification
-
-Run the full automated test suite:
-```bash
-npm test -- --run
-```
-Expected output: **66/66 tests passing across 6 test suites**:
-- `ai_engine_and_automation.test.ts`
-- `facebook_and_hardening.test.ts`
-- `core_engine.test.ts`
-- `auth_and_persistence.test.ts`
-- `integration_api.test.ts`
-- `collaboration.test.ts`
-
-Run production build verification:
-```bash
-npm run build
-```
+### 3. Deploy to Vercel
+1. Push your repository to GitHub.
+2. Go to [Vercel](https://vercel.com) and import `zuuagentai`.
+3. Add the environment variables from your `.env` file.
+4. Framework Preset: **Vite**.
+5. Build Command: `npm run build`
+6. Output Directory: `dist`
+7. Click **Deploy**.
 
 ---
 
 ## 📄 License
-MIT License. Owned and controlled by you.
+MIT License.
