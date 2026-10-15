@@ -319,8 +319,8 @@ export const ChatStudio: React.FC = () => {
                         </div>
                         {isReasoningOpen ? <ChevronDown className="w-3.5 h-3.5" /> : <ChevronRight className="w-3.5 h-3.5 text-neutral-500" />}
                       </button>
-                      {isReasoningOpen && (
-                        <div className="p-3.5 bg-neutral-950/60 font-mono text-[11px] leading-relaxed whitespace-pre-wrap border-t border-purple-500/10 text-neutral-300">
+                      {(isReasoningOpen || (!msg.content && isSending)) && (
+                        <div className="p-3.5 bg-neutral-950/60 font-mono text-[11px] leading-relaxed whitespace-pre-wrap border-t border-purple-500/10 text-neutral-300 animate-in fade-in">
                           {msg.reasoning}
                         </div>
                       )}
@@ -335,7 +335,9 @@ export const ChatStudio: React.FC = () => {
                         : 'bg-neutral-900 text-neutral-100 border border-white/10 rounded-bl-none shadow-sm'
                     }`}
                   >
-                    <div className="whitespace-pre-wrap">{msg.content || (isSending && !isUser ? 'Generating response...' : '')}</div>
+                    <div className="whitespace-pre-wrap">
+                      {msg.content || (isSending && !isUser ? (hasReasoning ? '🧠 Synthesizing final answer...' : 'Connecting to AI model...') : '')}
+                    </div>
                   </div>
 
                   {/* Footer actions */}

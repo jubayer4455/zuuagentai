@@ -15,10 +15,16 @@ export function getEffectiveKey(key?: string | null): string {
   return DEFAULT_OPENROUTER_KEY;
 }
 
+export const RELIABLE_FREE_FALLBACKS = [
+  'liquid/lfm-2.5-2.6b:free',
+  'poolside/laguna-s-2.1:free',
+  'nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free'
+];
+
 export const CURATED_MODELS: OpenRouterModel[] = [
   {
     id: 'liquid/lfm-2.5-2.6b:free',
-    name: 'LiquidAI: LFM 2.6B (Free)',
+    name: 'LiquidAI: LFM 2.6B (100% Free)',
     description: 'Ultra-fast, efficient open-weights model by Liquid AI with reasoning support.',
     context_length: 128000,
     pricing: { prompt: '0', completion: '0' },
@@ -26,58 +32,58 @@ export const CURATED_MODELS: OpenRouterModel[] = [
     category: 'free'
   },
   {
-    id: 'deepseek/deepseek-r1:free',
-    name: 'DeepSeek: R1 Reasoning (Free)',
-    description: 'Leading open reasoning model rivaling OpenAI o1, showing full chain-of-thought.',
-    context_length: 163840,
-    pricing: { prompt: '0', completion: '0' },
-    is_free: true,
-    category: 'deepseek'
-  },
-  {
-    id: 'deepseek/deepseek-chat:free',
-    name: 'DeepSeek: V3 Chat (Free)',
-    description: 'Flagship 671B MoE model from DeepSeek delivering top-tier coding & general intelligence.',
-    context_length: 131072,
-    pricing: { prompt: '0', completion: '0' },
-    is_free: true,
-    category: 'deepseek'
-  },
-  {
-    id: 'meta-llama/llama-3.3-70b-instruct:free',
-    name: 'Meta: Llama 3.3 70B (Free)',
-    description: 'Meta flagship 70B parameter open weights instruction-tuned model.',
-    context_length: 131072,
-    pricing: { prompt: '0', completion: '0' },
-    is_free: true,
-    category: 'meta'
-  },
-  {
-    id: 'google/gemini-2.0-flash-exp:free',
-    name: 'Google: Gemini 2.0 Flash (Free)',
-    description: 'Next-generation multimodal model from Google with high speed and visual reasoning.',
-    context_length: 1048576,
+    id: 'poolside/laguna-s-2.1:free',
+    name: 'Poolside: Laguna S 2.1 (100% Free)',
+    description: 'High-performance reasoning and multilingual model with deep thought processes.',
+    context_length: 65536,
     pricing: { prompt: '0', completion: '0' },
     is_free: true,
     category: 'free'
   },
   {
-    id: 'qwen/qwen-2.5-coder-32b-instruct:free',
-    name: 'Qwen: 2.5 Coder 32B (Free)',
-    description: 'Specialized state-of-the-art coding and agentic programming model by Alibaba.',
+    id: 'nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free',
+    name: 'NVIDIA: Nemotron 30B (100% Free)',
+    description: 'Advanced reasoning and conversational model from NVIDIA.',
     context_length: 32768,
     pricing: { prompt: '0', completion: '0' },
     is_free: true,
     category: 'free'
   },
   {
-    id: 'anthropic/claude-3.5-sonnet',
-    name: 'Anthropic: Claude 3.5 Sonnet',
-    description: 'The gold standard for coding, reasoning, agentic tasks and vision analysis.',
-    context_length: 200000,
-    pricing: { prompt: '0.000003', completion: '0.000015' },
+    id: 'deepseek/deepseek-r1',
+    name: 'DeepSeek: R1 Reasoning',
+    description: 'World-renowned open reasoning model rivaling OpenAI o1, showing full chain-of-thought.',
+    context_length: 163840,
+    pricing: { prompt: '0.00000055', completion: '0.00000219' },
     is_free: false,
-    category: 'anthropic'
+    category: 'deepseek'
+  },
+  {
+    id: 'deepseek/deepseek-chat',
+    name: 'DeepSeek: V3 Chat',
+    description: 'Flagship 671B MoE model from DeepSeek delivering top-tier coding & general intelligence.',
+    context_length: 131072,
+    pricing: { prompt: '0.00000014', completion: '0.00000028' },
+    is_free: false,
+    category: 'deepseek'
+  },
+  {
+    id: 'meta-llama/llama-3.3-70b-instruct',
+    name: 'Meta: Llama 3.3 70B Instruct',
+    description: 'Meta flagship 70B parameter open weights instruction-tuned model.',
+    context_length: 131072,
+    pricing: { prompt: '0.00000012', completion: '0.0000003' },
+    is_free: false,
+    category: 'meta'
+  },
+  {
+    id: 'google/gemini-2.0-flash-001',
+    name: 'Google: Gemini 2.0 Flash',
+    description: 'Google production 1M context flash model with lightning-fast latency.',
+    context_length: 1048576,
+    pricing: { prompt: '0.0000001', completion: '0.0000004' },
+    is_free: false,
+    category: 'google'
   },
   {
     id: 'openai/gpt-4o',
@@ -98,13 +104,13 @@ export const CURATED_MODELS: OpenRouterModel[] = [
     category: 'openai'
   },
   {
-    id: 'google/gemini-2.0-flash-001',
-    name: 'Google: Gemini 2.0 Flash',
-    description: 'Google production 1M context flash model with lightning-fast latency.',
-    context_length: 1048576,
-    pricing: { prompt: '0.0000001', completion: '0.0000004' },
+    id: 'anthropic/claude-3-5-sonnet-20241022',
+    name: 'Anthropic: Claude 3.5 Sonnet',
+    description: 'The gold standard for coding, reasoning, agentic tasks and vision analysis.',
+    context_length: 200000,
+    pricing: { prompt: '0.000003', completion: '0.000015' },
     is_free: false,
-    category: 'google'
+    category: 'anthropic'
   }
 ];
 
@@ -219,34 +225,59 @@ export class OpenRouterService {
       }
     }
 
-    const payload = {
-      model: model || 'liquid/lfm-2.5-2.6b:free',
-      messages: formattedMessages,
-      temperature,
-      max_tokens: maxTokens,
-      stream: Boolean(onChunk)
+    let activeModel = model || 'liquid/lfm-2.5-2.6b:free';
+
+    const executeRequest = async (targetModel: string) => {
+      const payload = {
+        model: targetModel,
+        messages: formattedMessages,
+        temperature,
+        max_tokens: maxTokens,
+        stream: Boolean(onChunk)
+      };
+
+      let response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${effectiveKey}`,
+          'Content-Type': 'application/json',
+          'HTTP-Referer': window.location.origin || 'https://zuuagentai.vercel.app',
+          'X-Title': 'ZUU AI Studio'
+        },
+        body: JSON.stringify(payload)
+      });
+
+      // If direct call fails with 401, fallback to serverless /api/chat
+      if (!response.ok && response.status === 401) {
+        try {
+          response = await fetch('/api/chat', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+          });
+        } catch {}
+      }
+
+      return response;
     };
 
-    let response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${effectiveKey}`,
-        'Content-Type': 'application/json',
-        'HTTP-Referer': window.location.origin || 'https://zuuagentai.vercel.app',
-        'X-Title': 'ZUU AI Studio'
-      },
-      body: JSON.stringify(payload)
-    });
+    let response = await executeRequest(activeModel);
 
-    // Fallback to serverless /api/chat if direct call gets 401 or network failure
-    if (!response.ok && response.status === 401) {
-      try {
-        response = await fetch('/api/chat', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload)
-        });
-      } catch {}
+    // Automatic fallback if model is 404 (deprecated slug) or 402 (insufficient credits) or 429
+    if (!response.ok && (response.status === 404 || response.status === 402 || response.status === 429 || response.status === 403)) {
+      console.warn(`Model ${activeModel} returned ${response.status}. Attempting free fallback...`);
+      for (const fallbackModel of RELIABLE_FREE_FALLBACKS) {
+        if (fallbackModel !== activeModel) {
+          activeModel = fallbackModel;
+          response = await executeRequest(activeModel);
+          if (response.ok) {
+            if (onChunk) {
+              onChunk(`*(Note: Auto-switched to verified free model **${activeModel}**)*\n\n`);
+            }
+            break;
+          }
+        }
+      }
     }
 
     if (!response.ok) {
@@ -302,7 +333,6 @@ export class OpenRouterService {
         }
       }
 
-      // If full content contains <think> tags, extract reasoning
       if (!fullReasoning && fullContent.includes('<think>') && fullContent.includes('</think>')) {
         const match = fullContent.match(/<think>([\s\S]*?)<\/think>/);
         if (match) {
@@ -340,7 +370,6 @@ export class OpenRouterService {
     };
   }
 
-  // Prompt Enhancer using OpenRouter
   static async enhancePrompt(rawPrompt: string, type: 'image' | 'video', apiKey?: string): Promise<string> {
     const effectiveKey = getEffectiveKey(apiKey);
     const systemPrompt = type === 'image'

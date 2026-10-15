@@ -39,17 +39,18 @@ export const ModelSelectorModal: React.FC<ModelSelectorModalProps> = ({ isOpen, 
 
     if (activeCategory === 'featured') {
       const featuredIds = [
-        'anthropic/claude-3.5-sonnet',
-        'openai/gpt-4o',
-        'deepseek/deepseek-r1:free',
-        'deepseek/deepseek-chat:free',
-        'google/gemini-2.0-flash-exp:free',
         'liquid/lfm-2.5-2.6b:free',
-        'meta-llama/llama-3.3-70b-instruct:free',
+        'poolside/laguna-s-2.1:free',
+        'nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free',
+        'deepseek/deepseek-r1',
+        'deepseek/deepseek-chat',
+        'meta-llama/llama-3.3-70b-instruct',
+        'google/gemini-2.0-flash-001',
+        'openai/gpt-4o',
         'openai/gpt-4o-mini',
-        'qwen/qwen-2.5-coder-32b-instruct:free'
+        'anthropic/claude-3-5-sonnet-20241022'
       ];
-      list = models.filter(m => featuredIds.includes(m.id) || m.id.endsWith(':free'));
+      list = models.filter(m => featuredIds.includes(m.id) || m.is_free || m.id.endsWith(':free'));
     } else if (activeCategory === 'free') {
       list = models.filter(m => m.is_free || m.id.endsWith(':free'));
     } else if (activeCategory === 'reasoning') {

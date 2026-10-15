@@ -96,41 +96,24 @@ export const VideoStudio: React.FC = () => {
     }
 
     setIsGeneratingVideo(true);
-    setGenerationPercent(15);
-    setGenerationPhase('Analyzing prompt semantics & physics...');
-
-    const timer1 = setTimeout(() => {
-      setGenerationPercent(45);
-      setGenerationPhase('Synthesizing dynamic camera motion vectors...');
-    }, 1200);
-
-    const timer2 = setTimeout(() => {
-      setGenerationPercent(75);
-      setGenerationPhase('Rendering 1080p high frame-rate neural diffusion...');
-    }, 2800);
-
-    const timer3 = setTimeout(() => {
-      setGenerationPercent(95);
-      setGenerationPhase('Finalizing MP4 container and lighting passes...');
-    }, 4500);
+    setGenerationPercent(10);
+    setGenerationPhase('Connecting to neural diffusion engine...');
 
     try {
-      // Simulate real neural diffusion generation time
-      await new Promise(r => setTimeout(r, 5200));
-
       const video = await VideoService.generateMotionVideo({
         prompt: motionPrompt.trim(),
         motionPreset,
-        aspectRatio: motionRatio
+        aspectRatio: motionRatio,
+        onProgress: (percent, phase) => {
+          setGenerationPercent(percent);
+          setGenerationPhase(phase);
+        }
       });
       addVideo(video);
       setNotification({ message: 'AI video rendered successfully!', type: 'success' });
     } catch (err: any) {
       setNotification({ message: err.message || 'Video generation failed', type: 'error' });
     } finally {
-      clearTimeout(timer1);
-      clearTimeout(timer2);
-      clearTimeout(timer3);
       setIsGeneratingVideo(false);
       setGenerationPercent(0);
       setGenerationPhase('');
@@ -145,31 +128,27 @@ export const VideoStudio: React.FC = () => {
     }
 
     setIsGeneratingVideo(true);
-    setGenerationPercent(30);
-    setGenerationPhase('Syncing avatar speech phonemes...');
-
-    const timer = setTimeout(() => {
-      setGenerationPercent(80);
-      setGenerationPhase('Rendering facial expressions and speaking avatar...');
-    }, 2000);
+    setGenerationPercent(15);
+    setGenerationPhase('Preparing avatar keypoints and speech synthesis...');
 
     try {
-      await new Promise(r => setTimeout(r, 3800));
-
       const newVideo = await VideoService.createHeyGenVideo({
         script: script.trim(),
         avatarId: selectedAvatar,
         voiceId: selectedVoice,
         aspectRatio: heygenRatio,
         apiKey: settings.heyGenApiKey,
-        title: topic || script.slice(0, 30)
+        title: topic || script.slice(0, 30),
+        onProgress: (percent, phase) => {
+          setGenerationPercent(percent);
+          setGenerationPhase(phase);
+        }
       });
       addVideo(newVideo);
       setNotification({ message: 'Avatar video rendered successfully!', type: 'success' });
     } catch (err: any) {
       setNotification({ message: err.message || 'HeyGen render failed', type: 'error' });
     } finally {
-      clearTimeout(timer);
       setIsGeneratingVideo(false);
       setGenerationPercent(0);
       setGenerationPhase('');
