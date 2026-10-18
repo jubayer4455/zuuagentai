@@ -23,7 +23,7 @@ export interface OpenRouterModel {
     is_moderated?: boolean;
   };
   is_free?: boolean;
-  category?: 'featured' | 'free' | 'openai' | 'anthropic' | 'google' | 'deepseek' | 'meta' | 'vision' | 'other';
+  category?: 'featured' | 'free' | 'gemini' | 'openai' | 'anthropic' | 'google' | 'deepseek' | 'meta' | 'vision' | 'other';
 }
 
 export interface ChatMessage {
@@ -95,6 +95,7 @@ export interface HeyGenVoice {
 
 export interface AppSettings {
   openRouterApiKey: string;
+  geminiApiKey?: string;
   heyGenApiKey: string;
   defaultModel: string;
   temperature: number;

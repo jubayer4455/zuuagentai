@@ -21,42 +21,27 @@ interface ModelSelectorModalProps {
 export const ModelSelectorModal: React.FC<ModelSelectorModalProps> = ({ isOpen, onClose }) => {
   const { models, selectedModel, setSelectedModel, setNotification } = useAppStore();
   const [search, setSearch] = useState('');
-  const [activeCategory, setActiveCategory] = useState<'featured' | 'free' | 'reasoning' | 'vision' | 'code' | 'all'>('featured');
+  const [activeCategory, setActiveCategory] = useState<'all' | 'gemini' | 'reasoning' | 'vision' | 'code'>('all');
 
   const categories = [
-    { id: 'featured', label: 'Featured', icon: Zap },
-    { id: 'free', label: '100% Free', icon: Check },
+    { id: 'all', label: `All Free Models (${models.length})`, icon: Check },
+    { id: 'gemini', label: 'Google Gemini', icon: Zap },
     { id: 'reasoning', label: 'Reasoning', icon: Brain },
     { id: 'vision', label: 'Vision', icon: Eye },
     { id: 'code', label: 'Coding', icon: Code2 },
-    { id: 'all', label: `All (${models.length})`, icon: Cpu },
   ] as const;
 
   const filteredModels = useMemo(() => {
     let list = models;
 
-    if (activeCategory === 'featured') {
-      const featuredIds = [
-        'liquid/lfm-2.5-2.6b:free',
-        'poolside/laguna-s-2.1:free',
-        'nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free',
-        'deepseek/deepseek-r1',
-        'deepseek/deepseek-chat',
-        'meta-llama/llama-3.3-70b-instruct',
-        'google/gemini-2.0-flash-001',
-        'openai/gpt-4o',
-        'openai/gpt-4o-mini',
-        'anthropic/claude-3-5-sonnet-20241022'
-      ];
-      list = models.filter(m => featuredIds.includes(m.id) || m.is_free || m.id.endsWith(':free'));
-    } else if (activeCategory === 'free') {
-      list = models.filter(m => m.is_free || m.id.endsWith(':free'));
+    if (activeCategory === 'gemini') {
+      list = models.filter(m => m.id.includes('gemini') || m.id.includes('gemma'));
     } else if (activeCategory === 'reasoning') {
-      list = models.filter(m => m.id.includes('r1') || m.id.includes('reason') || m.id.includes('o1') || m.description?.toLowerCase().includes('reasoning'));
+      list = models.filter(m => m.id.includes('reason') || m.id.includes('thinking') || m.id.includes('laguna') || m.description?.toLowerCase().includes('reasoning'));
     } else if (activeCategory === 'vision') {
-      list = models.filter(m => m.architecture?.modality?.includes('image') || m.id.includes('vision') || m.id.includes('4o') || m.id.includes('sonnet'));
+      list = models.filter(m => m.architecture?.modality?.includes('image') || m.id.includes('vl') || m.id.includes('vision') || m.id.includes('gemini'));
     } else if (activeCategory === 'code') {
-      list = models.filter(m => m.id.includes('coder') || m.id.includes('code') || m.id.includes('sonnet') || m.id.includes('deepseek'));
+      list = models.filter(m => m.id.includes('code') || m.description?.toLowerCase().includes('code') || m.id.includes('inkling'));
     }
 
     if (search.trim()) {
@@ -83,13 +68,12 @@ export const ModelSelectorModal: React.FC<ModelSelectorModalProps> = ({ isOpen, 
   };
 
   const getProviderTag = (modelId: string) => {
-    if (modelId.startsWith('anthropic/')) return 'Anthropic';
-    if (modelId.startsWith('openai/')) return 'OpenAI';
-    if (modelId.startsWith('deepseek/')) return 'DeepSeek';
-    if (modelId.startsWith('google/')) return 'Google';
-    if (modelId.startsWith('meta-llama/') || modelId.startsWith('meta/')) return 'Meta';
+    if (modelId.startsWith('google/') || modelId.includes('gemini') || modelId.includes('gemma')) return 'Google';
+    if (modelId.startsWith('nvidia/')) return 'NVIDIA';
     if (modelId.startsWith('liquid/')) return 'Liquid AI';
-    if (modelId.startsWith('mistralai/')) return 'Mistral';
+    if (modelId.startsWith('poolside/')) return 'Poolside';
+    if (modelId.startsWith('thinkingmachines/')) return 'Thinking Machines';
+    if (modelId.startsWith('cohere/')) return 'Cohere';
     return modelId.split('/')[0] || 'AI';
   };
 

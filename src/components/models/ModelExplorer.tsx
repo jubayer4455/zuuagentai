@@ -46,14 +46,13 @@ export const ModelExplorer: React.FC = () => {
   };
 
   const categories = [
-    { id: 'all', label: `All (${models.length})` },
-    { id: 'free', label: `Free Tier (${models.filter(m => m.is_free).length})` },
-    { id: 'deepseek', label: 'DeepSeek' },
-    { id: 'openai', label: 'OpenAI' },
-    { id: 'anthropic', label: 'Anthropic' },
-    { id: 'google', label: 'Google' },
-    { id: 'meta', label: 'Meta' },
-    { id: 'vision', label: 'Multimodal Vision' }
+    { id: 'all', label: `All Free Models (${models.length})` },
+    { id: 'gemini', label: 'Google Gemini' },
+    { id: 'gemma', label: 'Google Gemma' },
+    { id: 'nvidia', label: 'NVIDIA Nemotron' },
+    { id: 'reasoning', label: 'Reasoning Models' },
+    { id: 'vision', label: 'Multimodal Vision' },
+    { id: 'code', label: 'Coding' }
   ];
 
   const filteredModels = models.filter((m) => {
@@ -65,13 +64,12 @@ export const ModelExplorer: React.FC = () => {
     if (!matchesSearch) return false;
 
     if (selectedCategory === 'all') return true;
-    if (selectedCategory === 'free') return m.is_free;
-    if (selectedCategory === 'openai') return m.id.startsWith('openai/');
-    if (selectedCategory === 'anthropic') return m.id.startsWith('anthropic/');
-    if (selectedCategory === 'google') return m.id.startsWith('google/');
-    if (selectedCategory === 'deepseek') return m.id.startsWith('deepseek/');
-    if (selectedCategory === 'meta') return m.id.startsWith('meta-llama/') || m.id.startsWith('meta/');
-    if (selectedCategory === 'vision') return m.architecture?.modality?.includes('image');
+    if (selectedCategory === 'gemini') return m.id.includes('gemini');
+    if (selectedCategory === 'gemma') return m.id.includes('gemma');
+    if (selectedCategory === 'nvidia') return m.id.startsWith('nvidia/');
+    if (selectedCategory === 'reasoning') return m.id.includes('reason') || m.id.includes('thinking') || m.id.includes('laguna');
+    if (selectedCategory === 'vision') return m.architecture?.modality?.includes('image') || m.id.includes('vl') || m.id.includes('vision') || m.id.includes('gemini');
+    if (selectedCategory === 'code') return m.id.includes('code') || m.id.includes('inkling');
 
     return true;
   });

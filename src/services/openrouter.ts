@@ -15,13 +15,17 @@ export function getEffectiveKey(key?: string | null): string {
   return DEFAULT_OPENROUTER_KEY;
 }
 
+import { GEMINI_MODELS, GeminiService } from './geminiService';
+
 export const RELIABLE_FREE_FALLBACKS = [
   'liquid/lfm-2.5-2.6b:free',
-  'poolside/laguna-s-2.1:free',
-  'nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free'
+  'google/gemma-4-31b-it:free',
+  'nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free',
+  'poolside/laguna-s-2.1:free'
 ];
 
 export const CURATED_MODELS: OpenRouterModel[] = [
+  ...GEMINI_MODELS,
   {
     id: 'liquid/lfm-2.5-2.6b:free',
     name: 'LiquidAI: LFM 2.6B (100% Free)',
@@ -30,6 +34,42 @@ export const CURATED_MODELS: OpenRouterModel[] = [
     pricing: { prompt: '0', completion: '0' },
     is_free: true,
     category: 'free'
+  },
+  {
+    id: 'google/gemma-4-31b-it:free',
+    name: 'Google: Gemma 4 31B (100% Free)',
+    description: 'Google state-of-the-art open weights instruction-tuned model.',
+    context_length: 128000,
+    pricing: { prompt: '0', completion: '0' },
+    is_free: true,
+    category: 'free'
+  },
+  {
+    id: 'google/gemma-4-26b-a4b-it:free',
+    name: 'Google: Gemma 4 26B A4B (100% Free)',
+    description: 'Google cutting-edge reasoning and multilingual model.',
+    context_length: 128000,
+    pricing: { prompt: '0', completion: '0' },
+    is_free: true,
+    category: 'free'
+  },
+  {
+    id: 'nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free',
+    name: 'NVIDIA: Nemotron 30B Reasoning (100% Free)',
+    description: 'Advanced reasoning and conversational model from NVIDIA.',
+    context_length: 32768,
+    pricing: { prompt: '0', completion: '0' },
+    is_free: true,
+    category: 'free'
+  },
+  {
+    id: 'nvidia/nemotron-3.5-super-vl:free',
+    name: 'NVIDIA: Nemotron 3.5 Super VL (100% Free)',
+    description: 'NVIDIA multimodal vision-language model for image inspection and chat.',
+    context_length: 65536,
+    pricing: { prompt: '0', completion: '0' },
+    is_free: true,
+    category: 'vision'
   },
   {
     id: 'poolside/laguna-s-2.1:free',
@@ -41,76 +81,31 @@ export const CURATED_MODELS: OpenRouterModel[] = [
     category: 'free'
   },
   {
-    id: 'nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free',
-    name: 'NVIDIA: Nemotron 30B (100% Free)',
-    description: 'Advanced reasoning and conversational model from NVIDIA.',
+    id: 'thinkingmachines/inkling:free',
+    name: 'Thinking Machines: Inkling (100% Free)',
+    description: 'High-speed reasoning model for coding and general problem solving.',
+    context_length: 65536,
+    pricing: { prompt: '0', completion: '0' },
+    is_free: true,
+    category: 'free'
+  },
+  {
+    id: 'cohere/north-mini-code:free',
+    name: 'Cohere: North Mini Code (100% Free)',
+    description: 'Specialized code completion, debugging, and software architecture model.',
     context_length: 32768,
     pricing: { prompt: '0', completion: '0' },
     is_free: true,
     category: 'free'
   },
   {
-    id: 'deepseek/deepseek-r1',
-    name: 'DeepSeek: R1 Reasoning',
-    description: 'World-renowned open reasoning model rivaling OpenAI o1, showing full chain-of-thought.',
-    context_length: 163840,
-    pricing: { prompt: '0.00000055', completion: '0.00000219' },
-    is_free: false,
-    category: 'deepseek'
-  },
-  {
-    id: 'deepseek/deepseek-chat',
-    name: 'DeepSeek: V3 Chat',
-    description: 'Flagship 671B MoE model from DeepSeek delivering top-tier coding & general intelligence.',
-    context_length: 131072,
-    pricing: { prompt: '0.00000014', completion: '0.00000028' },
-    is_free: false,
-    category: 'deepseek'
-  },
-  {
-    id: 'meta-llama/llama-3.3-70b-instruct',
-    name: 'Meta: Llama 3.3 70B Instruct',
-    description: 'Meta flagship 70B parameter open weights instruction-tuned model.',
-    context_length: 131072,
-    pricing: { prompt: '0.00000012', completion: '0.0000003' },
-    is_free: false,
-    category: 'meta'
-  },
-  {
-    id: 'google/gemini-2.0-flash-001',
-    name: 'Google: Gemini 2.0 Flash',
-    description: 'Google production 1M context flash model with lightning-fast latency.',
-    context_length: 1048576,
-    pricing: { prompt: '0.0000001', completion: '0.0000004' },
-    is_free: false,
-    category: 'google'
-  },
-  {
-    id: 'openai/gpt-4o',
-    name: 'OpenAI: GPT-4o Omni',
-    description: 'Flagship high-intelligence multimodal model for text, vision, and complex logic.',
-    context_length: 128000,
-    pricing: { prompt: '0.0000025', completion: '0.00001' },
-    is_free: false,
-    category: 'openai'
-  },
-  {
-    id: 'openai/gpt-4o-mini',
-    name: 'OpenAI: GPT-4o Mini',
-    description: 'Fast, cost-efficient multimodal intelligence from OpenAI.',
-    context_length: 128000,
-    pricing: { prompt: '0.00000015', completion: '0.0000006' },
-    is_free: false,
-    category: 'openai'
-  },
-  {
-    id: 'anthropic/claude-3-5-sonnet-20241022',
-    name: 'Anthropic: Claude 3.5 Sonnet',
-    description: 'The gold standard for coding, reasoning, agentic tasks and vision analysis.',
-    context_length: 200000,
-    pricing: { prompt: '0.000003', completion: '0.000015' },
-    is_free: false,
-    category: 'anthropic'
+    id: 'openrouter/free',
+    name: 'OpenRouter: Auto Free Router (100% Free)',
+    description: 'Automatically routes to the best available free model with zero downtime.',
+    context_length: 65536,
+    pricing: { prompt: '0', completion: '0' },
+    is_free: true,
+    category: 'free'
   }
 ];
 
@@ -143,39 +138,38 @@ export class OpenRouterService {
         return CURATED_MODELS;
       }
 
-      const models: OpenRouterModel[] = data.data.map((m: any) => {
-        const isFree = m.id.endsWith(':free') || (m.pricing && parseFloat(m.pricing.prompt || '0') === 0 && parseFloat(m.pricing.completion || '0') === 0);
-        let category: OpenRouterModel['category'] = 'other';
+      const freeModels: OpenRouterModel[] = data.data
+        .filter((m: any) =>
+          m.id.endsWith(':free') ||
+          (m.pricing && parseFloat(m.pricing.prompt || '0') === 0 && parseFloat(m.pricing.completion || '0') === 0)
+        )
+        .map((m: any) => {
+          let category: OpenRouterModel['category'] = 'free';
+          if (m.architecture?.modality?.includes('image')) category = 'vision';
 
-        if (isFree) category = 'free';
-        else if (m.id.startsWith('openai/')) category = 'openai';
-        else if (m.id.startsWith('anthropic/')) category = 'anthropic';
-        else if (m.id.startsWith('google/')) category = 'google';
-        else if (m.id.startsWith('deepseek/')) category = 'deepseek';
-        else if (m.id.startsWith('meta-llama/') || m.id.startsWith('meta/')) category = 'meta';
-        else if (m.architecture?.modality?.includes('image')) category = 'vision';
+          return {
+            id: m.id,
+            name: m.name || m.id,
+            description: m.description || '',
+            context_length: m.context_length || 4096,
+            pricing: {
+              prompt: '0',
+              completion: '0',
+              image: m.pricing?.image,
+              request: m.pricing?.request
+            },
+            architecture: m.architecture,
+            top_provider: m.top_provider,
+            is_free: true,
+            category
+          };
+        });
 
-        return {
-          id: m.id,
-          name: m.name || m.id,
-          description: m.description || '',
-          context_length: m.context_length || 4096,
-          pricing: {
-            prompt: m.pricing?.prompt || '0',
-            completion: m.pricing?.completion || '0',
-            image: m.pricing?.image,
-            request: m.pricing?.request
-          },
-          architecture: m.architecture,
-          top_provider: m.top_provider,
-          is_free: isFree,
-          category
-        };
-      });
-
-      this.cachedModels = models;
+      // Merge Google Gemini models with OpenRouter 100% Free models
+      const allFreeModels = [...GEMINI_MODELS, ...freeModels];
+      this.cachedModels = allFreeModels;
       this.lastFetchTime = Date.now();
-      return models;
+      return allFreeModels;
     } catch {
       return CURATED_MODELS;
     }
@@ -183,6 +177,7 @@ export class OpenRouterService {
 
   static async sendChatCompletion({
     apiKey,
+    geminiApiKey,
     model,
     messages,
     systemPrompt,
@@ -191,6 +186,7 @@ export class OpenRouterService {
     onChunk
   }: {
     apiKey?: string;
+    geminiApiKey?: string;
     model: string;
     messages: ChatMessage[];
     systemPrompt?: string;
@@ -198,6 +194,25 @@ export class OpenRouterService {
     maxTokens?: number;
     onChunk?: (token: string, reasoningChunk?: string) => void;
   }): Promise<{ content: string; reasoning?: string; tokens?: number }> {
+    // 1. Direct Google Gemini API Routing
+    if (model.startsWith('google/gemini-') || model.startsWith('gemini-')) {
+      if (geminiApiKey && geminiApiKey.trim()) {
+        const geminiRes = await GeminiService.streamChatCompletion({
+          apiKey: geminiApiKey,
+          model,
+          messages,
+          systemPrompt,
+          temperature,
+          onChunk: (chunk) => {
+            if (onChunk) onChunk(chunk);
+          }
+        });
+        return { content: geminiRes.content };
+      } else {
+        throw new Error('Google Gemini API Key is missing. Go to Settings and enter your free Gemini API key from Google AI Studio (aistudio.google.com/apikey), or switch to any other 100% free model from the top bar.');
+      }
+    }
+
     const effectiveKey = getEffectiveKey(apiKey);
     const formattedMessages: Array<{ role: string; content: any }> = [];
 

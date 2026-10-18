@@ -32,7 +32,7 @@ export const Navbar: React.FC = () => {
     { id: 'chat', label: 'Chat', icon: MessageSquare },
     { id: 'image', label: 'Image Studio', icon: ImageIcon },
     { id: 'video', label: 'Video Studio', icon: VideoIcon },
-    { id: 'models', label: 'Models', icon: Cpu, badge: models.length ? `${models.length}` : '460+' },
+    { id: 'models', label: 'Models', icon: Cpu, badge: 'Free' },
     { id: 'settings', label: 'Settings', icon: Settings },
   ] as const;
 

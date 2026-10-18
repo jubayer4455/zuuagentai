@@ -65,6 +65,7 @@ export class StorageService {
     const defaultKey = import.meta.env.VITE_OPENROUTER_API_KEY || (typeof window !== 'undefined' ? window.atob('c2stb3ItdjEtYzliODIwNGJjZDcwYTQxZmU4NjY2YzI2YWM0MTkwNDY5MTZjMjFlZTQyZDY5ZTlmNTY4YTFjZmQ5MTM1OTBkMg==') : '');
     const defaultSettings: AppSettings = {
       openRouterApiKey: defaultKey,
+      geminiApiKey: import.meta.env.VITE_GEMINI_API_KEY || '',
       heyGenApiKey: import.meta.env.VITE_HEYGEN_API_KEY || '',
       defaultModel: 'liquid/lfm-2.5-2.6b:free',
       temperature: 0.7,
@@ -89,6 +90,7 @@ export class StorageService {
       defaultModel: settings.defaultModel,
       temperature: settings.temperature,
       theme: settings.theme,
+      hasGeminiKey: Boolean(settings.geminiApiKey),
       hasHeyGenKey: Boolean(settings.heyGenApiKey)
     });
   }

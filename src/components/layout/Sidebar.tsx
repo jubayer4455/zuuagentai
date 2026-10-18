@@ -237,8 +237,8 @@ export const Sidebar: React.FC = () => {
             <div className="flex items-center gap-2 min-w-0">
               <span className="w-2 h-2 rounded-full bg-emerald-400 shrink-0" />
               <div className="truncate text-[11px]">
-                <div className="text-zinc-200 font-medium truncate">OpenRouter Synced</div>
-                <div className="text-zinc-400 font-mono text-[10px]">{models.length || '460+'} Models</div>
+                <div className="text-zinc-200 font-medium truncate">100% Free Catalog</div>
+                <div className="text-zinc-400 font-mono text-[10px]">{models.length ? `${models.length} Models` : 'Free Tier'}</div>
               </div>
             </div>
             <button

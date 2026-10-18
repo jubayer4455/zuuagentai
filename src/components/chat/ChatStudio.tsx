@@ -262,6 +262,7 @@ export const ChatStudio: React.FC = () => {
 
       await OpenRouterService.sendChatCompletion({
         apiKey: settings.openRouterApiKey,
+        geminiApiKey: settings.geminiApiKey,
         model: selectedModel,
         messages: convHistory,
         systemPrompt: systemPrompt || undefined,
