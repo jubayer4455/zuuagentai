@@ -13,11 +13,11 @@ export const App: React.FC = () => {
   const { activeTab, notification, setNotification } = useAppStore();
 
   return (
-    <div className="min-h-screen bg-neutral-950 text-neutral-100 flex flex-col font-sans selection:bg-purple-500/30 selection:text-white">
+    <div className="min-h-screen bg-[#09090b] text-zinc-100 flex flex-col font-sans selection:bg-zinc-700 selection:text-white">
       {/* Top Navbar */}
       <Navbar />
 
-      {/* Main Workspace with Sidebar */}
+      {/* Main Workspace with Collapsible Sidebar */}
       <div className="flex-1 flex overflow-hidden">
         <Sidebar />
 
@@ -32,16 +32,16 @@ export const App: React.FC = () => {
 
       {/* Toast Notification Banner */}
       {notification && (
-        <div className="fixed bottom-6 right-6 z-50 flex items-center gap-2.5 px-4 py-3 rounded-2xl bg-neutral-900 border border-white/15 text-xs text-white shadow-2xl backdrop-blur-xl animate-in fade-in slide-in-from-bottom-3 duration-200">
+        <div className="fixed bottom-5 right-5 z-50 flex items-center gap-2.5 px-3.5 py-2.5 rounded-xl bg-[#121215] border border-white/[0.12] text-xs text-zinc-200 shadow-2xl backdrop-blur-xl animate-in fade-in slide-in-from-bottom-2 duration-150">
           {notification.type === 'success' && <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />}
           {notification.type === 'error' && <AlertCircle className="w-4 h-4 text-rose-400 shrink-0" />}
-          {notification.type === 'info' && <Info className="w-4 h-4 text-blue-400 shrink-0" />}
+          {notification.type === 'info' && <Info className="w-4 h-4 text-zinc-400 shrink-0" />}
 
-          <span>{notification.message}</span>
+          <span className="font-medium">{notification.message}</span>
 
           <button
             onClick={() => setNotification(null)}
-            className="p-1 hover:text-white text-neutral-400 rounded"
+            className="p-1 hover:text-white text-zinc-400 rounded-lg hover:bg-zinc-800 transition-colors"
           >
             <X className="w-3.5 h-3.5" />
           </button>

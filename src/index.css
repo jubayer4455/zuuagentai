@@ -4,56 +4,69 @@
 
 @layer base {
   :root {
-    --color-bg-primary: #0a0f1d;
-    --color-bg-surface: #0f172a;
-    --color-border: #1e293b;
-    --color-text-main: #f8fafc;
-    --color-text-muted: #94a3b8;
-  }
-
-  .light {
-    --color-bg-primary: #f8fafc;
-    --color-bg-surface: #ffffff;
-    --color-border: #e2e8f0;
-    --color-text-main: #0f172a;
-    --color-text-muted: #64748b;
+    --bg-page: #09090b;
+    --bg-surface: #121215;
+    --bg-surface-elevated: #18181b;
+    --bg-surface-hover: #222227;
+    --border-subtle: rgba(255, 255, 255, 0.07);
+    --border-strong: rgba(255, 255, 255, 0.14);
+    --text-primary: #f4f4f5;
+    --text-secondary: #a1a1aa;
+    --text-muted: #71717a;
+    --accent-primary: #3b82f6;
   }
 
   body {
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-    background-color: var(--color-bg-primary);
-    color: var(--color-text-main);
+    background-color: var(--bg-page);
+    color: var(--text-primary);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    letter-spacing: -0.011em;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
 }
 
-/* Custom modern scrollbar for high-density tables and panels */
+/* Custom subtle scrollbars */
 ::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: 5px;
+  height: 5px;
 }
 
 ::-webkit-scrollbar-track {
-  background: rgba(15, 23, 42, 0.4);
+  background: transparent;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(100, 116, 139, 0.3);
-  border-radius: 3px;
+  background: rgba(255, 255, 255, 0.12);
+  border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(100, 116, 139, 0.6);
+  background: rgba(255, 255, 255, 0.22);
 }
 
-/* Subtle glow effects for active nodes & status */
-.glow-cyan {
-  box-shadow: 0 0 15px -3px rgba(6, 182, 212, 0.25);
+/* Refined transitions & micro-interactions */
+.smooth-hover {
+  transition: all 0.15s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.glow-blue {
-  box-shadow: 0 0 15px -3px rgba(70, 122, 246, 0.25);
+/* Code block highlight */
+pre, code {
+  font-family: 'JetBrains Mono', 'Fira Code', monospace;
 }
 
-.glow-violet {
-  box-shadow: 0 0 15px -3px rgba(139, 92, 246, 0.25);
+/* Clean glass effect without rainbow noise */
+.glass-panel {
+  background: rgba(18, 18, 21, 0.82);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.glass-dropdown {
+  background: rgba(24, 24, 27, 0.95);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 16px 40px -8px rgba(0, 0, 0, 0.6);
 }

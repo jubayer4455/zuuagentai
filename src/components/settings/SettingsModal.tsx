@@ -10,7 +10,8 @@ import {
   RefreshCw,
   Trash2,
   ExternalLink,
-  ShieldCheck,
+  Eye,
+  EyeOff,
   Video
 } from 'lucide-react';
 
@@ -26,6 +27,8 @@ export const SettingsModal: React.FC = () => {
   const [openRouterKey, setOpenRouterKey] = useState(settings.openRouterApiKey);
   const [heyGenKey, setHeyGenKey] = useState(settings.heyGenApiKey);
   const [temperature, setTemperature] = useState(settings.temperature);
+  const [showOpenRouterKey, setShowOpenRouterKey] = useState(false);
+  const [showHeyGenKey, setShowHeyGenKey] = useState(false);
   const [isValidatingKey, setIsValidatingKey] = useState(false);
   const [keyStatus, setKeyStatus] = useState<{
     valid: boolean;
@@ -77,131 +80,145 @@ export const SettingsModal: React.FC = () => {
       heyGenApiKey: heyGenKey.trim(),
       temperature
     });
-    setNotification({ message: 'Settings saved successfully!', type: 'success' });
+    setNotification({ message: 'Settings saved', type: 'success' });
     checkOpenRouterKey(openRouterKey.trim());
   };
 
   const handleClearHistory = () => {
     if (window.confirm('Are you sure you want to delete all chat history?')) {
       conversations.forEach((c) => deleteConversation(c.id));
-      setNotification({ message: 'Chat history cleared.', type: 'info' });
+      setNotification({ message: 'Chat history cleared', type: 'info' });
     }
   };
 
   return (
-    <div className="flex-1 overflow-y-auto bg-neutral-950 p-4 sm:p-6 space-y-6">
-      <div className="max-w-3xl mx-auto space-y-6">
+    <div className="flex-1 overflow-y-auto bg-[#09090b] p-4 sm:p-6 space-y-6">
+      <div className="max-w-3xl mx-auto space-y-5">
         {/* Header */}
-        <div className="pb-6 border-b border-white/10">
-          <h2 className="text-xl sm:text-2xl font-bold text-white flex items-center gap-2">
-            <Settings className="w-6 h-6 text-purple-400" />
-            API Connections & Settings
+        <div className="pb-4 border-b border-white/[0.08]">
+          <h2 className="text-base sm:text-lg font-semibold text-zinc-100 flex items-center gap-2">
+            <Settings className="w-4 h-4 text-zinc-300" />
+            Workspace & API Settings
           </h2>
-          <p className="text-xs sm:text-sm text-neutral-400 mt-1">
-            Manage your OpenRouter API key, HeyGen credentials, and studio parameters.
+          <p className="text-xs text-zinc-400 mt-0.5">
+            Configure OpenRouter credentials, video avatar keys, and inference defaults
           </p>
         </div>
 
         {/* OpenRouter API Key Section */}
-        <div className="bg-neutral-900 border border-white/10 rounded-2xl p-5 shadow-xl space-y-4">
+        <div className="bg-[#121215] border border-white/[0.08] rounded-xl p-4 sm:p-5 shadow-sm space-y-3">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <Key className="w-4 h-4 text-purple-400" />
-              <h3 className="text-sm font-bold text-white">OpenRouter API Key</h3>
+              <Key className="w-4 h-4 text-zinc-400" />
+              <h3 className="text-xs font-semibold text-zinc-200">OpenRouter API Key</h3>
             </div>
             <a
               href="https://openrouter.ai/keys"
               target="_blank"
               rel="noreferrer"
-              className="text-[11px] text-purple-400 hover:text-purple-300 flex items-center gap-1"
+              className="text-[11px] text-zinc-400 hover:text-zinc-200 flex items-center gap-1"
             >
-              Get OpenRouter Key <ExternalLink className="w-3 h-3" />
+              Get Key <ExternalLink className="w-3 h-3" />
             </a>
           </div>
 
-          <div>
+          <div className="relative">
             <input
-              type="password"
+              type={showOpenRouterKey ? 'text' : 'password'}
               value={openRouterKey}
               onChange={(e) => setOpenRouterKey(e.target.value)}
               placeholder="sk-or-v1-..."
-              className="w-full bg-neutral-950 border border-white/10 rounded-xl px-3.5 py-2.5 text-xs sm:text-sm font-mono text-white placeholder-neutral-500 outline-none focus:border-purple-500/50"
+              className="w-full bg-zinc-900 border border-zinc-700/80 rounded-lg pl-3 pr-10 py-2 text-xs font-mono text-zinc-100 placeholder-zinc-500 outline-none focus:border-zinc-500 transition-colors"
             />
+            <button
+              type="button"
+              onClick={() => setShowOpenRouterKey(!showOpenRouterKey)}
+              className="absolute right-2.5 top-2 text-zinc-500 hover:text-zinc-300"
+            >
+              {showOpenRouterKey ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+            </button>
           </div>
 
           {/* Validation Status Badge */}
           <div className="flex items-center justify-between pt-1 text-xs">
             {isValidatingKey ? (
-              <div className="flex items-center gap-2 text-neutral-400">
-                <RefreshCw className="w-3.5 h-3.5 animate-spin" />
-                <span>Checking API key validity...</span>
+              <div className="flex items-center gap-2 text-zinc-400">
+                <RefreshCw className="w-3 h-3 animate-spin" />
+                <span>Checking key status...</span>
               </div>
             ) : keyStatus?.valid ? (
-              <div className="flex items-center gap-2 text-emerald-400 font-medium">
-                <CheckCircle2 className="w-4 h-4" />
-                <span>Connected to OpenRouter! Daily free quota: {keyStatus.freeLimitRemaining ?? 50} requests remaining.</span>
+              <div className="flex items-center gap-1.5 text-emerald-400 text-xs font-medium">
+                <CheckCircle2 className="w-3.5 h-3.5" />
+                <span>Connected. Daily free quota: {keyStatus.freeLimitRemaining ?? 50} requests remaining.</span>
               </div>
             ) : keyStatus?.valid === false ? (
-              <div className="flex items-center gap-2 text-rose-400 font-medium">
-                <AlertCircle className="w-4 h-4" />
+              <div className="flex items-center gap-1.5 text-rose-400 text-xs font-medium">
+                <AlertCircle className="w-3.5 h-3.5" />
                 <span>Invalid or expired OpenRouter API key.</span>
               </div>
             ) : (
-              <span className="text-neutral-500">Enter your key above to connect.</span>
+              <span className="text-zinc-500 text-[11px]">Enter your key to enable proprietary models.</span>
             )}
 
             <button
               onClick={() => checkOpenRouterKey(openRouterKey)}
-              className="text-xs text-neutral-400 hover:text-white"
+              className="text-xs text-zinc-400 hover:text-zinc-200"
             >
-              Test Key
+              Verify Key
             </button>
           </div>
         </div>
 
         {/* HeyGen API Key Section */}
-        <div className="bg-neutral-900 border border-white/10 rounded-2xl p-5 shadow-xl space-y-4">
+        <div className="bg-[#121215] border border-white/[0.08] rounded-xl p-4 sm:p-5 shadow-sm space-y-3">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <Video className="w-4 h-4 text-blue-400" />
-              <h3 className="text-sm font-bold text-white">HeyGen API Key (Video Avatars)</h3>
+              <Video className="w-4 h-4 text-zinc-400" />
+              <h3 className="text-xs font-semibold text-zinc-200">HeyGen API Key (Optional)</h3>
             </div>
             <a
               href="https://app.heygen.com/settings?nav=API"
               target="_blank"
               rel="noreferrer"
-              className="text-[11px] text-blue-400 hover:text-blue-300 flex items-center gap-1"
+              className="text-[11px] text-zinc-400 hover:text-zinc-200 flex items-center gap-1"
             >
-              Get HeyGen Key <ExternalLink className="w-3 h-3" />
+              Get Key <ExternalLink className="w-3 h-3" />
             </a>
           </div>
 
-          <p className="text-xs text-neutral-400">
-            Used to render custom video presenters. If not provided, you can still test with our interactive instant avatar demo!
+          <p className="text-[11px] text-zinc-400">
+            Required only for HeyGen cloud avatar video rendering. Motion keyframe synthesis runs without this key.
           </p>
 
-          <div>
+          <div className="relative">
             <input
-              type="password"
+              type={showHeyGenKey ? 'text' : 'password'}
               value={heyGenKey}
               onChange={(e) => setHeyGenKey(e.target.value)}
               placeholder="Paste HeyGen API key..."
-              className="w-full bg-neutral-950 border border-white/10 rounded-xl px-3.5 py-2.5 text-xs sm:text-sm font-mono text-white placeholder-neutral-500 outline-none focus:border-blue-500/50"
+              className="w-full bg-zinc-900 border border-zinc-700/80 rounded-lg pl-3 pr-10 py-2 text-xs font-mono text-zinc-100 placeholder-zinc-500 outline-none focus:border-zinc-500 transition-colors"
             />
+            <button
+              type="button"
+              onClick={() => setShowHeyGenKey(!showHeyGenKey)}
+              className="absolute right-2.5 top-2 text-zinc-500 hover:text-zinc-300"
+            >
+              {showHeyGenKey ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+            </button>
           </div>
         </div>
 
         {/* Model Parameters */}
-        <div className="bg-neutral-900 border border-white/10 rounded-2xl p-5 shadow-xl space-y-4">
+        <div className="bg-[#121215] border border-white/[0.08] rounded-xl p-4 sm:p-5 shadow-sm space-y-3">
           <div className="flex items-center gap-2">
-            <Sliders className="w-4 h-4 text-pink-400" />
-            <h3 className="text-sm font-bold text-white">Generation Parameters</h3>
+            <Sliders className="w-4 h-4 text-zinc-400" />
+            <h3 className="text-xs font-semibold text-zinc-200">Default Temperature</h3>
           </div>
 
           <div>
-            <div className="flex items-center justify-between text-xs text-neutral-300 mb-2">
-              <span>Creativity / Temperature:</span>
-              <span className="font-mono text-pink-400">{temperature}</span>
+            <div className="flex items-center justify-between text-xs text-zinc-300 mb-2">
+              <span>Creativity balance</span>
+              <span className="font-mono text-zinc-200">{temperature}</span>
             </div>
             <input
               type="range"
@@ -210,33 +227,33 @@ export const SettingsModal: React.FC = () => {
               step="0.05"
               value={temperature}
               onChange={(e) => setTemperature(parseFloat(e.target.value))}
-              className="w-full accent-pink-500"
+              className="w-full accent-zinc-200"
             />
-            <div className="flex justify-between text-[10px] text-neutral-500 mt-1">
-              <span>0.0 (Precise & Factual)</span>
+            <div className="flex justify-between text-[10px] text-zinc-500 mt-1">
+              <span>0.0 (Precise / Code)</span>
               <span>0.7 (Balanced)</span>
-              <span>1.0 (Highly Creative)</span>
+              <span>1.0 (Creative)</span>
             </div>
           </div>
         </div>
 
         {/* Cloud Database Sync */}
-        <div className="bg-neutral-900 border border-white/10 rounded-2xl p-5 shadow-xl flex items-center justify-between">
+        <div className="bg-[#121215] border border-white/[0.08] rounded-xl p-4 sm:p-5 shadow-sm flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center">
-              <Database className="w-5 h-5 text-emerald-400" />
+            <div className="w-8 h-8 rounded-lg bg-zinc-900 border border-zinc-700/80 flex items-center justify-center text-zinc-300">
+              <Database className="w-4 h-4" />
             </div>
             <div>
-              <h4 className="text-xs sm:text-sm font-bold text-white">Supabase Cloud Database</h4>
-              <p className="text-[11px] text-neutral-400">
-                Connected to project <span className="font-mono text-emerald-400">zlotgghqdfrbxeuinjjy</span>
+              <h4 className="text-xs font-medium text-zinc-200">Supabase Cloud Sync</h4>
+              <p className="text-[11px] text-zinc-500">
+                Project <span className="font-mono text-zinc-400">zlotgghqdfrbxeuinjjy</span>
               </p>
             </div>
           </div>
 
-          <div className="flex items-center gap-2">
-            <span className="w-2.5 h-2.5 rounded-full bg-emerald-400" />
-            <span className="text-xs text-emerald-300 font-semibold">Active</span>
+          <div className="flex items-center gap-1.5 text-xs text-emerald-400">
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+            <span>Connected</span>
           </div>
         </div>
 
@@ -244,15 +261,15 @@ export const SettingsModal: React.FC = () => {
         <div className="flex items-center justify-between pt-2">
           <button
             onClick={handleClearHistory}
-            className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-rose-600/10 hover:bg-rose-600/20 text-rose-400 border border-rose-500/20 text-xs font-semibold transition-all"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-rose-400 hover:bg-rose-500/10 border border-rose-500/20 text-xs font-medium transition-colors"
           >
             <Trash2 className="w-3.5 h-3.5" />
-            Clear All History
+            <span>Clear History</span>
           </button>
 
           <button
             onClick={handleSave}
-            className="px-6 py-2.5 rounded-xl bg-purple-600 hover:bg-purple-500 text-white text-xs sm:text-sm font-semibold shadow-lg shadow-purple-600/30 transition-all active:scale-98"
+            className="px-5 py-2 rounded-xl bg-zinc-100 hover:bg-white text-zinc-950 font-medium text-xs transition-all shadow-sm active:scale-[0.99]"
           >
             Save Settings
           </button>

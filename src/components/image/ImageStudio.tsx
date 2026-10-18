@@ -4,7 +4,6 @@ import { ImageService, IMAGE_MODELS, ASPECT_RATIOS, STYLE_PRESETS } from '../../
 import { OpenRouterService } from '../../services/openrouter';
 import { GeneratedImage } from '../../types';
 import {
-  Sparkles,
   Download,
   Trash2,
   Copy,
@@ -14,8 +13,9 @@ import {
   X,
   Sliders,
   Image as ImageIcon,
-  Layers,
-  Wand2
+  Sparkles,
+  ArrowRight,
+  ChevronDown
 } from 'lucide-react';
 
 export const ImageStudio: React.FC = () => {
@@ -38,15 +38,16 @@ export const ImageStudio: React.FC = () => {
   const [isEnhancing, setIsEnhancing] = useState(false);
   const [previewImage, setPreviewImage] = useState<GeneratedImage | null>(null);
   const [copiedId, setCopiedId] = useState<string | null>(null);
+  const [showAdvanced, setShowAdvanced] = useState(false);
 
   const handleEnhancePrompt = async () => {
     if (!prompt.trim()) return;
     setIsEnhancing(true);
-    setNotification({ message: 'Enhancing prompt with OpenRouter AI...', type: 'info' });
+    setNotification({ message: 'Enhancing prompt...', type: 'info' });
     try {
       const enhanced = await OpenRouterService.enhancePrompt(prompt, 'image', settings.openRouterApiKey);
       setPrompt(enhanced);
-      setNotification({ message: 'Prompt enhanced successfully!', type: 'success' });
+      setNotification({ message: 'Prompt enhanced', type: 'success' });
     } catch {
       setNotification({ message: 'Failed to enhance prompt', type: 'error' });
     } finally {
@@ -71,7 +72,7 @@ export const ImageStudio: React.FC = () => {
         seed: seed !== '' ? Number(seed) : undefined
       });
       addImage(generated);
-      setNotification({ message: 'Image generated successfully!', type: 'success' });
+      setNotification({ message: 'Image rendered successfully', type: 'success' });
     } catch (err: any) {
       setNotification({ message: err.message || 'Image generation failed', type: 'error' });
     } finally {
@@ -103,111 +104,100 @@ export const ImageStudio: React.FC = () => {
   };
 
   return (
-    <div className="flex-1 overflow-y-auto bg-neutral-950 p-4 sm:p-6 space-y-8">
-      {/* Top Banner */}
-      <div className="max-w-6xl mx-auto">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-white/10">
+    <div className="flex-1 flex flex-col h-[calc(100vh-3.5rem)] bg-[#09090b] overflow-y-auto">
+      <div className="max-w-6xl mx-auto w-full p-4 sm:p-6 space-y-6">
+        {/* Header */}
+        <div className="pb-4 border-b border-white/[0.08] flex items-center justify-between">
           <div>
-            <h2 className="text-xl sm:text-2xl font-bold text-white flex items-center gap-2">
-              <Sparkles className="w-6 h-6 text-pink-500" />
-              AI Image Studio
+            <h2 className="text-base sm:text-lg font-semibold text-zinc-100 flex items-center gap-2">
+              <ImageIcon className="w-4 h-4 text-zinc-300" />
+              Image Studio
             </h2>
-            <p className="text-xs sm:text-sm text-neutral-400 mt-1">
-              Generate photorealistic, anime, 3D, and cinematic artwork using Flux 1.1 Pro and Pollinations AI.
+            <p className="text-xs text-zinc-400 mt-0.5">
+              Photorealistic synthesis with Flux 1.1 Pro & SDXL Turbo
             </p>
-          </div>
-          <div className="flex items-center gap-2 text-xs text-neutral-400">
-            <span className="w-2 h-2 rounded-full bg-emerald-400" />
-            <span>Unlimited Free Generations</span>
           </div>
         </div>
 
-        {/* Prompt Input Box */}
-        <div className="mt-6 bg-neutral-900 border border-white/10 rounded-2xl p-4 sm:p-5 shadow-xl space-y-4">
-          <div className="relative">
-            <label className="text-xs font-semibold text-neutral-300 block mb-1.5">
-              Image Description / Prompt:
-            </label>
-            <div className="relative">
-              <textarea
-                rows={3}
-                value={prompt}
-                onChange={(e) => setPrompt(e.target.value)}
-                placeholder="Describe the image you want to create (e.g. A cybernetic samurai in Tokyo rain, neon reflections, highly detailed 8k photography)..."
-                className="w-full bg-neutral-950 border border-white/10 rounded-xl p-3.5 pr-28 text-xs sm:text-sm text-white placeholder-neutral-500 outline-none focus:border-pink-500/50 resize-none"
-              />
+        {/* Studio Control Panel */}
+        <div className="bg-[#121215] border border-white/[0.08] rounded-2xl p-4 sm:p-5 shadow-sm space-y-4">
+          {/* Prompt input */}
+          <div className="space-y-1.5">
+            <div className="flex items-center justify-between">
+              <label className="text-xs font-medium text-zinc-300">Prompt</label>
               <button
                 onClick={handleEnhancePrompt}
-                disabled={!prompt.trim() || isEnhancing}
-                className="absolute right-3 bottom-3 flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-pink-600/20 hover:bg-pink-600/30 text-pink-300 border border-pink-500/30 text-xs font-medium transition-all disabled:opacity-40"
+                disabled={isEnhancing || !prompt.trim()}
+                className="flex items-center gap-1.5 text-xs text-zinc-400 hover:text-zinc-200 transition-colors disabled:opacity-40"
               >
-                {isEnhancing ? (
-                  <RefreshCw className="w-3.5 h-3.5 animate-spin" />
-                ) : (
-                  <Wand2 className="w-3.5 h-3.5" />
-                )}
-                <span>AI Enhance</span>
+                <Sparkles className="w-3.5 h-3.5" />
+                <span>{isEnhancing ? 'Enhancing...' : 'Enhance Prompt'}</span>
               </button>
             </div>
+            <textarea
+              value={prompt}
+              onChange={(e) => setPrompt(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) {
+                  handleGenerate();
+                }
+              }}
+              placeholder="Describe your vision in detail (e.g. Cinematic portrait of an architect in an open glass modernist pavilion at golden hour, 35mm photography, subtle grain)..."
+              rows={3}
+              className="w-full bg-zinc-900/90 border border-zinc-700/80 rounded-xl p-3 text-xs sm:text-sm text-zinc-100 placeholder-zinc-500 outline-none focus:border-zinc-500 resize-none transition-colors"
+            />
           </div>
 
-          {/* Configuration Controls */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-2">
+          {/* Model and Settings Row */}
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
             {/* Model Selector */}
-            <div>
-              <label className="text-xs font-semibold text-neutral-300 block mb-1.5 flex items-center gap-1.5">
-                <Layers className="w-3.5 h-3.5 text-pink-400" />
-                Model Engine:
-              </label>
-              <select
-                value={selectedModel}
-                onChange={(e) => setSelectedModel(e.target.value)}
-                className="w-full bg-neutral-950 border border-white/10 rounded-xl px-3 py-2 text-xs text-white outline-none focus:border-pink-500/50"
-              >
-                {IMAGE_MODELS.map((m) => (
-                  <option key={m.id} value={m.id}>
-                    {m.name}
-                  </option>
+            <div className="space-y-1.5">
+              <label className="text-xs font-medium text-zinc-300">Model Engine</label>
+              <div className="grid grid-cols-2 gap-1.5">
+                {Object.entries(IMAGE_MODELS).map(([key, model]) => (
+                  <button
+                    key={key}
+                    onClick={() => setSelectedModel(key)}
+                    className={`px-3 py-2 rounded-xl text-xs font-medium border text-left transition-all ${
+                      selectedModel === key
+                        ? 'bg-zinc-800 text-zinc-100 border-zinc-600 shadow-sm'
+                        : 'bg-zinc-900/80 text-zinc-400 border-zinc-800 hover:text-zinc-200'
+                    }`}
+                  >
+                    <div className="font-semibold text-xs truncate">{model.name}</div>
+                    <div className="text-[10px] text-zinc-400 line-clamp-1">{model.desc}</div>
+                  </button>
                 ))}
-              </select>
+              </div>
             </div>
 
-            {/* Aspect Ratio */}
-            <div>
-              <label className="text-xs font-semibold text-neutral-300 block mb-1.5 flex items-center gap-1.5">
-                <Sliders className="w-3.5 h-3.5 text-pink-400" />
-                Aspect Ratio:
-              </label>
-              <div className="grid grid-cols-5 gap-1.5">
-                {Object.entries(ASPECT_RATIOS).map(([key, item]) => {
-                  const isSelected = selectedRatio === key;
-                  return (
-                    <button
-                      key={key}
-                      onClick={() => setSelectedRatio(key)}
-                      className={`py-2 px-1 rounded-xl text-[11px] font-medium border text-center transition-all ${
-                        isSelected
-                          ? 'bg-pink-600/20 border-pink-500/50 text-white shadow-sm'
-                          : 'bg-neutral-950 border-white/5 text-neutral-400 hover:text-white hover:bg-neutral-800'
-                      }`}
-                    >
-                      {key}
-                    </button>
-                  );
-                })}
+            {/* Aspect Ratio Selector */}
+            <div className="space-y-1.5">
+              <label className="text-xs font-medium text-zinc-300">Aspect Ratio</label>
+              <div className="grid grid-cols-3 gap-1">
+                {Object.entries(ASPECT_RATIOS).map(([ratio, meta]) => (
+                  <button
+                    key={ratio}
+                    onClick={() => setSelectedRatio(ratio)}
+                    className={`px-2 py-1.5 rounded-lg text-xs font-mono border transition-all text-center ${
+                      selectedRatio === ratio
+                        ? 'bg-zinc-800 text-zinc-100 border-zinc-600'
+                        : 'bg-zinc-900/80 text-zinc-400 border-zinc-800 hover:text-zinc-200'
+                    }`}
+                  >
+                    <span>{ratio}</span>
+                  </button>
+                ))}
               </div>
             </div>
 
             {/* Style Selector */}
-            <div>
-              <label className="text-xs font-semibold text-neutral-300 block mb-1.5 flex items-center gap-1.5">
-                <Sparkles className="w-3.5 h-3.5 text-pink-400" />
-                Artistic Style:
-              </label>
+            <div className="space-y-1.5">
+              <label className="text-xs font-medium text-zinc-300">Style</label>
               <select
                 value={selectedStyle}
                 onChange={(e) => setSelectedStyle(e.target.value)}
-                className="w-full bg-neutral-950 border border-white/10 rounded-xl px-3 py-2 text-xs text-white outline-none focus:border-pink-500/50"
+                className="w-full bg-zinc-900 border border-zinc-700/80 rounded-xl px-3 py-2 text-xs text-zinc-200 outline-none focus:border-zinc-500"
               >
                 {Object.entries(STYLE_PRESETS).map(([key, style]) => (
                   <option key={key} value={key}>
@@ -218,22 +208,63 @@ export const ImageStudio: React.FC = () => {
             </div>
           </div>
 
-          {/* Generate Button */}
-          <div className="pt-2 flex justify-end">
+          {/* Advanced toggle */}
+          <div>
+            <button
+              onClick={() => setShowAdvanced(!showAdvanced)}
+              className="text-xs text-zinc-400 hover:text-zinc-200 flex items-center gap-1.5 py-1"
+            >
+              <Sliders className="w-3.5 h-3.5" />
+              <span>{showAdvanced ? 'Hide advanced settings' : 'Show advanced settings (Seed, Negative prompt)'}</span>
+              <ChevronDown className={`w-3 h-3 transition-transform ${showAdvanced ? 'rotate-180' : ''}`} />
+            </button>
+
+            {showAdvanced && (
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2 mt-2 border-t border-white/[0.06]">
+                <div className="space-y-1">
+                  <label className="text-xs font-medium text-zinc-400">Negative Prompt</label>
+                  <input
+                    type="text"
+                    value={negativePrompt}
+                    onChange={(e) => setNegativePrompt(e.target.value)}
+                    placeholder="blurry, distorted, low quality..."
+                    className="w-full bg-zinc-900 border border-zinc-700 rounded-lg px-2.5 py-1.5 text-xs text-white outline-none focus:border-zinc-500"
+                  />
+                </div>
+                <div className="space-y-1">
+                  <label className="text-xs font-medium text-zinc-400">Seed (Optional)</label>
+                  <input
+                    type="number"
+                    value={seed}
+                    onChange={(e) => setSeed(e.target.value === '' ? '' : Number(e.target.value))}
+                    placeholder="Random"
+                    className="w-full bg-zinc-900 border border-zinc-700 rounded-lg px-2.5 py-1.5 text-xs text-white outline-none focus:border-zinc-500"
+                  />
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Render Action Button */}
+          <div className="pt-2 flex items-center justify-between border-t border-white/[0.06]">
+            <span className="text-xs text-zinc-400 font-mono hidden sm:inline">
+              Press ⌘ + Return to render
+            </span>
+
             <button
               onClick={handleGenerate}
               disabled={isGeneratingImage || !prompt.trim()}
-              className="w-full sm:w-auto px-6 py-2.5 rounded-xl bg-gradient-to-r from-pink-600 to-purple-600 hover:from-pink-500 hover:to-purple-500 text-white text-xs sm:text-sm font-semibold shadow-lg shadow-pink-600/30 transition-all active:scale-98 disabled:opacity-50 flex items-center justify-center gap-2"
+              className="w-full sm:w-auto px-5 py-2 rounded-xl bg-zinc-100 hover:bg-white text-zinc-950 font-medium text-xs transition-all shadow-sm active:scale-[0.99] disabled:opacity-40 flex items-center justify-center gap-2"
             >
               {isGeneratingImage ? (
                 <>
-                  <RefreshCw className="w-4 h-4 animate-spin" />
-                  <span>Synthesizing Image...</span>
+                  <RefreshCw className="w-3.5 h-3.5 animate-spin" />
+                  <span>Synthesizing...</span>
                 </>
               ) : (
                 <>
-                  <Sparkles className="w-4 h-4" />
-                  <span>Generate Image</span>
+                  <span>Render Image</span>
+                  <ArrowRight className="w-3.5 h-3.5" />
                 </>
               )}
             </button>
@@ -241,85 +272,86 @@ export const ImageStudio: React.FC = () => {
         </div>
 
         {/* Gallery Section */}
-        <div className="mt-10 space-y-4">
+        <div className="space-y-3">
           <div className="flex items-center justify-between">
-            <h3 className="text-base font-bold text-white flex items-center gap-2">
-              <ImageIcon className="w-4 h-4 text-pink-400" />
-              Your Creations ({images.length})
+            <h3 className="text-sm font-semibold text-zinc-200">
+              Creations ({images.length})
             </h3>
           </div>
 
           {images.length === 0 ? (
-            <div className="text-center py-16 border border-dashed border-white/10 rounded-2xl bg-neutral-900/30">
-              <ImageIcon className="w-10 h-10 text-neutral-600 mx-auto mb-3" />
-              <p className="text-sm text-neutral-400">No images created yet.</p>
-              <p className="text-xs text-neutral-500 mt-1">Enter a prompt above to start generating!</p>
+            <div className="text-center py-16 border border-zinc-800/80 rounded-2xl bg-zinc-900/30">
+              <ImageIcon className="w-8 h-8 text-zinc-600 mx-auto mb-2" />
+              <p className="text-xs text-zinc-400 font-medium">No images rendered yet</p>
+              <p className="text-[11px] text-zinc-500 mt-0.5">Enter a prompt above to generate</p>
             </div>
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
               {images.map((img) => (
                 <div
                   key={img.id}
-                  className="group relative bg-neutral-900 border border-white/10 rounded-2xl overflow-hidden shadow-lg hover:border-pink-500/40 transition-all flex flex-col"
+                  className="group relative bg-[#121215] border border-white/[0.08] hover:border-zinc-600 rounded-xl overflow-hidden transition-all flex flex-col shadow-sm"
                 >
                   <div
-                    className="relative aspect-square overflow-hidden bg-neutral-950 cursor-pointer"
+                    className="relative aspect-square overflow-hidden bg-zinc-950 cursor-pointer"
                     onClick={() => setPreviewImage(img)}
                   >
                     <img
                       src={img.imageUrl}
                       alt={img.prompt}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                      className="w-full h-full object-cover group-hover:scale-102 transition-transform duration-200"
                       loading="lazy"
                     />
-                    <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
+
+                    {/* Overlay */}
+                    <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
                           setPreviewImage(img);
                         }}
-                        className="p-2 rounded-xl bg-white/20 hover:bg-white/30 text-white backdrop-blur-md"
-                        title="View Fullscreen"
+                        className="p-1.5 rounded-lg bg-zinc-800/90 hover:bg-zinc-700 text-white"
+                        title="Expand"
                       >
-                        <Maximize2 className="w-4 h-4" />
+                        <Maximize2 className="w-3.5 h-3.5" />
                       </button>
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
                           handleDownload(img.imageUrl, img.prompt);
                         }}
-                        className="p-2 rounded-xl bg-white/20 hover:bg-white/30 text-white backdrop-blur-md"
+                        className="p-1.5 rounded-lg bg-zinc-800/90 hover:bg-zinc-700 text-white"
                         title="Download"
                       >
-                        <Download className="w-4 h-4" />
+                        <Download className="w-3.5 h-3.5" />
                       </button>
                     </div>
                   </div>
 
-                  <div className="p-3 flex-1 flex flex-col justify-between">
-                    <p className="text-xs text-neutral-200 line-clamp-2 leading-relaxed">
+                  <div className="p-2.5 flex-1 flex flex-col justify-between">
+                    <p className="text-xs text-zinc-300 line-clamp-2 leading-relaxed">
                       {img.prompt}
                     </p>
-                    <div className="flex items-center justify-between pt-2.5 mt-2 border-t border-white/5 text-[11px] text-neutral-400">
+                    <div className="flex items-center justify-between pt-2 mt-2 border-t border-white/[0.04] text-[10px] text-zinc-400">
                       <span className="capitalize">{img.model} • {img.aspectRatio}</span>
-                      <div className="flex items-center gap-1.5">
+                      <div className="flex items-center gap-1">
                         <button
                           onClick={() => handleCopyPrompt(img.prompt, img.id)}
-                          className="p-1 hover:text-white"
+                          className="p-1 hover:text-zinc-200"
                           title="Copy prompt"
                         >
                           {copiedId === img.id ? (
-                            <Check className="w-3.5 h-3.5 text-emerald-400" />
+                            <Check className="w-3 h-3 text-emerald-400" />
                           ) : (
-                            <Copy className="w-3.5 h-3.5" />
+                            <Copy className="w-3 h-3" />
                           )}
                         </button>
                         <button
                           onClick={() => deleteImage(img.id)}
                           className="p-1 hover:text-rose-400"
-                          title="Delete image"
+                          title="Delete"
                         >
-                          <Trash2 className="w-3.5 h-3.5" />
+                          <Trash2 className="w-3 h-3" />
                         </button>
                       </div>
                     </div>
@@ -334,34 +366,34 @@ export const ImageStudio: React.FC = () => {
       {/* Lightbox Modal */}
       {previewImage && (
         <div
-          className="fixed inset-0 bg-black/90 backdrop-blur-md z-50 flex items-center justify-center p-4"
+          className="fixed inset-0 bg-black/85 backdrop-blur-sm z-50 flex items-center justify-center p-4"
           onClick={() => setPreviewImage(null)}
         >
           <div
-            className="relative max-w-4xl max-h-[90vh] bg-neutral-900 border border-white/20 rounded-2xl overflow-hidden shadow-2xl flex flex-col"
+            className="relative max-w-4xl max-h-[90vh] bg-[#121215] border border-white/[0.1] rounded-2xl overflow-hidden shadow-2xl flex flex-col"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="flex items-center justify-between p-3 border-b border-white/10">
-              <span className="text-xs font-semibold text-neutral-300 truncate max-w-md">
+            <div className="flex items-center justify-between px-4 py-3 border-b border-white/[0.08]">
+              <span className="text-xs text-zinc-200 font-medium truncate max-w-md">
                 {previewImage.prompt}
               </span>
               <div className="flex items-center gap-2">
                 <button
                   onClick={() => handleDownload(previewImage.imageUrl, previewImage.prompt)}
-                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-pink-600 hover:bg-pink-500 text-white text-xs font-medium"
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-zinc-100 hover:bg-white text-zinc-950 text-xs font-medium"
                 >
                   <Download className="w-3.5 h-3.5" />
-                  Download
+                  <span>Download</span>
                 </button>
                 <button
                   onClick={() => setPreviewImage(null)}
-                  className="p-1.5 text-neutral-400 hover:text-white rounded-lg hover:bg-white/10"
+                  className="p-1.5 text-zinc-400 hover:text-white rounded-lg hover:bg-zinc-800"
                 >
                   <X className="w-4 h-4" />
                 </button>
               </div>
             </div>
-            <div className="flex-1 overflow-auto flex items-center justify-center p-2 bg-black">
+            <div className="flex-1 overflow-auto flex items-center justify-center p-3 bg-black">
               <img
                 src={previewImage.imageUrl}
                 alt={previewImage.prompt}
