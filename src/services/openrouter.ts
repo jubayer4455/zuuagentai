@@ -214,14 +214,15 @@ export class OpenRouterService {
     }
 
     const effectiveKey = getEffectiveKey(apiKey);
-    const formattedMessages: Array<{ role: string; content: any }> = [];
+    const defaultInstruction = 'You are ZUU AI, an intelligent, helpful, and culturally aware AI assistant. You are completely fluent in English, Bengali (বাংলা), and Romanized Bengali / Banglish (e.g. "kemon acho" = "how are you", "ki khobor" = "what news/what\'s up", "valo achi" = "I am fine", "ki korcho" = "what are you doing"). When the user writes in Bengali or Banglish, always understand it seamlessly and respond warmly in natural Bengali (বাংলা) or Banglish as requested.';
+    const finalSystemPrompt = systemPrompt && systemPrompt.trim() ? systemPrompt.trim() : defaultInstruction;
 
-    if (systemPrompt && systemPrompt.trim()) {
-      formattedMessages.push({
+    const formattedMessages: any[] = [
+      {
         role: 'system',
-        content: systemPrompt.trim()
-      });
-    }
+        content: finalSystemPrompt
+      }
+    ];
 
     for (const msg of messages) {
       if (msg.imageUrl) {
