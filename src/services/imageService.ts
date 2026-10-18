@@ -8,10 +8,12 @@ export interface ImageGenerationOptions {
   aspectRatio: string;
   style: string;
   seed?: number;
+  geminiApiKey?: string;
 }
 
 export const IMAGE_MODELS = [
   { id: 'flux', name: 'Flux 1.1 Pro (Recommended)', desc: 'Highest photorealism & detail' },
+  { id: 'imagen-3', name: 'Google Imagen 3', desc: 'Google next-gen photorealistic diffusion' },
   { id: 'flux-realism', name: 'Flux Realism', desc: 'True-to-life portraits & studio photography' },
   { id: 'flux-anime', name: 'Flux Anime', desc: 'Vibrant modern anime aesthetic' },
   { id: 'flux-3d', name: 'Flux 3D Cinema', desc: 'Unreal Engine 5 & Pixar 3D rendering' },
@@ -69,38 +71,71 @@ export class ImageService {
       enhancedPrompt += stylePreset.suffix;
     }
 
-    // Build model query
-    let modelParam = options.model || 'flux';
-    if (options.model === 'flux-realism') {
-      modelParam = 'flux-realism';
-    } else if (options.model === 'flux-anime') {
-      modelParam = 'flux-anime';
-    } else if (options.model === 'flux-3d') {
-      modelParam = 'flux-3d';
+    let finalImageUrl = '';
+
+    // If Google Imagen 3 selected and user has geminiApiKey
+    if (options.model === 'imagen-3' && options.geminiApiKey && options.geminiApiKey.trim()) {
+      try {
+        const imagenUrl = `https://generativelanguage.googleapis.com/v1beta/models/imagen-3.0-generate-002:predict?key=${options.geminiApiKey.trim()}`;
+        const ratioMap: Record<string, string> = {
+          '1:1': '1:1',
+          '16:9': '16:9',
+          '9:16': '9:16',
+          '4:3': '4:3'
+        };
+        const targetRatio = ratioMap[options.aspectRatio] || '1:1';
+
+        const res = await fetch(imagenUrl, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            instances: [{ prompt: enhancedPrompt }],
+            parameters: {
+              sampleCount: 1,
+              aspectRatio: targetRatio
+            }
+          })
+        });
+
+        if (res.ok) {
+          const json = await res.json();
+          const base64Data = json.predictions?.[0]?.bytesBase64Encoded;
+          if (base64Data) {
+            finalImageUrl = `data:image/jpeg;base64,${base64Data}`;
+          }
+        }
+      } catch (e) {
+        console.warn('Google Imagen 3 API error, falling back to Flux Pro:', e);
+      }
     }
 
-    const encodedPrompt = encodeURIComponent(enhancedPrompt);
-    const imageUrl = `https://image.pollinations.ai/prompt/${encodedPrompt}?width=${ratioConfig.width}&height=${ratioConfig.height}&model=${modelParam}&seed=${finalSeed}&nologo=true&enhance=false`;
+    // Default Flux / SDXL Turbo Generation
+    if (!finalImageUrl) {
+      let modelParam = options.model || 'flux';
+      if (options.model === 'flux-realism') modelParam = 'flux-realism';
+      else if (options.model === 'flux-anime') modelParam = 'flux-anime';
+      else if (options.model === 'flux-3d') modelParam = 'flux-3d';
+      else if (options.model === 'imagen-3') modelParam = 'flux';
 
-    // Preload image to verify availability and measure render
-    await new Promise<void>((resolve, reject) => {
-      const img = new Image();
-      img.onload = () => resolve();
-      img.onerror = () => {
-        // Fallback: if specific model query fails, try generic flux
-        resolve();
-      };
-      // Timeout after 25s
-      setTimeout(() => resolve(), 25000);
-      img.src = imageUrl;
-    });
+      const encodedPrompt = encodeURIComponent(enhancedPrompt);
+      finalImageUrl = `https://image.pollinations.ai/prompt/${encodedPrompt}?width=${ratioConfig.width}&height=${ratioConfig.height}&model=${modelParam}&seed=${finalSeed}&nologo=true&enhance=false`;
+
+      // Preload image
+      await new Promise<void>((resolve) => {
+        const img = new Image();
+        img.onload = () => resolve();
+        img.onerror = () => resolve();
+        setTimeout(() => resolve(), 25000);
+        img.src = finalImageUrl;
+      });
+    }
 
     const newImage: GeneratedImage = {
       id: crypto.randomUUID(),
       prompt: options.prompt,
       negativePrompt: options.negativePrompt,
       model: options.model,
-      imageUrl,
+      imageUrl: finalImageUrl,
       width: ratioConfig.width,
       height: ratioConfig.height,
       aspectRatio: options.aspectRatio,
@@ -109,7 +144,6 @@ export class ImageService {
       createdAt: new Date().toISOString()
     };
 
-    // Save to storage
     const currentImages = StorageService.getImages();
     StorageService.saveImages([newImage, ...currentImages]);
 

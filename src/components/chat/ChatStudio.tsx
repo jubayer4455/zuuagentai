@@ -3,6 +3,7 @@ import { useAppStore } from '../../store/useAppStore';
 import { OpenRouterService } from '../../services/openrouter';
 import { ChatMessage } from '../../types';
 import { ModelSelectorModal } from './ModelSelectorModal';
+import { ChatExportUtil } from '../../utils/chatExport';
 import {
   Send,
   Paperclip,
@@ -22,7 +23,10 @@ import {
   CornerDownLeft,
   ArrowUp,
   RotateCcw,
-  Layers
+  Layers,
+  Volume2,
+  VolumeX,
+  Download
 } from 'lucide-react';
 
 const SYSTEM_PRESETS = [
@@ -164,10 +168,44 @@ export const ChatStudio: React.FC = () => {
   const [attachedImage, setAttachedImage] = useState<string | null>(null);
   const [isModelModalOpen, setIsModelModalOpen] = useState(false);
   const [showSystemModal, setShowSystemModal] = useState(false);
+  const [showExportMenu, setShowExportMenu] = useState(false);
   const [systemPrompt, setSystemPrompt] = useState('');
   const [expandedReasoning, setExpandedReasoning] = useState<Record<string, boolean>>({});
   const [copiedId, setCopiedId] = useState<string | null>(null);
+  const [speakingMsgId, setSpeakingMsgId] = useState<string | null>(null);
   const [isListening, setIsListening] = useState(false);
+
+  // Text to Speech
+  const toggleSpeech = (text: string, msgId: string) => {
+    if (typeof window === 'undefined' || !('speechSynthesis' in window)) {
+      setNotification({ message: 'Text-to-speech is not supported in this browser.', type: 'info' });
+      return;
+    }
+
+    if (speakingMsgId === msgId) {
+      window.speechSynthesis.cancel();
+      setSpeakingMsgId(null);
+      return;
+    }
+
+    window.speechSynthesis.cancel();
+    // Clean text by stripping code blocks and markdown formatting
+    const cleanText = text
+      .replace(/```[\s\S]*?```/g, 'Code block omitted.')
+      .replace(/[*_#`>]/g, '')
+      .trim();
+
+    const utterance = new SpeechSynthesisUtterance(cleanText);
+    const hasBengali = /[\u0980-\u09FF]/.test(cleanText);
+    utterance.lang = hasBengali ? 'bn-BD' : 'en-US';
+    utterance.rate = 1.0;
+
+    utterance.onend = () => setSpeakingMsgId(null);
+    utterance.onerror = () => setSpeakingMsgId(null);
+
+    window.speechSynthesis.speak(utterance);
+    setSpeakingMsgId(msgId);
+  };
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -343,6 +381,58 @@ export const ChatStudio: React.FC = () => {
         </div>
 
         <div className="flex items-center gap-1.5">
+          {/* Export Dropdown */}
+          <div className="relative">
+            <button
+              onClick={() => setShowExportMenu(!showExportMenu)}
+              disabled={!currentConv || currentConv.messages.length === 0}
+              className="flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-medium text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800/60 transition-colors disabled:opacity-30"
+              title="Export Conversation"
+            >
+              <Download className="w-3.5 h-3.5" />
+              <span className="hidden sm:inline">Export</span>
+              <ChevronDown className="w-3 h-3 text-zinc-500" />
+            </button>
+
+            {showExportMenu && currentConv && (
+              <div
+                className="absolute right-0 top-full mt-1 w-44 rounded-xl bg-[#141418] border border-white/[0.1] shadow-2xl p-1 z-30 space-y-0.5 text-xs text-zinc-300"
+                onClick={() => setShowExportMenu(false)}
+              >
+                <button
+                  onClick={() => {
+                    ChatExportUtil.exportAs(currentConv, 'md');
+                    setNotification({ message: 'Exported as Markdown (.md)', type: 'success' });
+                  }}
+                  className="w-full text-left px-2.5 py-1.5 rounded-lg hover:bg-zinc-800 flex items-center justify-between"
+                >
+                  <span>Markdown (.md)</span>
+                  <span className="font-mono text-[10px] text-zinc-500">Docs</span>
+                </button>
+                <button
+                  onClick={() => {
+                    ChatExportUtil.exportAs(currentConv, 'txt');
+                    setNotification({ message: 'Exported as Plain Text (.txt)', type: 'success' });
+                  }}
+                  className="w-full text-left px-2.5 py-1.5 rounded-lg hover:bg-zinc-800 flex items-center justify-between"
+                >
+                  <span>Plain Text (.txt)</span>
+                  <span className="font-mono text-[10px] text-zinc-500">Text</span>
+                </button>
+                <button
+                  onClick={() => {
+                    ChatExportUtil.exportAs(currentConv, 'json');
+                    setNotification({ message: 'Exported as JSON (.json)', type: 'success' });
+                  }}
+                  className="w-full text-left px-2.5 py-1.5 rounded-lg hover:bg-zinc-800 flex items-center justify-between"
+                >
+                  <span>JSON (.json)</span>
+                  <span className="font-mono text-[10px] text-zinc-500">Data</span>
+                </button>
+              </div>
+            )}
+          </div>
+
           <button
             onClick={() => setShowSystemModal(true)}
             className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-medium text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800/60 transition-colors"
@@ -483,6 +573,27 @@ export const ChatStudio: React.FC = () => {
                           <>
                             <Copy className="w-3 h-3" />
                             <span>Copy</span>
+                          </>
+                        )}
+                      </button>
+
+                      <span>•</span>
+                      <button
+                        onClick={() => toggleSpeech(msg.content, msg.id)}
+                        className={`flex items-center gap-1 transition-colors ${
+                          speakingMsgId === msg.id ? 'text-emerald-400 font-medium' : 'text-zinc-500 hover:text-zinc-300'
+                        }`}
+                        title={speakingMsgId === msg.id ? 'Stop reading' : 'Read aloud with AI voice'}
+                      >
+                        {speakingMsgId === msg.id ? (
+                          <>
+                            <VolumeX className="w-3 h-3 text-emerald-400 animate-pulse" />
+                            <span>Stop</span>
+                          </>
+                        ) : (
+                          <>
+                            <Volume2 className="w-3 h-3" />
+                            <span>Listen</span>
                           </>
                         )}
                       </button>

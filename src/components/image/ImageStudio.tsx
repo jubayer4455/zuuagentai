@@ -69,7 +69,8 @@ export const ImageStudio: React.FC = () => {
         model: selectedModel,
         aspectRatio: selectedRatio,
         style: selectedStyle,
-        seed: seed !== '' ? Number(seed) : undefined
+        seed: seed !== '' ? Number(seed) : undefined,
+        geminiApiKey: settings.geminiApiKey
       });
       addImage(generated);
       setNotification({ message: 'Image rendered successfully', type: 'success' });
