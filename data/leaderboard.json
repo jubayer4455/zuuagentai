@@ -220,6 +220,14 @@
       "name": "",
       "weekScores": {},
       "allTimeBest": 0
+    },
+    "718f4929-421a-4d36-bb86-003dcea4955d": {
+      "pass": "b8cdec6e36c9f19ed799583b74c65ae8",
+      "name": "",
+      "weekScores": {
+        "2026-10-24": 2250
+      },
+      "allTimeBest": 2250
     }
   },
   "activeRuns": {
@@ -487,6 +495,11 @@
       "device": "3a5fc575-b466-420c-9071-99dac1139640",
       "pass": "3a2b88822d7a0275e3fe0b141928eddb",
       "start": 1793101755575
+    },
+    "07fa45f4ac4e137507180c091e9aa453": {
+      "device": "fa1d846b-8798-4e38-9155-0ab382f87291",
+      "pass": "a062e386eb44bd03569acddd99c02cde",
+      "start": 1793104827522
     }
   }
 }

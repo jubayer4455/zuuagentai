@@ -231,17 +231,51 @@ try {
           flyoverElev: window.__flyoverElevation,
           playerAir: at.P ? at.P.air : null,
           beatY: at.PLAYER && at.PLAYER.beat ? at.PLAYER.beat.y : null,
-          isFlyingGlitch: (at.P && at.P.air > 6.0) || (at.PLAYER && at.PLAYER.beat && at.PLAYER.beat.y > 1.0)
+          isFlyingGlitch: (at.P && at.P.air > 0.1) || (at.PLAYER && at.PLAYER.beat && Math.abs(at.PLAYER.beat.y) > 0.1)
         };
       })()
     `,
     returnByValue: true
   });
-  console.log('Flyover Elevation Test:', flyoverRes.result.value);
+  console.log('Overhead Viaduct Grounding Test:', flyoverRes.result.value);
 
   const ssFly = await send('Page.captureScreenshot');
   fs.writeFileSync(path.join(artifactDir, 'v3_flyover_elevation.png'), Buffer.from(ssFly.data, 'base64'));
   console.log('Saved v3_flyover_elevation.png');
+
+  // Test Bangladesh Heritage Architecture Landmarks
+  console.log('Testing Bangladesh Heritage Architecture Landmarks...');
+  await send('Runtime.evaluate', {
+    expression: `
+      (() => {
+        const at = window.__at;
+        if (at && at.P) at.P.z = -600; // Position right in front of National Martyrs' Memorial
+      })()
+    `
+  });
+  await new Promise(r => setTimeout(r, 400));
+
+  const heritageRes = await send('Runtime.evaluate', {
+    expression: `
+      (() => {
+        const sys = window.RastarRaja && window.RastarRaja.BangladeshHeritageLandmarksSystem;
+        return {
+          sysExists: !!sys,
+          initialized: sys ? sys.initialized : false,
+          totalLandmarks: sys ? sys.landmarks.length : 0,
+          landmarkNames: sys ? sys.landmarks.map(l => l.name) : [],
+          cardActive: document.getElementById('heritageCard')?.classList.contains('active'),
+          cardTitle: document.getElementById('heritageCard')?.querySelector('.h-title')?.textContent
+        };
+      })()
+    `,
+    returnByValue: true
+  });
+  console.log('Bangladesh Heritage Landmarks Test:', heritageRes.result.value);
+
+  const ssHeritage = await send('Page.captureScreenshot');
+  fs.writeFileSync(path.join(artifactDir, 'v3_bangladesh_heritage_landmarks.png'), Buffer.from(ssHeritage.data, 'base64'));
+  console.log('Saved v3_bangladesh_heritage_landmarks.png');
 
   // Test Zone 2 (Hatirjheel Expressway)
   console.log('Testing Zone 2: Hatirjheel Expressway...');

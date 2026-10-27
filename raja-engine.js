@@ -775,21 +775,27 @@
         z-index: 91 !important;
       }
 
-      /* BOTTOM-LEFT: Digital Cockpit Speedometer Gauge */
+      /* BOTTOM-RIGHT: Digital Cockpit Speedometer Gauge (Desktop Only) */
       .raja-gauge {
         position: fixed !important;
-        bottom: 40px !important;
-        left: 16px !important;
-        width: 104px !important;
-        height: 104px !important;
+        bottom: 24px !important;
+        right: 24px !important;
+        left: auto !important;
+        width: 108px !important;
+        height: 108px !important;
         background: rgba(11, 17, 32, 0.88) !important;
-        border: 2px solid rgba(255, 203, 31, 0.4) !important;
+        border: 2px solid rgba(255, 203, 31, 0.45) !important;
         border-radius: 50% !important;
-        backdrop-filter: blur(8px) !important;
+        backdrop-filter: blur(10px) !important;
         box-shadow: 0 4px 20px rgba(0, 0, 0, 0.7) !important;
         z-index: 90 !important;
         pointer-events: none !important;
         transition: border-color 0.3s, box-shadow 0.3s !important;
+      }
+      @media (max-width: 899px) {
+        .raja-gauge {
+          display: none !important; /* Hide on mobile so it never covers touch controls! */
+        }
       }
       .raja-gauge.overspeed {
         border-color: #ff0055 !important;
@@ -840,6 +846,95 @@
         font-weight: 700 !important;
         letter-spacing: 1px !important;
         color: #4fc3f7 !important;
+      }
+
+      /* Heritage Architectural Announcement Card */
+      .heritage-announcement-card {
+        position: fixed !important;
+        top: calc(env(safe-area-inset-top, 0px) + 68px) !important;
+        left: 50% !important;
+        transform: translateX(-50%) translateY(-20px) scale(0.92) !important;
+        background: rgba(15, 23, 42, 0.94) !important;
+        border: 2px solid #ffd400 !important;
+        border-radius: 20px !important;
+        padding: 10px 24px !important;
+        box-shadow: 0 0 30px rgba(255, 212, 0, 0.5), 0 8px 32px rgba(0, 0, 0, 0.85) !important;
+        backdrop-filter: blur(14px) !important;
+        z-index: 95 !important;
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+        gap: 2px !important;
+        pointer-events: none !important;
+        opacity: 0 !important;
+        transition: all 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
+      }
+      .heritage-announcement-card.active {
+        opacity: 1 !important;
+        transform: translateX(-50%) translateY(0) scale(1) !important;
+      }
+      .heritage-announcement-card .h-badge {
+        font-size: 11px !important;
+        font-weight: 800 !important;
+        color: #38bdf8 !important;
+        letter-spacing: 1px !important;
+        text-transform: uppercase !important;
+      }
+      .heritage-announcement-card .h-title {
+        font-size: 20px !important;
+        font-weight: 900 !important;
+        color: #ffd400 !important;
+        text-shadow: 0 0 14px rgba(255, 212, 0, 0.8) !important;
+      }
+      .heritage-announcement-card .h-sub {
+        font-size: 12.5px !important;
+        color: #f1f5f9 !important;
+        font-weight: 600 !important;
+      }
+
+      /* International Modern Touch Controls */
+      #touch {
+        pointer-events: none !important;
+      }
+      #touch .tbtn, #touch .pedal {
+        pointer-events: auto !important;
+        background: rgba(15, 23, 42, 0.55) !important;
+        border: 1.5px solid rgba(0, 240, 255, 0.4) !important;
+        border-radius: 18px !important;
+        backdrop-filter: blur(12px) !important;
+        box-shadow: 0 4px 18px rgba(0, 0, 0, 0.6) !important;
+        transition: transform 0.08s, background 0.12s, border-color 0.12s, box-shadow 0.12s !important;
+      }
+      #touch .tbtn:active, #touch .pedal:active {
+        transform: scale(0.92) !important;
+        background: rgba(0, 240, 255, 0.35) !important;
+        border-color: #00f0ff !important;
+        box-shadow: 0 0 24px rgba(0, 240, 255, 0.8) !important;
+      }
+      #tBoost {
+        border-color: rgba(255, 0, 128, 0.6) !important;
+        background: rgba(40, 10, 30, 0.55) !important;
+      }
+      #tBoost:active {
+        background: rgba(255, 0, 128, 0.45) !important;
+        border-color: #ff0080 !important;
+        box-shadow: 0 0 26px rgba(255, 0, 128, 0.9) !important;
+      }
+      #tGas {
+        border-color: rgba(77, 255, 149, 0.5) !important;
+      }
+      #tGas:active {
+        background: rgba(77, 255, 149, 0.35) !important;
+        border-color: #4dff95 !important;
+        box-shadow: 0 0 24px rgba(77, 255, 149, 0.8) !important;
+      }
+      #tBrake {
+        border-color: rgba(255, 51, 68, 0.55) !important;
+      }
+      #tBrake:active {
+        background: rgba(255, 51, 68, 0.35) !important;
+        border-color: #ff3344 !important;
+        box-shadow: 0 0 24px rgba(255, 51, 68, 0.8) !important;
       }
 
       /* Motion Blur Wind Streaks Canvas */
@@ -3253,20 +3348,24 @@
       this.prevV = p.v;
 
       const kind = window.__PLAYER_VEHICLE || 'auto';
-      const rollFactor = kind === 'cng' ? 0.42 : kind === 'leguna' ? 0.46 : kind === 'bus' ? 0.16 : 0.30;
+      const rollFactor = kind === 'cng' ? 0.45 : kind === 'leguna' ? 0.48 : kind === 'bus' ? 0.20 : 0.35;
 
       let targetPitch = 0;
       if (accel > 1.2 || p.boost) {
-        targetPitch = -0.12 - (p.boost ? 0.07 : 0);
+        // Acceleration / Nitro squat (rear dips, nose lifts)
+        targetPitch = -0.14 - (p.boost ? 0.08 : 0);
       } else if (accel < -2.2) {
-        targetPitch = 0.22 + Math.min(0.12, Math.abs(accel) * 0.015);
+        // Heavy braking dive (front nose dips down)
+        targetPitch = 0.20 + Math.min(0.14, Math.abs(accel) * 0.018);
       }
       this.pitchAngle += (targetPitch - this.pitchAngle) * Math.min(1, dt * 9.0);
 
-      const targetRoll = p.steer * Math.min(1.2, Math.abs(p.v) / 10.0) * rollFactor;
-      this.rollAngle += (targetRoll - this.rollAngle) * Math.min(1, dt * 8.0);
+      // Realistic Centrifugal Body Roll (Steering right leans chassis left)
+      const targetRoll = - p.steer * Math.min(1.4, Math.abs(p.v) / 7.5) * rollFactor;
+      this.rollAngle += (targetRoll - this.rollAngle) * Math.min(1, dt * 8.5);
 
-      this.bounceY = Math.sin(performance.now() * 0.018 * Math.abs(p.v)) * 0.018;
+      // Subtle high-speed road vibration micro-bounce
+      this.bounceY = Math.sin(performance.now() * 0.022 * Math.abs(p.v)) * 0.016;
 
       if (at && at.PLAYER && at.PLAYER.beat) {
         at.PLAYER.beat.pitch = this.pitchAngle;
@@ -3274,7 +3373,8 @@
         at.PLAYER.beat.y = this.bounceY;
       }
 
-      const isSkidding = (accel < -3.2 && p.v > 4.5) || (Math.abs(p.steer) > 0.42 && p.v > 6.0);
+      // Tire Skid Marks, Squeal Audio & Smoke Particles
+      const isSkidding = (accel < -3.0 && p.v > 3.8) || (Math.abs(p.steer) > 0.38 && p.v > 5.0);
       if (isSkidding) {
         const rearDist = (p.len || 2.6) * 0.44;
         const halfWid = (p.wid || 1.3) * 0.46;
@@ -3284,6 +3384,15 @@
         const rightZ = p.z + p.rz * halfWid + p.fz * rearDist;
         this.spawnSkid(leftX, leftZ, p.yaw);
         this.spawnSkid(rightX, rightZ, p.yaw);
+
+        // Sound & Smoke
+        if (DhakaAudioSFX && typeof DhakaAudioSFX.playSkidSqueal === 'function') {
+          DhakaAudioSFX.playSkidSqueal();
+        }
+        if (at && at.FX && typeof at.FX.sparks === 'function' && Math.random() < 0.25) {
+          at.FX.sparks(leftX, 0.05, leftZ, 2);
+          at.FX.sparks(rightX, 0.05, rightZ, 2);
+        }
       }
     }
   };
@@ -3921,6 +4030,55 @@
       } catch (e) {}
     },
 
+    // Landmark Announcement Chime (Rich Dual-Tone Crystal Bell)
+    playChimeSound() {
+      const ctx = this.getCtx();
+      if (!ctx) return;
+      try {
+        const now = ctx.currentTime;
+        [587.33, 880.00].forEach((freq, idx) => {
+          const t = now + idx * 0.12;
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(freq, t);
+          osc.frequency.exponentialRampToValueAtTime(freq * 1.02, t + 0.6);
+          gain.gain.setValueAtTime(0.001, t);
+          gain.gain.linearRampToValueAtTime(0.22, t + 0.02);
+          gain.gain.exponentialRampToValueAtTime(0.001, t + 0.7);
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+          osc.start(t);
+          osc.stop(t + 0.75);
+        });
+      } catch (e) {}
+    },
+
+    // Asphalt Rubber Tire Skid Squeal
+    playSkidSqueal() {
+      const ctx = this.getCtx();
+      if (!ctx) return;
+      try {
+        const now = ctx.currentTime;
+        const osc = ctx.createOscillator();
+        const filter = ctx.createBiquadFilter();
+        const gain = ctx.createGain();
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(850 + Math.random() * 80, now);
+        osc.frequency.exponentialRampToValueAtTime(420, now + 0.22);
+        filter.type = 'bandpass';
+        filter.frequency.value = 1200;
+        filter.Q.value = 6.0;
+        gain.gain.setValueAtTime(0.12, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.24);
+        osc.connect(filter);
+        filter.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start(now);
+        osc.stop(now + 0.25);
+      } catch (e) {}
+    },
+
     // Continuous Loose Gravel Rumble on Broken Road
     gravelNode: null,
     gravelGain: null,
@@ -4370,7 +4528,7 @@
   };
 
   // ----------------------------------------------------
-  // 23. Mayor Mohammad Hanif Flyover System
+  // 23. Mayor Mohammad Hanif Overhead Expressway Viaduct System
   // ----------------------------------------------------
   const FlyoverElevationSystem = {
     initialized: false,
@@ -4378,11 +4536,9 @@
     gantryGroup: null,
     currentElevation: 0,
     currentPitch: 0,
-    cycleDist: 2000,
-    rampUpStart: 550,
-    rampUpLen: 80,
-    deckLen: 540,
-    rampDownLen: 80,
+    cycleDist: 2400,
+    rampUpStart: 600,
+    deckLen: 650,
 
     init(THREE, scene) {
       if (this.initialized || !THREE || !scene) return;
@@ -4391,72 +4547,42 @@
       try {
         this.flyoverGroup = new THREE.Group();
 
-        const deckMat = new THREE.StandardMat({ color: 0x334155, roughness: 0.85 });
-        const pierMat = new THREE.StandardMat({ color: 0x64748b, roughness: 0.9 });
+        const deckMat = new THREE.StandardMat({ color: 0x1e293b, roughness: 0.85 });
+        const pierMat = new THREE.StandardMat({ color: 0x475569, roughness: 0.9 });
         const barrierMat = new THREE.BasicMat({ color: 0x1e3a8a });
         const reflectorMat = new THREE.BasicMat({ color: 0xfacc15 });
 
-        // 1. Ramp Up Slab (Stepped smooth rise over 80m from Y=0 to Y=4.6)
-        const rampUpGeo = new THREE.ct();
-        const steps = 10;
-        for (let i = 0; i < steps; i++) {
-          const t = i / steps;
-          const zRel = - (t * this.rampUpLen);
-          const yElev = 4.6 * (1 - Math.cos(Math.PI * t)) / 2;
-          const segLen = this.rampUpLen / steps;
-          rampUpGeo.box(0, yElev - 0.2, zRel - segLen / 2, 14.5, 0.45, segLen * 1.02, null);
-          // Side barriers
-          rampUpGeo.box(-7.2, yElev + 0.4, zRel - segLen / 2, 0.35, 0.8, segLen * 1.02, null);
-          rampUpGeo.box(7.2, yElev + 0.4, zRel - segLen / 2, 0.35, 0.8, segLen * 1.02, null);
-        }
-        const rampUpMesh = new THREE.Mesh(rampUpGeo.build(), deckMat);
-        this.flyoverGroup.add(rampUpMesh);
-
-        // 2. Elevated Main Deck (Length 540m at Y=4.6m)
+        // 1. Overhead Expressway Deck spanning above street at Y = 7.2m
         const deckGeo = new THREE.ct();
-        deckGeo.box(0, 4.4, - (this.rampUpLen + this.deckLen / 2), 14.5, 0.5, this.deckLen, null);
+        deckGeo.box(0, 7.2, - (this.deckLen / 2), 15.2, 0.65, this.deckLen, null);
         // Side Jersey Crash Barriers
-        deckGeo.box(-7.2, 5.0, - (this.rampUpLen + this.deckLen / 2), 0.35, 0.8, this.deckLen, null);
-        deckGeo.box(7.2, 5.0, - (this.rampUpLen + this.deckLen / 2), 0.35, 0.8, this.deckLen, null);
+        deckGeo.box(-7.4, 7.9, - (this.deckLen / 2), 0.4, 0.9, this.deckLen, null);
+        deckGeo.box(7.4, 7.9, - (this.deckLen / 2), 0.4, 0.9, this.deckLen, null);
         const deckMesh = new THREE.Mesh(deckGeo.build(), deckMat);
         this.flyoverGroup.add(deckMesh);
 
-        // Reflectors on barriers every 15m
+        // Reflectors on barriers every 18m
         const refGeo = new THREE.ct();
-        for (let rz = 0; rz < this.deckLen; rz += 15) {
-          const curZ = - (this.rampUpLen + rz);
-          refGeo.box(-7.0, 5.15, curZ, 0.08, 0.12, 0.25, null);
-          refGeo.box(7.0, 5.15, curZ, 0.08, 0.12, 0.25, null);
+        for (let rz = 0; rz < this.deckLen; rz += 18) {
+          refGeo.box(-7.2, 8.1, -rz, 0.08, 0.14, 0.3, null);
+          refGeo.box(7.2, 8.1, -rz, 0.08, 0.14, 0.3, null);
         }
-        const refMesh = new THREE.Mesh(refGeo.build(), reflectorMat);
-        this.flyoverGroup.add(refMesh);
+        this.flyoverGroup.add(new THREE.Mesh(refGeo.build(), reflectorMat));
 
-        // Solid Concrete T-Piers Supporting Deck every 45m
+        // Massive Concrete Support Portals (Side Piers + Overhead Crossbeam across road)
         const pierGeo = new THREE.ct();
-        for (let pz = 15; pz < this.deckLen; pz += 45) {
-          const curZ = - (this.rampUpLen + pz);
-          pierGeo.box(0, 2.1, curZ, 1.4, 4.2, 1.4, null);
-          pierGeo.box(0, 4.0, curZ, 5.4, 0.6, 1.8, null);
+        for (let pz = 20; pz < this.deckLen; pz += 50) {
+          const curZ = -pz;
+          // Left Sidewalk Pier
+          pierGeo.box(-7.6, 3.4, curZ, 1.4, 6.8, 1.4, null);
+          // Right Sidewalk Pier
+          pierGeo.box(7.6, 3.4, curZ, 1.4, 6.8, 1.4, null);
+          // Heavy Overhead Crossbeam supporting the deck
+          pierGeo.box(0, 6.7, curZ, 16.6, 0.75, 1.8, null);
         }
-        const pierMesh = new THREE.Mesh(pierGeo.build(), pierMat);
-        this.flyoverGroup.add(pierMesh);
+        this.flyoverGroup.add(new THREE.Mesh(pierGeo.build(), pierMat));
 
-        // 3. Ramp Down Slab (Stepped smooth descent over 80m from Y=4.6 to Y=0)
-        const rampDownGeo = new THREE.ct();
-        const startZ = - (this.rampUpLen + this.deckLen);
-        for (let i = 0; i < steps; i++) {
-          const t = i / steps;
-          const zRel = startZ - (t * this.rampDownLen);
-          const yElev = 4.6 * (1 + Math.cos(Math.PI * t)) / 2;
-          const segLen = this.rampDownLen / steps;
-          rampDownGeo.box(0, yElev - 0.2, zRel - segLen / 2, 14.5, 0.45, segLen * 1.02, null);
-          rampDownGeo.box(-7.2, yElev + 0.4, zRel - segLen / 2, 0.35, 0.8, segLen * 1.02, null);
-          rampDownGeo.box(7.2, yElev + 0.4, zRel - segLen / 2, 0.35, 0.8, segLen * 1.02, null);
-        }
-        const rampDownMesh = new THREE.Mesh(rampDownGeo.build(), deckMat);
-        this.flyoverGroup.add(rampDownMesh);
-
-        // 4. Overhead Highway Entrance Gantry
+        // 2. Overhead Highway Entrance Gantry
         const cv = document.createElement('canvas');
         cv.width = 256; cv.height = 128;
         const ctx = cv.getContext('2d');
@@ -4480,9 +4606,9 @@
         const gMat = new THREE.BasicMat({ map: gTex });
 
         const gGeo = new THREE.ct();
-        gGeo.box(0, 4.8, 10, 14.8, 2.2, 0.3, null);
-        gGeo.box(-7.2, 2.4, 10, 0.4, 4.8, 0.4, null);
-        gGeo.box(7.2, 2.4, 10, 0.4, 4.8, 0.4, null);
+        gGeo.box(0, 6.2, 10, 15.6, 2.0, 0.3, null);
+        gGeo.box(-7.6, 3.1, 10, 0.4, 6.2, 0.4, null);
+        gGeo.box(7.6, 3.1, 10, 0.4, 6.2, 0.4, null);
         const gMesh = new THREE.Mesh(gGeo.build(), gMat);
         this.flyoverGroup.add(gMesh);
 
@@ -4502,66 +4628,396 @@
 
       const pDist = Math.abs(p.z);
       const cycle = Math.floor(pDist / this.cycleDist);
-      const localZ = pDist % this.cycleDist;
 
-      // Position 3D flyover structure for current cycle
+      // Position overhead flyover viaduct for current cycle
       if (this.flyoverGroup) {
         this.flyoverGroup.position.z = - (cycle * this.cycleDist + this.rampUpStart);
       }
 
-      // Calculate Elevation and Pitch
-      let yElev = 0;
-      let pitch = 0;
+      // Vehicles strictly drive on the asphalt road — zero airborne elevation!
+      this.currentElevation = 0;
+      this.currentPitch = 0;
+      window.__flyoverElevation = 0;
 
-      if (localZ >= this.rampUpStart && localZ < this.rampUpStart + this.rampUpLen) {
-        // Climbing Ramp Up
-        const t = (localZ - this.rampUpStart) / this.rampUpLen;
-        yElev = 4.6 * (1 - Math.cos(Math.PI * t)) / 2;
-        pitch = 0.16 * Math.sin(Math.PI * t); // Tilt nose up
-      } else if (localZ >= this.rampUpStart + this.rampUpLen && localZ < this.rampUpStart + this.rampUpLen + this.deckLen) {
-        // Cruising Elevated Deck
-        yElev = 4.6;
-        pitch = 0;
-      } else if (localZ >= this.rampUpStart + this.rampUpLen + this.deckLen && localZ < this.rampUpStart + this.rampUpLen + this.deckLen + this.rampDownLen) {
-        // Descending Ramp Down
-        const t = (localZ - (this.rampUpStart + this.rampUpLen + this.deckLen)) / this.rampDownLen;
-        yElev = 4.6 * (1 + Math.cos(Math.PI * t)) / 2;
-        pitch = -0.16 * Math.sin(Math.PI * t); // Tilt nose down
+      if (!p.jump) {
+        p.air = 0;
       }
-
-      this.currentElevation = yElev;
-      this.currentPitch = pitch;
-      window.__flyoverElevation = yElev;
-
-      // 1. Apply clean flyover elevation to player's airborne height (NEVER compound beat.y)
-      if (yElev > 0.02) {
-        p.air = (p.jump ? Math.max(p.jump.y, yElev) : yElev);
-      } else if (!p.jump) {
-        if (p.air > 0.02) p.air = Math.max(0, p.air - dt * 9.0);
-        else p.air = 0;
-      }
-
-      // Safety clamp: vehicle cannot shoot into outer space
-      if (p.air > 5.2 && !p.jump) p.air = 5.2;
-
-      // Apply Pitch Tilt without accumulating
       if (at && at.PLAYER && at.PLAYER.beat) {
-        at.PLAYER.beat.y = 0; // zero compound accumulation!
-        at.PLAYER.beat.pitch = pitch;
+        at.PLAYER.beat.y = 0;
+        at.PLAYER.beat.pitch = 0;
       }
       if (at && at.PLAYER && at.PLAYER.o && at.PLAYER.o.position) {
-        at.PLAYER.o.position.y = (p.air || 0) + (p.bumpY || 0);
+        at.PLAYER.o.position.y = (p.jump ? p.jump.y : 0) + (p.bumpY || 0);
       }
+    }
+  };
 
-      // Trigger dialogue when ascending flyover
-      if (yElev > 1.2 && !this.flyoverSaid) {
-        this.flyoverSaid = true;
-        if (typeof DhakaStreetHumorSystem !== 'undefined' && DhakaStreetHumorSystem.sayRandom) {
-          DhakaStreetHumorSystem.sayRandom(DhakaStreetHumorSystem.flyoverDialogues, 'important');
+  // ----------------------------------------------------
+  // 24. Bangladesh Heritage & Iconic Architecture System
+  // ----------------------------------------------------
+  const BangladeshHeritageLandmarksSystem = {
+    initialized: false,
+    group: null,
+    landmarks: [],
+    cycleDist: 5000,
+    lastAnnouncedLandmark: null,
+
+    init(THREE, scene) {
+      if (this.initialized || !THREE || !scene) return;
+      this.initialized = true;
+
+      try {
+        this.group = new THREE.Group();
+
+        // High quality PBR architectural materials
+        const concreteMat = new THREE.StandardMat({ color: 0xe2e8f0, roughness: 0.85 }); // Monument white concrete
+        const kahnConcreteMat = new THREE.StandardMat({ color: 0x94a3b8, roughness: 0.92 }); // Parliament grey concrete
+        const redBrickMat = new THREE.StandardMat({ color: 0x991b1b, roughness: 0.88 }); // Terracotta Mughal red brick
+        const curzonBrickMat = new THREE.StandardMat({ color: 0x881337, roughness: 0.85 }); // Curzon Hall deep wine brick
+        const ahsanPinkMat = new THREE.StandardMat({ color: 0xec4899, roughness: 0.78 }); // Ahsan Manzil rose pink
+        const ahsanDarkPink = new THREE.StandardMat({ color: 0xdb2777, roughness: 0.82 });
+        const marbleWhiteMat = new THREE.StandardMat({ color: 0xffffff, roughness: 0.35 }); // Polished marble
+        const sunRedMat = new THREE.BasicMat({ color: 0xdc2626 }); // Rising Red Sun
+        const waterMat = new THREE.StandardMat({ color: 0x0284c7, roughness: 0.15, metalness: 0.25 }); // Reflecting pools
+        const brassMat = new THREE.StandardMat({ color: 0xd97706, roughness: 0.35, metalness: 0.6 }); // Minaret brass
+        const grassGreenMat = new THREE.StandardMat({ color: 0x15803d, roughness: 0.95 }); // Lawns
+        const darkPlinthMat = new THREE.StandardMat({ color: 0x1e293b, roughness: 0.85 });
+
+        // Helper function: Create illuminated monument plaque
+        const createLandmarkSign = (title, sub, width = 8.5, height = 2.4) => {
+          const cv = document.createElement('canvas');
+          cv.width = 512; cv.height = 160;
+          const ctx = cv.getContext('2d');
+          ctx.fillStyle = 'rgba(10, 15, 30, 0.95)';
+          ctx.fillRect(0, 0, 512, 160);
+          ctx.strokeStyle = '#ffd400';
+          ctx.lineWidth = 6;
+          ctx.strokeRect(6, 6, 500, 148);
+
+          ctx.fillStyle = '#ffd400';
+          ctx.font = 'bold 28px "Tiro Bangla", sans-serif';
+          ctx.textAlign = 'center';
+          ctx.fillText(title, 256, 58);
+
+          ctx.fillStyle = '#f8fafc';
+          ctx.font = '20px "Tiro Bangla", sans-serif';
+          ctx.fillText(sub, 256, 104);
+
+          ctx.fillStyle = '#38bdf8';
+          ctx.font = 'bold 15px "Tiro Bangla", sans-serif';
+          ctx.fillText('🇧🇩 বাংলাদেশের ঐতিহাসিক জাতীয় স্থাপত্য নিদর্শন', 256, 138);
+
+          const tex = new THREE.Tex.glow.constructor(cv);
+          tex.needsUpdate = true;
+          const mat = new THREE.BasicMat({ map: tex });
+          const geo = new THREE.ct();
+          geo.box(0, height * 0.5 + 0.4, 0, width, height, 0.25, null);
+          geo.box(-width * 0.42, height * 0.25, 0, 0.35, height * 0.5, 0.25, null);
+          geo.box(width * 0.42, height * 0.25, 0, 0.35, height * 0.5, 0.25, null);
+          return new THREE.Mesh(geo.build(), mat);
+        };
+
+        // ------------------------------------------------------------------
+        // 1. জাতীয় স্মৃতিসৌধ (National Martyrs' Memorial, Savar) at Z = -600m
+        // ------------------------------------------------------------------
+        const sritiGroup = new THREE.Group();
+        sritiGroup.position.set(26, 0, -600);
+
+        const sPlazaGeo = new THREE.ct();
+        sPlazaGeo.box(0, 0.3, 0, 28, 0.6, 36, null);
+        sritiGroup.add(new THREE.Mesh(sPlazaGeo.build(), redBrickMat));
+
+        const sWaterGeo = new THREE.ct();
+        sWaterGeo.box(0, 0.62, 4, 18, 0.1, 16, null);
+        sritiGroup.add(new THREE.Mesh(sWaterGeo.build(), waterMat));
+
+        const sLawnGeo = new THREE.ct();
+        sLawnGeo.box(0, 0.1, 0, 36, 0.2, 46, null);
+        sritiGroup.add(new THREE.Mesh(sLawnGeo.build(), grassGreenMat));
+
+        // 7 pairs of soaring triangular concrete wall prisms
+        const sPylonsGeo = new THREE.ct();
+        const pHeights = [34, 28, 22, 17, 13, 9.5, 6.5];
+        const pWidths  = [3.2, 4.0, 4.6, 5.2, 5.8, 6.4, 7.0];
+        for (let i = 0; i < 7; i++) {
+          const h = pHeights[i];
+          const w = pWidths[i];
+          const zStep = -6 + i * 1.8;
+          const xOffset = 0.9 + i * 1.35;
+          sPylonsGeo.box(-xOffset, h * 0.5, zStep, 0.7, h, w * 0.45, null);
+          sPylonsGeo.box(xOffset, h * 0.5, zStep, 0.7, h, w * 0.45, null);
         }
-      } else if (yElev < 0.2) {
-        this.flyoverSaid = false;
+        sritiGroup.add(new THREE.Mesh(sPylonsGeo.build(), concreteMat));
+
+        const sSign = createLandmarkSign('জাতীয় স্মৃতিসৌধ (১৯৭১)', 'সাভার · স্থপতি সৈয়দ মাইনুল হোসেন');
+        sSign.position.set(0, 0, 15);
+        sSign.rotation.y = -0.3;
+        sritiGroup.add(sSign);
+
+        this.group.add(sritiGroup);
+        this.landmarks.push({
+          id: 'sriti',
+          name: 'জাতীয় স্মৃতিসৌধ (১৯৭১)',
+          sub: 'বীর শহীদদের স্মরণে সাভারে নির্মিত জাতীয় সৌধ',
+          z: -600,
+          group: sritiGroup
+        });
+
+        // ------------------------------------------------------------------
+        // 2. জাতীয় সংসদ ভবন (National Parliament House, Louis Kahn) at Z = -1350m
+        // ------------------------------------------------------------------
+        const sangsadGroup = new THREE.Group();
+        sangsadGroup.position.set(-28, 0, -1350);
+
+        const sangWaterGeo = new THREE.ct();
+        sangWaterGeo.box(0, 0.4, 0, 44, 0.4, 38, null);
+        sangsadGroup.add(new THREE.Mesh(sangWaterGeo.build(), waterMat));
+
+        const sangGeo = new THREE.ct();
+        sangGeo.box(0, 9.0, 0, 26, 18.0, 22, null);
+        sangGeo.box(-12, 10.0, -10, 4.5, 20.0, 4.5, null);
+        sangGeo.box(12, 10.0, -10, 4.5, 20.0, 4.5, null);
+        sangGeo.box(-12, 10.0, 10, 4.5, 20.0, 4.5, null);
+        sangGeo.box(12, 10.0, 10, 4.5, 20.0, 4.5, null);
+        // Cutouts
+        sangGeo.box(0, 11.0, 11.2, 8.0, 8.0, 0.4, null);
+        sangGeo.box(-7.0, 6.0, 11.2, 4.2, 6.0, 0.4, null);
+        sangGeo.box(7.0, 6.0, 11.2, 4.2, 6.0, 0.4, null);
+        sangsadGroup.add(new THREE.Mesh(sangGeo.build(), kahnConcreteMat));
+
+        // Marble bands
+        const sangBandsGeo = new THREE.ct();
+        for (let yb = 3; yb < 18; yb += 3.5) {
+          sangBandsGeo.box(0, yb, 11.1, 26.2, 0.35, 0.2, null);
+        }
+        sangsadGroup.add(new THREE.Mesh(sangBandsGeo.build(), marbleWhiteMat));
+
+        const sangSign = createLandmarkSign('জাতীয় সংসদ ভবন', 'শের-ই-বাংলা নগর · স্থপতি লুই কান (Louis Kahn)');
+        sangSign.position.set(0, 0, 16);
+        sangSign.rotation.y = 0.35;
+        sangsadGroup.add(sangSign);
+
+        this.group.add(sangsadGroup);
+        this.landmarks.push({
+          id: 'sangsad',
+          name: 'জাতীয় সংসদ ভবন (লুই কান)',
+          sub: 'বিশ্বখ্যাত স্থাপত্যকলা ও বাংলাদেশের জাতীয় সংসদ',
+          z: -1350,
+          group: sangsadGroup
+        });
+
+        // ------------------------------------------------------------------
+        // 3. আহসান মঞ্জিল (Ahsan Manzil - Pink Palace, 1872) at Z = -2100m
+        // ------------------------------------------------------------------
+        const ahsanGroup = new THREE.Group();
+        ahsanGroup.position.set(28, 0, -2100);
+
+        const ahsanBaseGeo = new THREE.ct();
+        ahsanBaseGeo.box(0, 1.2, 0, 32, 2.4, 20, null);
+        for (let s = 0; s < 8; s++) {
+          ahsanBaseGeo.box(0, s * 0.28, 10 + (8 - s) * 0.65, 10, 0.3, 0.7, null);
+        }
+        ahsanGroup.add(new THREE.Mesh(ahsanBaseGeo.build(), darkPlinthMat));
+
+        const ahsanGeo = new THREE.ct();
+        ahsanGeo.box(0, 6.8, 0, 30, 8.8, 16, null);
+        ahsanGeo.box(0, 5.0, 8.5, 12, 5.2, 2.5, null);
+        for (let c = -5; c <= 5; c += 2.5) {
+          ahsanGeo.box(c, 5.0, 9.8, 0.5, 5.2, 0.5, null);
+        }
+        ahsanGeo.box(0, 11.6, 8.0, 30.5, 0.9, 0.4, null);
+        ahsanGroup.add(new THREE.Mesh(ahsanGeo.build(), ahsanPinkMat));
+
+        const domeDrumGeo = new THREE.ct();
+        domeDrumGeo.box(0, 13.0, 0, 7.5, 4.0, 7.5, null);
+        domeDrumGeo.box(0, 16.2, 0, 5.8, 2.8, 5.8, null);
+        domeDrumGeo.box(0, 18.2, 0, 1.0, 1.6, 1.0, null);
+        ahsanGroup.add(new THREE.Mesh(domeDrumGeo.build(), ahsanDarkPink));
+
+        const ahsanSign = createLandmarkSign('আহসান মঞ্জিল (১৮৭২)', 'বুড়িগঙ্গার তীরে নবাবদের গোলাপি প্রাসাদ');
+        ahsanSign.position.set(0, 0, 16);
+        ahsanSign.rotation.y = -0.3;
+        ahsanGroup.add(ahsanSign);
+
+        this.group.add(ahsanGroup);
+        this.landmarks.push({
+          id: 'ahsan',
+          name: 'আহসান মঞ্জিল (Pink Palace)',
+          sub: 'ঢাকার ঐতিহাসিক নবাব প্যালেস ও বুড়িগঙ্গা ঐতিহ্য',
+          z: -2100,
+          group: ahsanGroup
+        });
+
+        // ------------------------------------------------------------------
+        // 4. লালবাগ কেল্লা (Lalbagh Mughal Fort, 1678) at Z = -2850m
+        // ------------------------------------------------------------------
+        const lalbaghGroup = new THREE.Group();
+        lalbaghGroup.position.set(-27, 0, -2850);
+
+        const lalGeo = new THREE.ct();
+        lalGeo.box(0, 6.0, 0, 24, 12.0, 10, null);
+        lalGeo.box(-16, 4.5, 0, 10, 9.0, 6, null);
+        lalGeo.box(16, 4.5, 0, 10, 9.0, 6, null);
+        lalGeo.box(0, 4.0, 4.8, 5.5, 8.0, 1.0, null);
+        for (let m = -20; m <= 20; m += 2.2) {
+          lalGeo.box(m, 12.4, 4.8, 1.2, 0.9, 0.4, null);
+        }
+        lalbaghGroup.add(new THREE.Mesh(lalGeo.build(), redBrickMat));
+
+        const minGeo = new THREE.ct();
+        minGeo.box(-11.5, 8.0, 4.5, 1.6, 16.0, 1.6, null);
+        minGeo.box(11.5, 8.0, 4.5, 1.6, 16.0, 1.6, null);
+        minGeo.box(-11.5, 16.5, 4.5, 2.2, 1.2, 2.2, null);
+        minGeo.box(11.5, 16.5, 4.5, 2.2, 1.2, 2.2, null);
+        lalbaghGroup.add(new THREE.Mesh(minGeo.build(), brassMat));
+
+        const pariGeo = new THREE.ct();
+        pariGeo.box(0, 3.5, -8, 8, 7.0, 8, null);
+        pariGeo.box(0, 8.0, -8, 4.5, 2.2, 4.5, null);
+        lalbaghGroup.add(new THREE.Mesh(pariGeo.build(), marbleWhiteMat));
+
+        const lalSign = createLandmarkSign('লালবাগ কেল্লা (১৬৭৮)', 'মুঘল সুবাদার মুহাম্মদ আজম শাহের দুর্গ');
+        lalSign.position.set(0, 0, 14);
+        lalSign.rotation.y = 0.35;
+        lalbaghGroup.add(lalSign);
+
+        this.group.add(lalbaghGroup);
+        this.landmarks.push({
+          id: 'lalbagh',
+          name: 'লালবাগ কেল্লা (Lalbagh Fort)',
+          sub: 'মুঘল স্থাপত্যের ঐতিহাসিক দুর্গ ও পরী বিবির মাজার',
+          z: -2850,
+          group: lalbaghGroup
+        });
+
+        // ------------------------------------------------------------------
+        // 5. কেন্দ্রীয় শহীদ মিনার (Central Shaheed Minar, 1952) at Z = -3600m
+        // ------------------------------------------------------------------
+        const shaheedGroup = new THREE.Group();
+        shaheedGroup.position.set(25, 0, -3600);
+
+        const shBaseGeo = new THREE.ct();
+        shBaseGeo.box(0, 0.4, 0, 18, 0.8, 16, null);
+        shaheedGroup.add(new THREE.Mesh(shBaseGeo.build(), redBrickMat));
+
+        const shPylonGeo = new THREE.ct();
+        shPylonGeo.box(0, 7.0, -1.5, 2.6, 14.0, 0.6, null);
+        shPylonGeo.box(0, 13.8, 0.2, 2.6, 0.6, 2.8, null);
+        shPylonGeo.box(-3.8, 4.5, -1.5, 1.8, 9.0, 0.5, null);
+        shPylonGeo.box(-3.8, 8.8, -0.4, 1.8, 0.5, 1.8, null);
+        shPylonGeo.box(3.8, 4.5, -1.5, 1.8, 9.0, 0.5, null);
+        shPylonGeo.box(3.8, 8.8, -0.4, 1.8, 0.5, 1.8, null);
+        shaheedGroup.add(new THREE.Mesh(shPylonGeo.build(), marbleWhiteMat));
+
+        const sunGeo = new THREE.ct();
+        sunGeo.box(0, 7.5, -2.2, 7.2, 7.2, 0.2, null);
+        shaheedGroup.add(new THREE.Mesh(sunGeo.build(), sunRedMat));
+
+        const shSign = createLandmarkSign('কেন্দ্রীয় শহীদ মিনার', 'অমর একুশে ও আন্তর্জাতিক মাতৃভাষা দিবস');
+        shSign.position.set(0, 0, 12);
+        shSign.rotation.y = -0.28;
+        shaheedGroup.add(shSign);
+
+        this.group.add(shaheedGroup);
+        this.landmarks.push({
+          id: 'shaheed',
+          name: 'কেন্দ্রীয় শহীদ মিনার',
+          sub: 'ভাষা আন্দোলনের অমর স্মৃতি ও ২১শে ফেব্রুয়ারি',
+          z: -3600,
+          group: shaheedGroup
+        });
+
+        // ------------------------------------------------------------------
+        // 6. কার্জন হল (Curzon Hall, University of Dhaka, 1904) at Z = -4350m
+        // ------------------------------------------------------------------
+        const curzonGroup = new THREE.Group();
+        curzonGroup.position.set(-28, 0, -4350);
+
+        const curGeo = new THREE.ct();
+        curGeo.box(0, 7.5, 0, 32, 15.0, 16, null);
+        curGeo.box(-20, 6.0, 0, 12, 12.0, 12, null);
+        curGeo.box(20, 6.0, 0, 12, 12.0, 12, null);
+        curGeo.box(0, 5.0, 7.8, 6.0, 8.0, 0.8, null);
+        for (let w = -12; w <= 12; w += 4.5) {
+          if (w !== 0) curGeo.box(w, 5.5, 7.8, 2.2, 4.5, 0.6, null);
+        }
+        curzonGroup.add(new THREE.Mesh(curGeo.build(), curzonBrickMat));
+
+        const curTrimsGeo = new THREE.ct();
+        curTrimsGeo.box(-20, 13.0, 0, 4.0, 2.5, 4.0, null);
+        curTrimsGeo.box(20, 13.0, 0, 4.0, 2.5, 4.0, null);
+        curTrimsGeo.box(0, 16.0, 0, 6.0, 3.0, 6.0, null);
+        curTrimsGeo.box(0, 14.8, 8.2, 33, 0.5, 1.2, null);
+        curzonGroup.add(new THREE.Mesh(curTrimsGeo.build(), marbleWhiteMat));
+
+        const curSign = createLandmarkSign('কার্জন হল (১৯০৪)', 'ঢাকা বিশ্ববিদ্যালয়ের লাল ইটের রাজকীয় স্থাপত্য');
+        curSign.position.set(0, 0, 14);
+        curSign.rotation.y = 0.32;
+        curzonGroup.add(curSign);
+
+        this.group.add(curzonGroup);
+        this.landmarks.push({
+          id: 'curzon',
+          name: 'কার্জন হল (Curzon Hall)',
+          sub: 'ঢাকা বিশ্ববিদ্যালয়ের শতাব্দী প্রাচীন ইন্দো-ইউরোপীয় স্থাপত্য',
+          z: -4350,
+          group: curzonGroup
+        });
+
+        scene.add(this.group);
+      } catch (e) {
+        console.warn('BangladeshHeritageLandmarksSystem init error:', e);
       }
+    },
+
+    update(p, dt, inPlay) {
+      const THREE = window.__THREE_EXPORTS;
+      const at = window.__at;
+      if (!this.initialized && THREE && at && at.SCENE) {
+        this.init(THREE, at.SCENE);
+      }
+      if (!this.initialized || !inPlay || !p) return;
+
+      // Recycle landmarks smoothly along infinite road
+      for (const lm of this.landmarks) {
+        while (lm.group.position.z > p.z + 200) {
+          lm.group.position.z -= this.cycleDist;
+        }
+        while (lm.group.position.z < p.z - (this.cycleDist - 200)) {
+          lm.group.position.z += this.cycleDist;
+        }
+
+        // Proximity detection for on-screen landmark announcement card
+        const dist = Math.abs(p.z - lm.group.position.z);
+        if (dist < 75 && this.lastAnnouncedLandmark !== lm.id) {
+          this.lastAnnouncedLandmark = lm.id;
+          this.showLandmarkAnnouncement(lm.name, lm.sub);
+        }
+      }
+    },
+
+    showLandmarkAnnouncement(name, sub) {
+      try {
+        let card = document.getElementById('heritageCard');
+        if (!card) {
+          card = document.createElement('div');
+          card.id = 'heritageCard';
+          card.className = 'heritage-announcement-card';
+          document.body.appendChild(card);
+        }
+        card.innerHTML = `
+          <div class="h-badge">🏛️ ঐতিহাসিক দর্শনীয় স্থান</div>
+          <div class="h-title">${name}</div>
+          <div class="h-sub">${sub}</div>
+        `;
+        card.classList.add('active');
+        if (window.RastarRaja && window.RastarRaja.DhakaAudioSFX && typeof window.RastarRaja.DhakaAudioSFX.playChimeSound === 'function') {
+          window.RastarRaja.DhakaAudioSFX.playChimeSound();
+        }
+        setTimeout(() => {
+          if (card) card.classList.remove('active');
+        }, 4500);
+      } catch (_) {}
     }
   };
 
@@ -5632,11 +6088,27 @@
     if (inPlay && isAlive && at.P) {
       checkSpeedBumps(at.P, dt);
 
-      // Smooth bumpY & air decay: eliminates flying rickshaw glitch!
-      at.P.bumpY = Math.max(0, (at.P.bumpY || 0) * 0.84);
-      if (!at.P.jump && (window.__flyoverElevation || 0) <= 0.02) {
-        if (at.P.air > 0.02) at.P.air = Math.max(0, at.P.air - dt * 9.0);
-        else at.P.air = 0;
+      // 100% Grounded Asphalt Physics: Eliminates flying rickshaw & floating vehicle glitch forever!
+      at.P.bumpY = Math.max(0, (at.P.bumpY || 0) * 0.82);
+      if (!at.P.jump) {
+        at.P.air = 0;
+      }
+      if (at.PLAYER && at.PLAYER.beat) {
+        at.PLAYER.beat.y = SuspensionDynamics.bounceY || 0;
+      }
+      if (at.PLAYER && at.PLAYER.o && at.PLAYER.o.position) {
+        at.PLAYER.o.position.y = (at.P.jump ? at.P.jump.y : 0) + (at.P.bumpY || 0);
+      }
+
+      // Grounding Watchdog: Pin all traffic NPC rickshaws, cars, CNGs firmly to asphalt
+      if (at.TRAFFIC && at.TRAFFIC.list) {
+        for (const v of at.TRAFFIC.list) {
+          if (v.o && v.o.grp && v.o.grp.position) {
+            if (v.o.grp.position.y > 0.35 && v.state !== 'fallen') {
+              v.o.grp.position.y = 0.02;
+            }
+          }
+        }
       }
     }
 
@@ -5649,6 +6121,7 @@
 
     // v3.0 Road Geometry & Elevation (Run before Radar so radar corridor renders correct hazard styling)
     ZoneProgressionSystem.update(at.P, dt, inPlay);
+    BangladeshHeritageLandmarksSystem.update(at.P, dt, inPlay);
     FlyoverElevationSystem.update(at.P, dt, inPlay);
     DhakaRoadEnvironmentSystem.update(at.P, dt, inPlay);
     RoadMicroDetailsSystem.update(at.P, dt, inPlay);
@@ -5717,6 +6190,7 @@
 
     // Export systems to RastarRaja namespace
     window.RastarRaja.ZoneProgressionSystem = ZoneProgressionSystem;
+    window.RastarRaja.BangladeshHeritageLandmarksSystem = BangladeshHeritageLandmarksSystem;
     window.RastarRaja.FlyoverElevationSystem = FlyoverElevationSystem;
     window.RastarRaja.RoadMicroDetailsSystem = RoadMicroDetailsSystem;
     window.RastarRaja.DhakaRoadEnvironmentSystem = DhakaRoadEnvironmentSystem;
