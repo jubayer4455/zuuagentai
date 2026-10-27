@@ -106,69 +106,70 @@
     const oldHow = menuMain.querySelector('.how');
 
     if (oldTitle) {
-      oldTitle.innerHTML = `<img src="logo.svg" alt="রাস্তার রাজা · Rastar Raja" style="width: 100%; max-width: 380px; height: auto; display: block; margin: 0 auto; filter: drop-shadow(0 4px 14px rgba(0,0,0,0.8));">`;
+      oldTitle.innerHTML = `<img src="logo.svg" alt="রাস্তার রাজা · Rastar Raja" style="width: 100%; max-width: 320px; height: auto; display: block; margin: 0 auto; filter: drop-shadow(0 4px 14px rgba(0,0,0,0.85));">`;
     }
     if (oldSub) oldSub.remove();
     if (oldTag) {
-      oldTag.innerHTML = `★ ঢাকার রাজপথের আসল রাজা ★`;
+      oldTag.innerHTML = `★ ঢাকার রাজপথের আসল রাজা ★ · নো লাইসেন্স, নো ব্রেক!`;
       oldTag.style.color = '#ffcb1f';
       oldTag.style.fontWeight = 'bold';
-      oldTag.style.letterSpacing = '1px';
+      oldTag.style.letterSpacing = '0.5px';
+      oldTag.style.fontSize = '14px';
     }
     if (oldHow) {
-      oldHow.innerHTML = `<em><span>নো লাইসেন্স, নো ব্রেক:</span> <span>রাস্তার রাজা কে?</span></em><span class="dup">ধাক্কায় ক্ষতি বাড়ান। বাস-ট্রাক এড়ান।<br>পাবলিক ধরার আগেই পালান।</span>`;
+      oldHow.style.display = 'none'; // Keep clean and uncluttered; rules are inside help drawer
     }
 
-    // Add Garage Vehicle Selection
+    // Add Garage Vehicle Selection (Sleek Horizontal Segmented Carousel)
     if (!document.getElementById('garageBox')) {
       const garageBox = document.createElement('div');
       garageBox.id = 'garageBox';
-      garageBox.className = 'raja-card';
+      garageBox.className = 'raja-garage-bar';
+      const curVeh = window.RastarRaja.vehicle || 'auto';
+      const curCfg = VEHICLE_CONFIGS[curVeh] || VEHICLE_CONFIGS.auto;
       garageBox.innerHTML = `
-        <div class="raja-card-header">
-          <span>🚗 আপনার বাহন বেছে নিন (Garage)</span>
-        </div>
-        <div class="v-grid">
+        <div class="raja-bar-title">🚗 আপনার বাহন বেছে নিন:</div>
+        <div class="v-strip">
           ${Object.entries(VEHICLE_CONFIGS).map(([k, v]) => `
-            <button type="button" class="v-btn ${window.RastarRaja.vehicle === k ? 'active' : ''}" data-vehicle="${k}">
+            <button type="button" class="v-pill ${curVeh === k ? 'active' : ''}" data-vehicle="${k}" title="${v.name}: ${v.subtitle}">
               <span class="v-ic">${v.icon}</span>
-              <div class="v-info">
-                <b>${v.name}</b>
-                <small>${v.subtitle}</small>
-              </div>
+              <span class="v-name">${v.name.split(' ')[0]}</span>
             </button>
           `).join('')}
+        </div>
+        <div id="vSpecBadge" class="v-spec-badge">
+          ⚡ ${curCfg.name} · ${curCfg.subtitle}
         </div>
       `;
       menuMain.insertBefore(garageBox, document.querySelector('.play-row'));
 
-      garageBox.querySelectorAll('.v-btn').forEach(btn => {
+      garageBox.querySelectorAll('.v-pill').forEach(btn => {
         btn.addEventListener('click', () => {
-          garageBox.querySelectorAll('.v-btn').forEach(b => b.classList.remove('active'));
+          garageBox.querySelectorAll('.v-pill').forEach(b => b.classList.remove('active'));
           btn.classList.add('active');
           const v = btn.getAttribute('data-vehicle');
           window.RastarRaja.vehicle = v;
           localStorage.setItem('rastarRaja.vehicle', v);
           window.__PLAYER_VEHICLE = v;
+          const cfg = VEHICLE_CONFIGS[v] || VEHICLE_CONFIGS.auto;
+          const badge = document.getElementById('vSpecBadge');
+          if (badge) badge.textContent = `⚡ ${cfg.name} · ${cfg.subtitle}`;
           applyVehicleToPlayer(v);
         });
       });
     }
 
-    // Add Time & Weather Selector
+    // Add Time & Weather Selector (Compact Horizontal Row)
     if (!document.getElementById('envBox')) {
       const envBox = document.createElement('div');
       envBox.id = 'envBox';
-      envBox.className = 'raja-card';
+      envBox.className = 'raja-env-bar';
       envBox.innerHTML = `
-        <div class="raja-card-header">
-          <span>🌤️ সময় ও আবহাওয়া (Environment)</span>
-        </div>
-        <div class="env-row">
-          <button type="button" class="env-btn ${window.RastarRaja.time === 'morning' ? 'active' : ''}" data-time="morning">☀️ দিন</button>
-          <button type="button" class="env-btn ${window.RastarRaja.time === 'dusk' ? 'active' : ''}" data-time="dusk">🌅 গোধূলি</button>
-          <button type="button" class="env-btn ${window.RastarRaja.time === 'night' ? 'active' : ''}" data-time="night">🌙 রাত (হেডলাইট)</button>
-          <button type="button" class="env-btn ${window.RastarRaja.rain ? 'active' : ''}" id="rajaRainBtn">🌧️ বৃষ্টি: ${window.RastarRaja.rain ? 'চালু' : 'বন্ধ'}</button>
+        <div class="env-strip">
+          <button type="button" class="env-pill ${window.RastarRaja.time === 'morning' ? 'active' : ''}" data-time="morning">☀️ দিন</button>
+          <button type="button" class="env-pill ${window.RastarRaja.time === 'dusk' ? 'active' : ''}" data-time="dusk">🌅 গোধূলি</button>
+          <button type="button" class="env-pill ${window.RastarRaja.time === 'night' ? 'active' : ''}" data-time="night">🌙 রাত</button>
+          <button type="button" class="env-pill ${window.RastarRaja.rain ? 'active' : ''}" id="rajaRainBtn">🌧️ বৃষ্টি: ${window.RastarRaja.rain ? 'চালু' : 'বন্ধ'}</button>
         </div>
       `;
       menuMain.insertBefore(envBox, document.querySelector('.play-row'));
@@ -194,6 +195,12 @@
       });
     }
 
+    // Ensure Help drawer doesn't clutter the initial screen
+    const help = document.getElementById('help');
+    if (help) {
+      help.open = false; // Clean presentation; one-click expand for rules
+    }
+
     // Add FM Radio button to HUD
     const battBox = document.getElementById('battBox');
     if (battBox && !document.getElementById('radioBtn')) {
@@ -201,13 +208,13 @@
       radioBtn.id = 'radioBtn';
       radioBtn.type = 'button';
       radioBtn.title = 'রেট্রো ঢাকা ট্যাক্সি রেডিও (FM)';
-      radioBtn.innerHTML = `📻 <span>এফএম রেডিও</span>`;
+      radioBtn.innerHTML = `📻 <span>এফএম</span>`;
       battBox.appendChild(radioBtn);
 
       radioBtn.addEventListener('click', () => {
         window.RastarRaja.radio = !window.RastarRaja.radio;
         radioBtn.classList.toggle('active', window.RastarRaja.radio);
-        radioBtn.innerHTML = window.RastarRaja.radio ? `🔊 <span>রেডিও বাজছে</span>` : `📻 <span>এফএম রেডিও</span>`;
+        radioBtn.innerHTML = window.RastarRaja.radio ? `🔊 <span>বাজছে</span>` : `📻 <span>এফএম</span>`;
         toggleRadioMusic(window.RastarRaja.radio);
       });
     }
@@ -243,386 +250,648 @@
   function injectStyles() {
     const style = document.createElement('style');
     style.textContent = `
-      .raja-card {
-        background: rgba(20, 16, 12, 0.9);
-        border: 1.5px solid rgba(255, 203, 31, 0.4);
-        border-radius: 12px;
-        padding: 10px 12px;
-        margin: 10px 0;
-        text-align: left;
-        box-shadow: 0 4px 16px rgba(0,0,0,0.5);
+      /* ============================================================ */
+      /* RASTAR RAJA v2.9: CLEAN 4-CORNER HUD & SLEEK MENU OVERHAUL  */
+      /* ============================================================ */
+
+      /* 1. Menu Layout & Segmented Bars */
+      #menu:not([hidden]) {
+        display: flex !important;
+        flex-direction: column !important;
+        justify-content: center !important;
+        align-items: center !important;
+        padding: 16px !important;
+        padding-bottom: 60px !important;
+        overflow-y: auto !important;
       }
-      .raja-card-header {
-        font-size: 13px;
-        font-weight: 800;
-        color: #ffcb1f;
-        margin-bottom: 8px;
-        letter-spacing: 0.5px;
-        display: flex;
-        align-items: center;
-        gap: 6px;
+      #menu[hidden] {
+        display: none !important;
       }
-      .v-grid {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 8px;
+      .menu-card {
+        max-width: 580px !important;
+        width: 100% !important;
+        margin: auto !important;
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+        text-align: center !important;
+        gap: 10px !important;
       }
-      .v-btn {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        padding: 8px 10px;
-        background: rgba(35, 28, 22, 0.8);
-        border: 1.5px solid rgba(255, 255, 255, 0.15);
-        border-radius: 8px;
-        cursor: pointer;
-        color: #fff;
-        transition: all 0.15s ease;
-        text-align: left;
+      .menu-main {
+        width: 100% !important;
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+        gap: 8px !important;
       }
-      .v-btn:hover {
-        background: rgba(60, 48, 36, 0.9);
-        border-color: #ffcb1f;
+      .tagline {
+        font-size: 14px !important;
+        color: #ffcb1f !important;
+        margin: 0 !important;
+        letter-spacing: 0.5px !important;
+        font-weight: 700 !important;
       }
-      .v-btn.active {
-        background: rgba(255, 203, 31, 0.22);
-        border-color: #ffcb1f;
-        box-shadow: 0 0 12px rgba(255, 203, 31, 0.35);
+      .how {
+        display: none !important; /* Rules kept in help drawer to avoid screen clutter */
       }
-      .v-ic {
-        font-size: 26px;
+
+      /* Vehicle Segmented Bar */
+      .raja-garage-bar {
+        width: 100% !important;
+        background: rgba(14, 18, 26, 0.9) !important;
+        border: 1.5px solid rgba(255, 203, 31, 0.45) !important;
+        border-radius: 14px !important;
+        padding: 8px 10px !important;
+        backdrop-filter: blur(12px) !important;
+        box-shadow: 0 4px 18px rgba(0, 0, 0, 0.55) !important;
+        box-sizing: border-box !important;
       }
-      .v-info b {
-        display: block;
-        font-size: 14px;
-        color: #fff;
+      .raja-bar-title {
+        font-size: 11px !important;
+        font-weight: 800 !important;
+        color: #ffcb1f !important;
+        letter-spacing: 0.5px !important;
+        margin-bottom: 6px !important;
+        text-align: left !important;
       }
-      .v-info small {
-        display: block;
-        font-size: 11px;
-        color: #cfc3ab;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
+      .v-strip {
+        display: flex !important;
+        gap: 6px !important;
+        overflow-x: auto !important;
+        padding-bottom: 2px !important;
+        scrollbar-width: none !important;
       }
-      .env-row {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 6px;
+      .v-strip::-webkit-scrollbar {
+        display: none !important;
       }
-      .env-btn {
-        flex: 1 1 auto;
-        padding: 7px 12px;
-        background: rgba(35, 28, 22, 0.8);
-        border: 1.5px solid rgba(255, 255, 255, 0.15);
-        border-radius: 6px;
-        color: #fff;
-        font-size: 13px;
-        font-weight: 700;
-        cursor: pointer;
+      .v-pill {
+        flex: 1 1 0 !important;
+        min-width: 70px !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        gap: 4px !important;
+        padding: 6px 4px !important;
+        background: rgba(255, 255, 255, 0.08) !important;
+        border: 1px solid rgba(255, 255, 255, 0.16) !important;
+        border-radius: 8px !important;
+        color: #f1f5f9 !important;
+        font-family: inherit !important;
+        font-size: 12px !important;
+        font-weight: 700 !important;
+        cursor: pointer !important;
+        transition: all 0.15s ease !important;
+        white-space: nowrap !important;
       }
-      .env-btn.active {
-        background: rgba(46, 230, 255, 0.22);
-        border-color: #2ee6ff;
-        color: #2ee6ff;
-        box-shadow: 0 0 10px rgba(46, 230, 255, 0.35);
+      .v-pill:hover {
+        background: rgba(255, 203, 31, 0.2) !important;
+        border-color: #ffcb1f !important;
+      }
+      .v-pill.active {
+        background: linear-gradient(135deg, #ffd400, #ff9900) !important;
+        color: #0b0f19 !important;
+        border-color: #ffd400 !important;
+        font-weight: 900 !important;
+        box-shadow: 0 0 14px rgba(255, 212, 0, 0.6) !important;
+        transform: translateY(-1px) !important;
+      }
+      .v-pill .v-ic {
+        font-size: 16px !important;
+      }
+      .v-spec-badge {
+        font-size: 11px !important;
+        color: #cfd8dc !important;
+        margin-top: 5px !important;
+        padding-top: 4px !important;
+        border-top: 1px dashed rgba(255, 203, 31, 0.25) !important;
+        text-align: center !important;
+        white-space: nowrap !important;
+        overflow: hidden !important;
+        text-overflow: ellipsis !important;
+      }
+
+      /* Environment Bar */
+      .raja-env-bar {
+        width: 100% !important;
+        box-sizing: border-box !important;
+      }
+      .env-strip {
+        display: flex !important;
+        gap: 6px !important;
+        width: 100% !important;
+      }
+      .env-pill {
+        flex: 1 1 0 !important;
+        padding: 6px 8px !important;
+        background: rgba(255, 255, 255, 0.08) !important;
+        border: 1px solid rgba(255, 255, 255, 0.16) !important;
+        border-radius: 8px !important;
+        color: #f1f5f9 !important;
+        font-size: 12px !important;
+        font-weight: 700 !important;
+        cursor: pointer !important;
+        transition: all 0.15s ease !important;
+        text-align: center !important;
+        white-space: nowrap !important;
+      }
+      .env-pill:hover {
+        background: rgba(46, 230, 255, 0.2) !important;
+        border-color: #2ee6ff !important;
+      }
+      .env-pill.active {
+        background: rgba(46, 230, 255, 0.25) !important;
+        border-color: #2ee6ff !important;
+        color: #2ee6ff !important;
+        box-shadow: 0 0 10px rgba(46, 230, 255, 0.4) !important;
       }
       #rajaRainBtn.active {
-        background: rgba(0, 180, 255, 0.25);
-        border-color: #00d2ff;
-        color: #00d2ff;
+        background: rgba(0, 180, 255, 0.3) !important;
+        border-color: #00d2ff !important;
+        color: #00d2ff !important;
+        box-shadow: 0 0 10px rgba(0, 210, 255, 0.4) !important;
+      }
+
+      /* Play Row CTA */
+      .play-row {
+        margin-top: 4px !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        gap: 14px !important;
+      }
+      .cta {
+        font-size: 26px !important;
+        padding: 12px 38px 10px !important;
+        border-radius: 50px !important;
+        background: linear-gradient(135deg, #ffd400 0%, #ff9900 100%) !important;
+        color: #0d1117 !important;
+        border: 0 !important;
+        box-shadow: 0 0 24px rgba(255, 203, 31, 0.6), 0 5px 0 #9c7400 !important;
+        cursor: pointer !important;
+        transition: transform 0.08s, box-shadow 0.15s !important;
+        font-weight: 800 !important;
+      }
+      .cta:hover {
+        box-shadow: 0 0 32px rgba(255, 203, 31, 0.8), 0 5px 0 #9c7400 !important;
+        transform: translateY(-2px) !important;
+      }
+      .cta:active {
+        transform: translateY(3px) !important;
+        box-shadow: 0 0 12px rgba(255, 203, 31, 0.4), 0 2px 0 #9c7400 !important;
+      }
+
+      /* Help Drawer */
+      .help {
+        max-width: 580px !important;
+        width: 100% !important;
+        background: rgba(14, 18, 26, 0.75) !important;
+        border: 1px solid rgba(255, 255, 255, 0.15) !important;
+        border-radius: 12px !important;
+        padding: 6px 12px !important;
+        margin-top: 4px !important;
+        box-sizing: border-box !important;
+      }
+      .help summary {
+        font-size: 13px !important;
+        font-weight: 700 !important;
+        color: #ffcb1f !important;
+        cursor: pointer !important;
+        padding: 4px 0 !important;
+        text-align: center !important;
+      }
+
+      /* 2. IN-GAME HUD 4-CORNER ARCHITECTURE */
+
+      /* TOP-LEFT: Consolidated Player Vitals Capsule */
+      .hud-top {
+        position: fixed !important;
+        top: calc(env(safe-area-inset-top, 0px) + 12px) !important;
+        left: 12px !important;
+        right: auto !important;
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: flex-start !important;
+        gap: 6px !important;
+        padding: 0 !important;
+        pointer-events: none !important;
+        z-index: 92 !important;
+      }
+      #lossBox {
+        background: rgba(11, 17, 32, 0.88) !important;
+        border: 1.5px solid rgba(255, 203, 31, 0.5) !important;
+        border-radius: 12px !important;
+        padding: 6px 12px !important;
+        backdrop-filter: blur(10px) !important;
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6) !important;
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 2px !important;
+        min-width: 160px !important;
+        pointer-events: none !important;
+      }
+      #lossBox .lbl {
+        font-size: 11px !important;
+        font-weight: 800 !important;
+        color: #ffcb1f !important;
+        background: transparent !important;
+        padding: 0 !important;
+        box-shadow: none !important;
+        letter-spacing: 0.5px !important;
+      }
+      .loss-row {
+        display: flex !important;
+        align-items: baseline !important;
+        gap: 6px !important;
+      }
+      #loss {
+        font-size: 24px !important;
+        color: #ffcb1f !important;
+        line-height: 1.1 !important;
+        text-shadow: 0 0 10px rgba(255, 203, 31, 0.6) !important;
+      }
+      #combo {
+        font-size: 14px !important;
+        background: #ff0055 !important;
+        color: #fff !important;
+        padding: 1px 6px !important;
+        border-radius: 6px !important;
+      }
+      .raja-fare-inline {
+        display: flex !important;
+        align-items: center !important;
+        gap: 6px !important;
+        border-top: 1px dashed rgba(255, 203, 31, 0.25) !important;
+        padding-top: 3px !important;
+        margin-top: 2px !important;
+      }
+      .raja-fare-inline .fare-badge {
+        font-size: 11px !important;
+        color: #a8ff78 !important;
+        font-weight: 700 !important;
+      }
+      .raja-fare-inline .fare-num {
+        font-size: 14px !important;
+        color: #38ef7d !important;
+        font-weight: 800 !important;
+        font-family: 'Baloo Da 2', monospace !important;
+      }
+
+      #battBox {
+        background: rgba(11, 17, 32, 0.88) !important;
+        border: 1.5px solid rgba(46, 230, 255, 0.4) !important;
+        border-radius: 12px !important;
+        padding: 5px 8px !important;
+        backdrop-filter: blur(10px) !important;
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6) !important;
+        display: flex !important;
+        flex-wrap: wrap !important;
+        align-items: center !important;
+        gap: 4px 6px !important;
+        max-width: 175px !important;
+        pointer-events: auto !important;
+        box-sizing: border-box !important;
+      }
+      #battBox .battery-label {
+        font-size: 11px !important;
+        font-weight: 700 !important;
+        color: #4fc3f7 !important;
+        white-space: nowrap !important;
+      }
+      #battBox .bar {
+        width: 50px !important;
+        height: 7px !important;
+        background: rgba(0, 0, 0, 0.6) !important;
+        border: 1px solid rgba(255, 255, 255, 0.3) !important;
+        border-radius: 4px !important;
+        margin: 0 !important;
+      }
+      #battBox #chargeHint {
+        width: 100% !important;
+        font-size: 10px !important;
+        padding: 1px 6px !important;
+        box-sizing: border-box !important;
+        margin-top: 2px !important;
+      }
+      #battBox #minimap {
+        display: none !important; /* Hide old redundant minimap */
+      }
+      #battBox #muteBtn {
+        width: 26px !important;
+        height: 26px !important;
+        margin: 0 !important;
+        border: 1px solid rgba(255, 255, 255, 0.3) !important;
+        background: rgba(255, 255, 255, 0.1) !important;
+        border-radius: 50% !important;
+        display: grid !important;
+        place-items: center !important;
+        cursor: pointer !important;
+      }
+      #battBox #muteBtn svg {
+        width: 14px !important;
+        height: 14px !important;
       }
       #radioBtn {
-        pointer-events: auto;
-        display: inline-flex;
-        align-items: center;
-        gap: 6px;
-        background: rgba(15, 43, 99, 0.85);
-        border: 1.5px solid #2ee6ff;
-        color: #fff;
-        padding: 4px 10px;
-        border-radius: 6px;
-        font-size: 13px;
-        font-weight: 700;
-        cursor: pointer;
-        margin-top: 4px;
+        margin: 0 !important;
+        padding: 3px 8px !important;
+        font-size: 11px !important;
+        height: 26px !important;
+        border-radius: 6px !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        cursor: pointer !important;
+        background: rgba(15, 43, 99, 0.85) !important;
+        border: 1.5px solid #2ee6ff !important;
+        color: #fff !important;
       }
       #radioBtn.active {
-        background: #2ee6ff;
-        color: #0a1128;
-        box-shadow: 0 0 14px rgba(46, 230, 255, 0.7);
-        animation: radioPulse 1.2s infinite alternate ease-in-out;
+        background: #2ee6ff !important;
+        color: #0a1128 !important;
+        box-shadow: 0 0 14px rgba(46, 230, 255, 0.7) !important;
       }
-      @keyframes radioPulse {
-        from { transform: scale(1); }
-        to { transform: scale(1.05); }
+      #fareMeter, .raja-fare-meter {
+        display: none !important; /* Integrated into #lossBox */
       }
 
-      /* Rain Canvas Overlay */
-      #rainCanvas {
-        position: fixed;
-        inset: 0;
-        width: 100%;
-        height: 100%;
-        pointer-events: none;
-        z-index: 10;
+      /* TOP-RIGHT: Dedicated Mini-Map Cyber Radar */
+      .mini-map-radar {
+        position: fixed !important;
+        top: calc(env(safe-area-inset-top, 0px) + 12px) !important;
+        right: 12px !important;
+        left: auto !important;
+        width: auto !important;
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+        background: rgba(11, 17, 32, 0.9) !important;
+        border: 2px solid #00f0ff !important;
+        border-radius: 14px !important;
+        padding: 6px 8px !important;
+        box-shadow: 0 0 20px rgba(0, 240, 255, 0.4), 0 8px 32px rgba(0, 0, 0, 0.8) !important;
+        backdrop-filter: blur(10px) !important;
+        z-index: 92 !important;
+        cursor: pointer !important;
+        pointer-events: auto !important;
+        transition: transform 0.2s ease !important;
+      }
+      .mini-map-radar:hover {
+        transform: scale(1.04) !important;
+      }
+      .mini-map-radar.minimized #radarCanvas,
+      .mini-map-radar.minimized .radar-gps-hint {
+        display: none !important;
+      }
+      .radar-header {
+        display: flex !important;
+        align-items: center !important;
+        justify-content: space-between !important;
+        width: 100% !important;
+        margin-bottom: 4px !important;
+        padding: 0 2px !important;
+      }
+      .radar-live-dot {
+        width: 7px !important;
+        height: 7px !important;
+        background: #00f0ff !important;
+        border-radius: 50% !important;
+        box-shadow: 0 0 8px #00f0ff !important;
+        animation: recBlink 0.9s infinite alternate !important;
+      }
+      .radar-title {
+        font-family: inherit !important;
+        font-size: 11px !important;
+        font-weight: 800 !important;
+        color: #00f0ff !important;
+        letter-spacing: 0.5px !important;
+      }
+      .radar-heading {
+        font-family: monospace !important;
+        font-size: 11px !important;
+        font-weight: 900 !important;
+        color: #ffd400 !important;
+      }
+      #radarCanvas {
+        border-radius: 50% !important;
+        background: #070d18 !important;
+      }
+      .radar-gps-hint {
+        font-size: 10.5px !important;
+        font-weight: 700 !important;
+        color: #ffd400 !important;
+        margin-top: 3px !important;
+        text-shadow: 0 1px 4px rgba(0,0,0,0.9) !important;
       }
 
-      /* Live TV Breaking News Styling for Game Over */
-      #paper .np {
-        background: #0d1117 !important;
-        color: #f7efe0 !important;
-        border: 2px solid #e0242b !important;
-        box-shadow: 0 0 35px rgba(224, 36, 43, 0.6) !important;
-      }
-      #paper .np-scroll {
-        background: transparent !important;
-      }
-      #paper header {
-        border-bottom: 3px solid #e0242b !important;
-        background: #1a0809 !important;
-        padding: 10px 14px !important;
-        border-radius: 8px 8px 0 0;
-      }
-      #paper .np-mast .np-name {
-        color: #ff3344 !important;
-        font-size: clamp(24px, 5vw, 36px) !important;
-        text-shadow: 0 0 12px rgba(255, 51, 68, 0.8) !important;
-        letter-spacing: 1px;
-      }
-      #paper .np-kicker {
-        background: #e0242b;
-        color: #fff;
-        padding: 2px 12px;
-        display: inline-block;
-        font-weight: 900;
-        border-radius: 4px;
-        letter-spacing: 1.5px;
-      }
-      #paper .np-body {
-        border-color: rgba(224, 36, 43, 0.3) !important;
-      }
-      #paper .np-price {
-        background: rgba(224, 36, 43, 0.15) !important;
-        border-left: 4px solid #ffcb1f !important;
-        padding: 8px 12px !important;
-      }
-      #paper .np-stamp {
-        background: #e0242b !important;
-        color: #fff !important;
-        box-shadow: 0 0 18px rgba(224, 36, 43, 0.9) !important;
-      }
-
-      /* GTA Wanted Stars Box */
+      /* TOP-CENTER: Wanted Stars & Contextual Bribe */
       .raja-stars-box {
-        position: fixed;
-        top: 14px;
-        left: 50%;
-        transform: translateX(-50%);
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        background: rgba(15, 12, 10, 0.85);
-        border: 1.5px solid rgba(255, 203, 31, 0.4);
-        padding: 4px 14px;
-        border-radius: 20px;
-        box-shadow: 0 4px 16px rgba(0,0,0,0.6);
-        z-index: 92;
-        pointer-events: none;
-        transition: all 0.3s ease;
+        position: fixed !important;
+        top: calc(env(safe-area-inset-top, 0px) + 12px) !important;
+        left: 50% !important;
+        transform: translateX(-50%) !important;
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+        background: rgba(11, 17, 32, 0.88) !important;
+        border: 1.5px solid rgba(255, 203, 31, 0.4) !important;
+        padding: 3px 12px !important;
+        border-radius: 20px !important;
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6) !important;
+        z-index: 92 !important;
+        pointer-events: none !important;
+        transition: all 0.3s ease !important;
       }
       .raja-stars-box .stars-label {
-        font-family: 'Hind Siliguri', sans-serif;
-        font-size: 11px;
-        font-weight: 800;
-        letter-spacing: 2px;
-        color: #ffcb1f;
-        text-shadow: 0 0 8px rgba(255, 203, 31, 0.6);
-        margin-bottom: -2px;
+        font-size: 10px !important;
+        font-weight: 800 !important;
+        letter-spacing: 2px !important;
+        color: #ffcb1f !important;
+        margin-bottom: -2px !important;
       }
       .raja-stars-box .stars-row {
-        display: flex;
-        gap: 4px;
+        display: flex !important;
+        gap: 3px !important;
       }
       .raja-stars-box .star {
-        font-size: 20px;
-        color: rgba(255, 255, 255, 0.2);
-        transition: color 0.2s, transform 0.2s;
+        font-size: 18px !important;
+        color: rgba(255, 255, 255, 0.22) !important;
+        transition: color 0.2s, transform 0.2s !important;
       }
       .raja-stars-box .star.lit {
-        color: #ffd400;
-        text-shadow: 0 0 10px #ffd400, 0 0 20px #ff9900;
-        transform: scale(1.15);
+        color: #ffd400 !important;
+        text-shadow: 0 0 10px #ffd400, 0 0 20px #ff9900 !important;
+        transform: scale(1.15) !important;
       }
       .raja-stars-box.chase .star.lit {
-        animation: starChaseFlash 0.4s infinite alternate;
+        animation: starChaseFlash 0.4s infinite alternate !important;
       }
       @keyframes starChaseFlash {
-        0% { color: #ff0055; text-shadow: 0 0 12px #ff0055; }
-        100% { color: #0088ff; text-shadow: 0 0 12px #0088ff; }
+        0% { color: #ff0055 !important; text-shadow: 0 0 12px #ff0055 !important; }
+        100% { color: #0088ff !important; text-shadow: 0 0 12px #0088ff !important; }
+      }
+
+      .bribe-btn {
+        position: fixed !important;
+        top: calc(env(safe-area-inset-top, 0px) + 58px) !important;
+        left: 50% !important;
+        transform: translateX(-50%) !important;
+        background: linear-gradient(135deg, #e0242b, #8b0000) !important;
+        color: #fff !important;
+        font-family: inherit !important;
+        font-weight: 800 !important;
+        font-size: 13px !important;
+        padding: 6px 18px !important;
+        border-radius: 30px !important;
+        border: 2px solid #ffd400 !important;
+        box-shadow: 0 4px 20px rgba(224, 36, 43, 0.8) !important;
+        cursor: pointer !important;
+        z-index: 96 !important;
+        display: none; /* Controlled dynamically by WantedSystem */
+        align-items: center !important;
+        gap: 6px !important;
+        animation: bribePulse 0.9s infinite alternate !important;
+      }
+      .bribe-btn:hover {
+        transform: translateX(-50%) scale(1.05) !important;
+      }
+      @keyframes bribePulse {
+        0% { box-shadow: 0 0 12px rgba(255, 212, 0, 0.6) !important; }
+        100% { box-shadow: 0 0 26px rgba(224, 36, 43, 0.9) !important; }
+      }
+
+      /* Alerts Container */
+      #alerts {
+        position: fixed !important;
+        top: calc(env(safe-area-inset-top, 0px) + 54px) !important;
+        left: 50% !important;
+        transform: translateX(-50%) !important;
+        z-index: 91 !important;
+      }
+
+      /* BOTTOM-LEFT: Digital Cockpit Speedometer Gauge */
+      .raja-gauge {
+        position: fixed !important;
+        bottom: 40px !important;
+        left: 16px !important;
+        width: 104px !important;
+        height: 104px !important;
+        background: rgba(11, 17, 32, 0.88) !important;
+        border: 2px solid rgba(255, 203, 31, 0.4) !important;
+        border-radius: 50% !important;
+        backdrop-filter: blur(8px) !important;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.7) !important;
+        z-index: 90 !important;
+        pointer-events: none !important;
+        transition: border-color 0.3s, box-shadow 0.3s !important;
+      }
+      .raja-gauge.overspeed {
+        border-color: #ff0055 !important;
+        box-shadow: 0 0 25px rgba(255, 0, 85, 0.8) !important;
+      }
+      .gauge-svg {
+        width: 100% !important;
+        height: 100% !important;
+      }
+      .gauge-bg {
+        fill: none !important;
+        stroke: rgba(255, 255, 255, 0.08) !important;
+        stroke-width: 8 !important;
+      }
+      .gauge-arc {
+        fill: none !important;
+        stroke: url(#gaugeGrad) !important;
+        stroke-width: 8 !important;
+        stroke-linecap: round !important;
+      }
+      .gauge-needle {
+        stroke: #ffd400 !important;
+        stroke-width: 3.5 !important;
+        stroke-linecap: round !important;
+        filter: drop-shadow(0 0 6px #ffd400) !important;
+        transition: transform 0.08s ease-out !important;
+      }
+      .gauge-readout {
+        position: absolute !important;
+        bottom: 20px !important;
+        left: 0 !important;
+        right: 0 !important;
+        text-align: center !important;
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+      }
+      .speed-number {
+        font-family: 'Baloo Da 2', monospace !important;
+        font-weight: 800 !important;
+        font-size: 22px !important;
+        color: #fff !important;
+        line-height: 1 !important;
+        text-shadow: 0 0 10px rgba(255, 203, 31, 0.8) !important;
+      }
+      .speed-unit {
+        font-size: 8.5px !important;
+        font-weight: 700 !important;
+        letter-spacing: 1px !important;
+        color: #4fc3f7 !important;
+      }
+
+      /* Motion Blur Wind Streaks Canvas */
+      .speed-streaks-canvas {
+        position: fixed !important;
+        inset: 0 !important;
+        pointer-events: none !important;
+        z-index: 75 !important;
       }
 
       /* Police Flashing Screen Vignette */
       .police-vignette {
-        position: fixed;
-        inset: 0;
-        pointer-events: none;
-        z-index: 80;
-        opacity: 0;
-        transition: opacity 0.3s;
+        position: fixed !important;
+        inset: 0 !important;
+        pointer-events: none !important;
+        z-index: 80 !important;
+        opacity: 0 !important;
+        transition: opacity 0.3s !important;
       }
       .police-vignette.active {
-        opacity: 1;
-        animation: policeFlash 0.4s infinite alternate;
+        opacity: 1 !important;
+        animation: policeFlash 0.4s infinite alternate !important;
       }
       @keyframes policeFlash {
-        0% { box-shadow: inset 0 0 90px rgba(255, 0, 0, 0.55); }
-        100% { box-shadow: inset 0 0 90px rgba(0, 100, 255, 0.55); }
+        0% { box-shadow: inset 0 0 90px rgba(255, 0, 0, 0.55) !important; }
+        100% { box-shadow: inset 0 0 90px rgba(0, 100, 255, 0.55) !important; }
       }
 
-      /* Bribe Police Button */
-      .bribe-btn {
-        position: fixed;
-        top: 70px;
-        left: 50%;
-        transform: translateX(-50%);
-        background: linear-gradient(135deg, #e0242b, #8b0000);
-        color: #fff;
-        font-family: 'Hind Siliguri', sans-serif;
-        font-weight: 800;
-        font-size: 14px;
-        padding: 8px 20px;
-        border-radius: 30px;
-        border: 2px solid #ffd400;
-        box-shadow: 0 4px 20px rgba(224, 36, 43, 0.7);
-        cursor: pointer;
-        z-index: 100;
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        animation: bribePulse 0.9s infinite alternate;
-        transition: transform 0.15s, background 0.15s;
-      }
-      .bribe-btn:hover {
-        transform: translateX(-50%) scale(1.06);
-        background: linear-gradient(135deg, #ff3333, #a00000);
-      }
-      @keyframes bribePulse {
-        0% { box-shadow: 0 0 12px rgba(255, 212, 0, 0.6); }
-        100% { box-shadow: 0 0 26px rgba(224, 36, 43, 0.9); }
+      /* Rain Canvas Overlay */
+      #rainCanvas {
+        position: fixed !important;
+        inset: 0 !important;
+        width: 100% !important;
+        height: 100% !important;
+        pointer-events: none !important;
+        z-index: 10 !important;
       }
 
-      /* Circular SVG Speedometer Gauge */
-      .raja-gauge {
-        position: fixed;
-        bottom: 90px;
-        left: 20px;
-        width: 124px;
-        height: 124px;
-        background: rgba(12, 16, 24, 0.88);
-        border: 2px solid rgba(255, 203, 31, 0.4);
-        border-radius: 50%;
-        backdrop-filter: blur(8px);
-        box-shadow: 0 4px 20px rgba(0,0,0,0.7), inset 0 0 18px rgba(79, 195, 247, 0.18);
-        z-index: 92;
-        pointer-events: none;
-        transition: border-color 0.3s, box-shadow 0.3s;
+      /* Near-Miss Cinematic Flash Banner */
+      .near-miss-toast {
+        position: fixed !important;
+        top: 22% !important;
+        left: 50% !important;
+        transform: translate(-50%, -50%) scale(0.6) !important;
+        background: linear-gradient(135deg, rgba(255, 51, 68, 0.95), rgba(255, 153, 0, 0.95)) !important;
+        color: #ffffff !important;
+        font-family: inherit !important;
+        font-size: clamp(16px, 4vw, 24px) !important;
+        font-weight: 900 !important;
+        padding: 8px 24px !important;
+        border-radius: 30px !important;
+        border: 2px solid #ffd400 !important;
+        box-shadow: 0 0 25px rgba(255, 203, 31, 0.9), 0 4px 20px rgba(0, 0, 0, 0.8) !important;
+        pointer-events: none !important;
+        z-index: 100 !important;
+        opacity: 0 !important;
+        transition: all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
       }
-      .raja-gauge.overspeed {
-        border-color: #ff0055;
-        box-shadow: 0 0 25px rgba(255, 0, 85, 0.8), inset 0 0 20px rgba(255, 0, 85, 0.5);
-        animation: overspeedPulse 0.4s infinite alternate;
-      }
-      @keyframes overspeedPulse {
-        0% { transform: scale(1); }
-        100% { transform: scale(1.04); }
-      }
-      .gauge-svg {
-        width: 100%;
-        height: 100%;
-      }
-      .gauge-bg {
-        fill: none;
-        stroke: rgba(255, 255, 255, 0.08);
-        stroke-width: 8;
-      }
-      .gauge-arc {
-        fill: none;
-        stroke: url(#gaugeGrad);
-        stroke-width: 8;
-        stroke-linecap: round;
-        stroke-dasharray: 240;
-        stroke-dashoffset: 0;
-      }
-      .gauge-needle {
-        stroke: #ffd400;
-        stroke-width: 3.5;
-        stroke-linecap: round;
-        filter: drop-shadow(0 0 6px #ffd400);
-        transition: transform 0.08s ease-out;
-      }
-      .gauge-readout {
-        position: absolute;
-        bottom: 24px;
-        left: 0;
-        right: 0;
-        text-align: center;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-      }
-      .speed-number {
-        font-family: 'Baloo Da 2', monospace;
-        font-weight: 800;
-        font-size: 24px;
-        color: #fff;
-        line-height: 1;
-        text-shadow: 0 0 10px rgba(255, 203, 31, 0.8);
-      }
-      .speed-unit {
-        font-family: sans-serif;
-        font-size: 9px;
-        font-weight: 700;
-        letter-spacing: 1px;
-        color: #4fc3f7;
-      }
-
-      /* Dhaka Taxi Fare Meter */
-      .raja-fare-meter {
-        position: fixed;
-        top: 14px;
-        right: 80px;
-        background: rgba(10, 15, 22, 0.9);
-        border: 1.5px solid #38ef7d;
-        padding: 5px 12px;
-        border-radius: 10px;
-        box-shadow: 0 2px 14px rgba(56, 239, 125, 0.35);
-        z-index: 92;
-        pointer-events: none;
-        text-align: right;
-      }
-      .fare-badge {
-        font-family: 'Hind Siliguri', sans-serif;
-        font-size: 11px;
-        font-weight: 700;
-        color: #a8ff78;
-        letter-spacing: 0.5px;
-      }
-      .fare-num {
-        font-family: 'Baloo Da 2', monospace;
-        font-size: 18px;
-        font-weight: 800;
-        color: #38ef7d;
-        text-shadow: 0 0 8px rgba(56, 239, 125, 0.6);
-        line-height: 1.1;
-      }
-
-      /* Motion Blur Wind Speed Streaks */
-      .speed-streaks-canvas {
-        position: fixed;
-        inset: 0;
-        pointer-events: none;
-        z-index: 75;
+      .near-miss-toast.active {
+        opacity: 1 !important;
+        transform: translate(-50%, -50%) scale(1.15) !important;
       }
 
       /* Live TV News & Police FIR Challan Game Over Screen */
@@ -645,7 +914,7 @@
       }
       .np-name {
         color: #ffcb1f !important;
-        font-family: 'Baloo Da 2', sans-serif !important;
+        font-family: inherit !important;
         font-weight: 800 !important;
         font-size: 28px !important;
         letter-spacing: 1.5px !important;
@@ -668,7 +937,7 @@
       }
       .np h2 {
         color: #ffffff !important;
-        font-family: 'Anek Bangla', sans-serif !important;
+        font-family: inherit !important;
         font-weight: 800 !important;
         text-shadow: 0 2px 10px rgba(0,0,0,0.9) !important;
       }
@@ -704,282 +973,262 @@
 
       /* Camera Flash Animation */
       .tv-camera-flash {
-        position: fixed;
-        inset: 0;
-        background: #ffffff;
-        opacity: 0;
-        pointer-events: none;
-        z-index: 99999;
+        position: fixed !important;
+        inset: 0 !important;
+        background: #ffffff !important;
+        opacity: 0 !important;
+        pointer-events: none !important;
+        z-index: 99999 !important;
       }
       .tv-camera-flash.flashing {
-        animation: cameraFlashAnim 0.35s ease-out;
+        animation: cameraFlashAnim 0.35s ease-out !important;
       }
       @keyframes cameraFlashAnim {
-        0% { opacity: 0.92; }
-        25% { opacity: 0; }
-        45% { opacity: 0.85; }
-        100% { opacity: 0; }
+        0% { opacity: 0.92 !important; }
+        25% { opacity: 0 !important; }
+        45% { opacity: 0.85 !important; }
+        100% { opacity: 0 !important; }
       }
 
       /* TV Photo Overlays & CRT Scanlines */
       .tv-photo-overlay {
-        position: absolute;
-        inset: 0;
-        pointer-events: none;
+        position: absolute !important;
+        inset: 0 !important;
+        pointer-events: none !important;
       }
       .tv-live-pill {
-        position: absolute;
-        top: 8px;
-        left: 8px;
-        background: rgba(224, 36, 43, 0.95);
-        color: #ffffff;
-        padding: 3px 8px;
-        border-radius: 4px;
-        font-size: 11px;
-        font-weight: 800;
-        box-shadow: 0 0 10px rgba(224, 36, 43, 0.8);
-        display: flex;
-        align-items: center;
-        gap: 5px;
-        z-index: 2;
-        letter-spacing: 0.5px;
+        position: absolute !important;
+        top: 8px !important;
+        left: 8px !important;
+        background: rgba(224, 36, 43, 0.95) !important;
+        color: #ffffff !important;
+        padding: 3px 8px !important;
+        border-radius: 4px !important;
+        font-size: 11px !important;
+        font-weight: 800 !important;
+        box-shadow: 0 0 10px rgba(224, 36, 43, 0.8) !important;
+        display: flex !important;
+        align-items: center !important;
+        gap: 5px !important;
+        z-index: 2 !important;
+        letter-spacing: 0.5px !important;
       }
       .rec-blink {
-        width: 7px;
-        height: 7px;
-        background: #ffffff;
-        border-radius: 50%;
-        animation: recBlink 0.8s infinite alternate;
+        width: 7px !important;
+        height: 7px !important;
+        background: #ffffff !important;
+        border-radius: 50% !important;
+        animation: recBlink 0.8s infinite alternate !important;
       }
       @keyframes recBlink {
-        0% { opacity: 1; }
-        100% { opacity: 0.2; }
+        0% { opacity: 1 !important; }
+        100% { opacity: 0.2 !important; }
       }
       .tv-rec-time {
-        position: absolute;
-        top: 8px;
-        right: 8px;
-        background: rgba(15, 23, 42, 0.85);
-        color: #ffd400;
-        padding: 3px 8px;
-        border-radius: 4px;
-        font-size: 11px;
-        font-family: monospace;
-        font-weight: 700;
-        z-index: 2;
-        border: 1px solid rgba(255, 212, 0, 0.3);
+        position: absolute !important;
+        top: 8px !important;
+        right: 8px !important;
+        background: rgba(15, 23, 42, 0.85) !important;
+        color: #ffd400 !important;
+        padding: 3px 8px !important;
+        border-radius: 4px !important;
+        font-size: 11px !important;
+        font-family: monospace !important;
+        font-weight: 700 !important;
+        z-index: 2 !important;
+        border: 1px solid rgba(255, 212, 0, 0.3) !important;
       }
       .tv-scanlines {
-        position: absolute;
-        inset: 0;
-        background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.35) 50%);
-        background-size: 100% 4px;
-        z-index: 1;
+        position: absolute !important;
+        inset: 0 !important;
+        background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.35) 50%) !important;
+        background-size: 100% 4px !important;
+        z-index: 1 !important;
       }
 
       /* Police FIR Challan Docket */
       .police-fir-box {
-        background: rgba(15, 23, 42, 0.92);
-        border: 2px solid #ffcb1f;
-        border-radius: 10px;
-        padding: 12px 14px;
-        margin: 12px 0;
-        box-shadow: inset 0 0 15px rgba(255, 203, 31, 0.15), 0 4px 18px rgba(0, 0, 0, 0.6);
-        font-family: 'Anek Bangla', 'Hind Siliguri', sans-serif;
+        background: rgba(15, 23, 42, 0.92) !important;
+        border: 2px solid #ffcb1f !important;
+        border-radius: 10px !important;
+        padding: 12px 14px !important;
+        margin: 12px 0 !important;
+        box-shadow: inset 0 0 15px rgba(255, 203, 31, 0.15), 0 4px 18px rgba(0, 0, 0, 0.6) !important;
+        font-family: inherit !important;
       }
       .fir-top-bar {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        border-bottom: 1.5px solid rgba(255, 203, 31, 0.4);
-        padding-bottom: 6px;
-        margin-bottom: 8px;
+        display: flex !important;
+        justify-content: space-between !important;
+        align-items: center !important;
+        border-bottom: 1.5px solid rgba(255, 203, 31, 0.4) !important;
+        padding-bottom: 6px !important;
+        margin-bottom: 8px !important;
       }
       .fir-emblem {
-        color: #ffcb1f;
-        font-weight: 800;
-        font-size: 13px;
-        letter-spacing: 0.5px;
+        color: #ffcb1f !important;
+        font-weight: 800 !important;
+        font-size: 13px !important;
+        letter-spacing: 0.5px !important;
       }
       .fir-doc-badge {
-        background: #e0242b;
-        color: #ffffff;
-        padding: 2px 8px;
-        border-radius: 4px;
-        font-size: 11px;
-        font-weight: 800;
-        letter-spacing: 0.5px;
+        background: #e0242b !important;
+        color: #ffffff !important;
+        padding: 2px 8px !important;
+        border-radius: 4px !important;
+        font-size: 11px !important;
+        font-weight: 800 !important;
+        letter-spacing: 0.5px !important;
       }
       .fir-meta-row {
-        display: flex;
-        justify-content: space-between;
-        font-size: 12px;
-        color: #94a3b8;
-        margin-bottom: 10px;
+        display: flex !important;
+        justify-content: space-between !important;
+        font-size: 12px !important;
+        color: #94a3b8 !important;
+        margin-bottom: 10px !important;
       }
       .fir-details-grid {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 8px 14px;
+        display: grid !important;
+        grid-template-columns: 1fr 1fr !important;
+        gap: 8px 14px !important;
       }
       .fir-grid-item small {
-        display: block;
-        font-size: 11px;
-        color: #94a3b8;
-        margin-bottom: 2px;
+        display: block !important;
+        font-size: 11px !important;
+        color: #94a3b8 !important;
+        margin-bottom: 2px !important;
       }
       .fir-grid-item strong {
-        display: block;
-        font-size: 13px;
-        color: #f8fafc;
-        line-height: 1.3;
+        display: block !important;
+        font-size: 13px !important;
+        color: #f8fafc !important;
+        line-height: 1.3 !important;
       }
       .fir-grid-item .fir-amount {
-        color: #ff3344;
-        font-size: 18px;
-        font-weight: 900;
-        text-shadow: 0 0 12px rgba(255, 51, 68, 0.6);
+        color: #ff3344 !important;
+        font-size: 18px !important;
+        font-weight: 900 !important;
+        text-shadow: 0 0 12px rgba(255, 51, 68, 0.6) !important;
       }
       .fir-seal-banner {
-        margin-top: 10px;
-        text-align: center;
-        border-top: 1px dashed rgba(255, 203, 31, 0.3);
-        padding-top: 6px;
+        margin-top: 10px !important;
+        text-align: center !important;
+        border-top: 1px dashed rgba(255, 203, 31, 0.3) !important;
+        padding-top: 6px !important;
       }
       .fir-seal-badge {
-        color: #38ef7d;
-        font-size: 11px;
-        font-weight: 700;
-        letter-spacing: 0.5px;
+        color: #38ef7d !important;
+        font-size: 11px !important;
+        font-weight: 700 !important;
+        letter-spacing: 0.5px !important;
       }
 
-      
-      /* Mini-Map Cyber Radar HUD */
-      .mini-map-radar {
-        position: fixed;
-        top: 14px;
-        right: 14px;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        background: rgba(11, 17, 32, 0.88);
-        border: 2px solid #00f0ff;
-        border-radius: 14px;
-        padding: 6px 8px;
-        box-shadow: 0 0 20px rgba(0, 240, 255, 0.4), 0 8px 32px rgba(0, 0, 0, 0.8);
-        backdrop-filter: blur(10px);
-        z-index: 90;
-        cursor: pointer;
-        transition: transform 0.2s ease, opacity 0.2s ease;
+      /* Bottom TV Breaking News Marquee Scroller */
+      .tv-breaking-ticker {
+        background: #0b1120 !important;
+        border-top: 2px solid #e0242b !important;
+        border-bottom: 2px solid #ffd400 !important;
+        display: flex !important;
+        align-items: center !important;
+        overflow: hidden !important;
+        padding: 6px 0 !important;
+        border-radius: 0 0 14px 14px !important;
+        margin-top: 12px !important;
       }
-      .mini-map-radar:hover {
-        transform: scale(1.04);
+      .ticker-badge {
+        background: #e0242b !important;
+        color: #ffffff !important;
+        font-weight: 900 !important;
+        padding: 4px 12px !important;
+        font-size: 12px !important;
+        white-space: nowrap !important;
+        margin-left: 8px !important;
+        margin-right: 10px !important;
+        border-radius: 4px !important;
+        box-shadow: 0 0 10px rgba(224, 36, 43, 0.8) !important;
+        flex-shrink: 0 !important;
       }
-      .mini-map-radar.minimized #radarCanvas,
-      .mini-map-radar.minimized .radar-gps-hint {
-        display: none;
+      .ticker-marquee-wrap {
+        overflow: hidden !important;
+        white-space: nowrap !important;
+        width: 100% !important;
       }
-      .radar-header {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        width: 100%;
-        margin-bottom: 4px;
-        padding: 0 4px;
+      .ticker-marquee-track {
+        display: inline-block !important;
+        padding-left: 100% !important;
+        animation: tickerScroll 20s linear infinite !important;
+        font-size: 13px !important;
+        font-weight: 700 !important;
+        color: #ffd400 !important;
+        letter-spacing: 0.5px !important;
       }
-      .radar-live-dot {
-        width: 8px;
-        height: 8px;
-        background: #00f0ff;
-        border-radius: 50%;
-        box-shadow: 0 0 8px #00f0ff;
-        animation: recBlink 0.9s infinite alternate;
-      }
-      .radar-title {
-        font-family: 'Baloo Da 2', 'Anek Bangla', sans-serif;
-        font-size: 11px;
-        font-weight: 800;
-        color: #00f0ff;
-        letter-spacing: 0.5px;
-      }
-      .radar-heading {
-        font-family: monospace;
-        font-size: 11px;
-        font-weight: 900;
-        color: #ffd400;
-      }
-      #radarCanvas {
-        border-radius: 50%;
-        background: #070d18;
-      }
-      .radar-gps-hint {
-        font-family: 'Anek Bangla', sans-serif;
-        font-size: 11px;
-        font-weight: 700;
-        color: #ffd400;
-        margin-top: 4px;
-        text-shadow: 0 1px 4px rgba(0,0,0,0.9);
+      @keyframes tickerScroll {
+        0% { transform: translateX(0) !important; }
+        100% { transform: translateX(-100%) !important; }
       }
 
-      /* Near-Miss Cinematic Flash Banner */
-      .near-miss-toast {
-        position: fixed;
-        top: 22%;
-        left: 50%;
-        transform: translate(-50%, -50%) scale(0.6);
-        background: linear-gradient(135deg, rgba(255, 51, 68, 0.95), rgba(255, 153, 0, 0.95));
-        color: #ffffff;
-        font-family: 'Baloo Da 2', 'Anek Bangla', sans-serif;
-        font-size: clamp(16px, 4vw, 24px);
-        font-weight: 900;
-        padding: 8px 24px;
-        border-radius: 30px;
-        border: 2px solid #ffd400;
-        box-shadow: 0 0 25px rgba(255, 203, 31, 0.9), 0 4px 20px rgba(0, 0, 0, 0.8);
-        pointer-events: none;
-        z-index: 100;
-        opacity: 0;
-        transition: all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-      }
-      .near-miss-toast.active {
-        opacity: 1;
-        transform: translate(-50%, -50%) scale(1.15);
-      }
-
-      /* Mobile Perfection: Touch Ergonomics & Responsive UI */
+      /* MOBILE RESPONSIVE OVERRIDES (PERFECT TOUCH CLEARANCE) */
       @media (max-width: 768px) {
-        .mini-map-radar {
-          top: 8px;
-          right: 8px;
-          padding: 4px;
-          transform: scale(0.85);
-          transform-origin: top right;
-        }
-        .raja-cockpit-hud {
-          bottom: 12px !important;
-          left: 12px !important;
-          transform: scale(0.82) !important;
-          transform-origin: bottom left !important;
-        }
-        .raja-chada-meter {
-          top: 8px !important;
+        .hud-top {
+          top: calc(env(safe-area-inset-top, 0px) + 8px) !important;
           left: 8px !important;
-          padding: 4px 10px !important;
-          font-size: 12px !important;
+          gap: 4px !important;
+        }
+        #lossBox {
+          padding: 4px 8px !important;
+          min-width: 135px !important;
+        }
+        #loss {
+          font-size: 19px !important;
+        }
+        #battBox {
+          padding: 3px 8px !important;
+          gap: 6px !important;
+        }
+        #battBox .bar {
+          width: 48px !important;
+        }
+        .mini-map-radar {
+          top: calc(env(safe-area-inset-top, 0px) + 8px) !important;
+          right: 8px !important;
+          padding: 4px 6px !important;
+          transform: scale(0.85) !important;
+          transform-origin: top right !important;
         }
         .raja-stars-box {
-          top: 8px !important;
-          padding: 3px 10px !important;
+          top: calc(env(safe-area-inset-top, 0px) + 8px) !important;
+          padding: 2px 8px !important;
           transform: translateX(-50%) scale(0.85) !important;
         }
-        .bribe-police-btn {
-          top: 48px !important;
+        #controls {
+          display: none !important; /* Hide keyboard helper on touch screens */
+        }
+        .bribe-btn {
+          top: calc(env(safe-area-inset-top, 0px) + 240px) !important;
           font-size: 12px !important;
-          padding: 5px 12px !important;
+          padding: 6px 16px !important;
+          white-space: nowrap !important;
+        }
+        /* Speedometer lifted safely above left steering touch pedals */
+        .raja-gauge {
+          bottom: calc(var(--band) + 148px) !important;
+          left: 10px !important;
+          width: 72px !important;
+          height: 72px !important;
+          transform: none !important;
+        }
+        .speed-number {
+          font-size: 18px !important;
+        }
+        .gauge-readout {
+          bottom: 14px !important;
+        }
+        .cta {
+          font-size: 22px !important;
+          padding: 10px 30px !important;
         }
         #touch .tbtn {
-          touch-action: manipulation;
-          -webkit-tap-highlight-color: transparent;
+          touch-action: manipulation !important;
+          -webkit-tap-highlight-color: transparent !important;
         }
         #touch .pedal {
           font-weight: 900 !important;
@@ -1002,51 +1251,6 @@
           box-shadow: 0 0 15px rgba(255, 212, 0, 0.4) !important;
         }
       }
-
-      /* Bottom TV Breaking News Marquee Scroller */
-      .tv-breaking-ticker {
-        background: #0b1120;
-        border-top: 2px solid #e0242b;
-        border-bottom: 2px solid #ffd400;
-        display: flex;
-        align-items: center;
-        overflow: hidden;
-        padding: 6px 0;
-        border-radius: 0 0 14px 14px;
-        margin-top: 12px;
-      }
-      .ticker-badge {
-        background: #e0242b;
-        color: #ffffff;
-        font-weight: 900;
-        padding: 4px 12px;
-        font-size: 12px;
-        white-space: nowrap;
-        margin-left: 8px;
-        margin-right: 10px;
-        border-radius: 4px;
-        box-shadow: 0 0 10px rgba(224, 36, 43, 0.8);
-        flex-shrink: 0;
-      }
-      .ticker-marquee-wrap {
-        overflow: hidden;
-        white-space: nowrap;
-        width: 100%;
-      }
-      .ticker-marquee-track {
-        display: inline-block;
-        padding-left: 100%;
-        animation: tickerScroll 20s linear infinite;
-        font-size: 13px;
-        font-weight: 700;
-        color: #ffd400;
-        letter-spacing: 0.5px;
-      }
-      @keyframes tickerScroll {
-        0% { transform: translateX(0); }
-        100% { transform: translateX(-100%); }
-      }
-
     `;
     document.head.appendChild(style);
   }
@@ -1376,6 +1580,7 @@
         bribe.className = 'bribe-btn';
         bribe.innerHTML = `<span>👮 মামা চা-পানি খান (৳১০০ ঘুষ দিন) [B]</span>`;
         bribe.hidden = true;
+        bribe.style.display = 'none';
         bribe.addEventListener('click', () => this.bribePolice());
         hud.appendChild(bribe);
 
@@ -1430,6 +1635,7 @@
 
       if (bribeBtn) {
         bribeBtn.hidden = num < 2;
+        bribeBtn.style.display = num >= 2 ? 'flex' : 'none';
       }
 
       if (vig) {
@@ -1592,14 +1798,15 @@
       `;
       hud.appendChild(gauge);
 
-      const fareMeter = document.createElement('div');
-      fareMeter.id = 'fareMeter';
-      fareMeter.className = 'raja-fare-meter';
-      fareMeter.innerHTML = `
-        <div class="fare-badge">🚖 চাঁদা ও ভাড়া মিটার</div>
-        <div class="fare-num" id="fareVal">৳০</div>
-      `;
-      hud.appendChild(fareMeter);
+      // Integrate Fare readout into #lossBox for zero-clutter top-left status capsule
+      const lossBox = document.getElementById('lossBox');
+      if (lossBox && !document.getElementById('fareVal')) {
+        const fareRow = document.createElement('div');
+        fareRow.id = 'rajaFareRow';
+        fareRow.className = 'raja-fare-inline';
+        fareRow.innerHTML = `<span class="fare-badge">🚖 ভাড়া:</span> <strong id="fareVal" class="fare-num">৳০</strong>`;
+        lossBox.appendChild(fareRow);
+      }
 
       const c = document.createElement('canvas');
       c.id = 'speedCanvas';
@@ -2947,16 +3154,19 @@
       this.container = document.createElement('div');
       this.container.id = 'miniMapRadar';
       this.container.className = 'mini-map-radar';
+      this.container.style.display = 'none'; // Initially hidden when not playing
       this.container.innerHTML = `
         <div class="radar-header">
           <span class="radar-live-dot"></span>
           <span class="radar-title">রাডার জিপিএস</span>
           <span class="radar-heading" id="radarHeading">N</span>
         </div>
-        <canvas id="radarCanvas" width="130" height="130"></canvas>
+        <canvas id="radarCanvas" width="96" height="96"></canvas>
         <div class="radar-gps-hint" id="radarGpsHint">🛣️ রাজপথ ক্লিয়ার, টানেন!</div>
       `;
-      document.body.appendChild(this.container);
+      const hud = document.getElementById('hud');
+      if (hud) hud.appendChild(this.container);
+      else document.body.appendChild(this.container);
 
       this.canvas = document.getElementById('radarCanvas');
       if (this.canvas) this.ctx = this.canvas.getContext('2d');
@@ -2975,15 +3185,15 @@
       this.container.style.display = 'flex';
 
       const ctx = this.ctx;
-      const w = 130, h = 130;
-      const cx = 65, cy = 65;
-      const scale = 0.58;
+      const w = 96, h = 96;
+      const cx = 48, cy = 48;
+      const scale = 0.44;
 
       ctx.clearRect(0, 0, w, h);
 
       // Radar disc
       ctx.beginPath();
-      ctx.arc(cx, cy, 62, 0, Math.PI * 2);
+      ctx.arc(cx, cy, 45, 0, Math.PI * 2);
       ctx.fillStyle = 'rgba(11, 17, 32, 0.88)';
       ctx.fill();
       ctx.lineWidth = 1.5;
@@ -2993,7 +3203,7 @@
       // Range Rings
       ctx.strokeStyle = 'rgba(0, 240, 255, 0.2)';
       ctx.lineWidth = 1;
-      [22, 42, 60].forEach(r => {
+      [16, 30, 44].forEach(r => {
         ctx.beginPath();
         ctx.arc(cx, cy, r, 0, Math.PI * 2);
         ctx.stroke();
@@ -3001,8 +3211,8 @@
 
       // Crosshairs
       ctx.beginPath();
-      ctx.moveTo(cx, 5); ctx.lineTo(cx, 125);
-      ctx.moveTo(5, cy); ctx.lineTo(125, cy);
+      ctx.moveTo(cx, 4); ctx.lineTo(cx, 92);
+      ctx.moveTo(4, cy); ctx.lineTo(92, cy);
       ctx.strokeStyle = 'rgba(0, 240, 255, 0.15)';
       ctx.stroke();
 
