@@ -1566,6 +1566,254 @@
           padding: 8px 16px;
         }
       }
+
+      /* ============================================================ */
+      /* RASTAR RAJA v3.4: COCKPIT FPP, PASSENGER HUD & POLICE TRAP   */
+      /* ============================================================ */
+
+      /* Camera View Toggle Button (Desktop & Mobile) */
+      .raja-cam-btn {
+        position: fixed !important;
+        top: 14px !important;
+        right: 215px !important;
+        z-index: 1000 !important;
+        display: flex !important;
+        align-items: center !important;
+        gap: 6px !important;
+        background: rgba(15, 23, 42, 0.88) !important;
+        border: 1px solid rgba(255, 203, 31, 0.5) !important;
+        border-radius: 999px !important;
+        padding: 6px 12px !important;
+        color: #ffcb1f !important;
+        font-family: inherit !important;
+        font-size: 13px !important;
+        font-weight: 700 !important;
+        cursor: pointer !important;
+        backdrop-filter: blur(8px) !important;
+        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4) !important;
+        transition: all 0.2s ease !important;
+        touch-action: manipulation !important;
+      }
+      .raja-cam-btn:hover {
+        background: rgba(255, 203, 31, 0.2) !important;
+        border-color: #ffd400 !important;
+      }
+      .raja-cam-btn.active {
+        background: #ffd400 !important;
+        color: #0b0f19 !important;
+        box-shadow: 0 0 16px rgba(255, 212, 0, 0.7) !important;
+      }
+      @media (max-width: 640px) {
+        .raja-cam-btn {
+          top: 8px !important;
+          right: 175px !important;
+          padding: 5px 9px !important;
+          font-size: 11px !important;
+        }
+      }
+
+      /* First Person Cockpit Overlay & Dash */
+      .raja-cockpit-overlay {
+        position: fixed !important;
+        inset: 0 !important;
+        pointer-events: none !important;
+        z-index: 76 !important;
+      }
+      .cockpit-glass-frame {
+        position: absolute;
+        inset: 0;
+        box-shadow: inset 0 0 80px rgba(0, 0, 0, 0.65);
+        background: linear-gradient(180deg, rgba(255, 255, 255, 0.04) 0%, transparent 40%);
+      }
+      .cockpit-dash {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 180px;
+        display: flex;
+        justify-content: center;
+        align-items: flex-end;
+      }
+      .handlebar-container {
+        position: relative;
+        width: 360px;
+        height: 140px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+      .handlebar-stem {
+        position: absolute;
+        bottom: 0;
+        width: 28px;
+        height: 75px;
+        background: linear-gradient(90deg, #334155, #64748b, #1e293b);
+        border-radius: 4px;
+        box-shadow: 0 0 10px rgba(0,0,0,0.8);
+      }
+      .handlebar-bar {
+        position: absolute;
+        bottom: 60px;
+        width: 320px;
+        height: 18px;
+        background: linear-gradient(180deg, #cbd5e1, #64748b, #334155);
+        border-radius: 9px;
+        box-shadow: 0 6px 16px rgba(0, 0, 0, 0.7);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0 8px;
+        box-sizing: border-box;
+      }
+      .grip-left, .grip-right {
+        width: 65px;
+        height: 28px;
+        background: repeating-linear-gradient(90deg, #0f172a, #0f172a 4px, #1e293b 4px, #1e293b 8px);
+        border-radius: 8px;
+        border: 2px solid #334155;
+      }
+      .cycle-bell {
+        position: absolute;
+        left: 80px;
+        top: -24px;
+        font-size: 24px;
+        filter: drop-shadow(0 2px 5px rgba(0,0,0,0.8));
+      }
+      /* Swinging Chili-Lemon Amulet */
+      .talisman-cord {
+        position: absolute;
+        left: 50%;
+        top: 14px;
+        transform-origin: top center;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        filter: drop-shadow(0 4px 8px rgba(0,0,0,0.7));
+        transition: transform 0.05s ease-out;
+      }
+      .talisman-beads {
+        width: 3px;
+        height: 24px;
+        background: repeating-linear-gradient(180deg, #dc2626, #dc2626 3px, #000 3px, #000 6px);
+      }
+      .chili-bundle {
+        font-size: 20px;
+        letter-spacing: -6px;
+        line-height: 1;
+        margin-top: -4px;
+      }
+      .lemon-charm {
+        font-size: 22px;
+        line-height: 1;
+        margin-top: -2px;
+      }
+      @media (max-width: 640px) {
+        .handlebar-container {
+          width: 280px;
+          transform: scale(0.85);
+          transform-origin: bottom center;
+        }
+      }
+
+      /* Passenger Trip Mission Capsule in Top Status Bar */
+      .raja-passenger-hud-pill {
+        position: fixed !important;
+        top: calc(env(safe-area-inset-top, 0px) + 12px) !important;
+        left: 50% !important;
+        transform: translateX(-50%) !important;
+        background: rgba(11, 17, 32, 0.92) !important;
+        border: 1.5px solid #10b981 !important;
+        border-radius: 20px !important;
+        padding: 5px 16px !important;
+        color: #f1f5f9 !important;
+        font-family: inherit !important;
+        font-size: 13px !important;
+        font-weight: 700 !important;
+        backdrop-filter: blur(12px) !important;
+        box-shadow: 0 0 16px rgba(16, 185, 129, 0.4), 0 4px 16px rgba(0, 0, 0, 0.7) !important;
+        z-index: 93 !important;
+        display: flex !important;
+        align-items: center !important;
+        gap: 8px !important;
+        white-space: nowrap !important;
+      }
+      @media (max-width: 768px) {
+        .raja-passenger-hud-pill {
+          top: calc(env(safe-area-inset-top, 0px) + 48px) !important;
+          font-size: 11px !important;
+          padding: 3px 10px !important;
+        }
+      }
+
+      /* Police Sergeant Speed Trap Modal Prompt */
+      .raja-police-trap-prompt {
+        position: fixed !important;
+        inset: 0 !important;
+        background: rgba(3, 7, 18, 0.75) !important;
+        backdrop-filter: blur(8px) !important;
+        z-index: 99999 !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        padding: 16px !important;
+      }
+      .trap-card {
+        background: linear-gradient(145deg, #0b1329, #1e293b) !important;
+        border: 2.5px solid #e0242b !important;
+        border-radius: 20px !important;
+        padding: 20px 24px !important;
+        max-width: 440px !important;
+        width: 100% !important;
+        text-align: center !important;
+        box-shadow: 0 0 35px rgba(224, 36, 43, 0.7), 0 12px 36px rgba(0,0,0,0.9) !important;
+        animation: trapPulse 1.2s infinite alternate !important;
+      }
+      @keyframes trapPulse {
+        0% { border-color: #e0242b; box-shadow: 0 0 25px rgba(224, 36, 43, 0.6); }
+        100% { border-color: #00f0ff; box-shadow: 0 0 35px rgba(0, 240, 255, 0.6); }
+      }
+      .trap-title {
+        font-size: 22px !important;
+        font-weight: 900 !important;
+        color: #ffd400 !important;
+        margin-bottom: 6px !important;
+        text-shadow: 0 0 12px rgba(255, 212, 0, 0.6) !important;
+      }
+      .trap-msg {
+        font-size: 14px !important;
+        color: #f1f5f9 !important;
+        margin-bottom: 18px !important;
+      }
+      .trap-actions {
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 10px !important;
+      }
+      .trap-btn {
+        padding: 12px 16px !important;
+        font-family: inherit !important;
+        font-size: 14px !important;
+        font-weight: 800 !important;
+        border-radius: 12px !important;
+        cursor: pointer !important;
+        border: none !important;
+        transition: transform 0.1s, box-shadow 0.15s !important;
+      }
+      .trap-btn:active {
+        transform: scale(0.95) !important;
+      }
+      .bribe-choice {
+        background: linear-gradient(135deg, #10b981, #059669) !important;
+        color: #ffffff !important;
+        box-shadow: 0 4px 14px rgba(16, 185, 129, 0.5) !important;
+      }
+      .smash-choice {
+        background: linear-gradient(135deg, #e0242b, #b91c1c) !important;
+        color: #ffffff !important;
+        box-shadow: 0 4px 14px rgba(224, 36, 43, 0.6) !important;
+      }
+
       html, body, #touch, .tbtn, .pedal {
         touch-action: manipulation !important;
         overscroll-behavior: none !important;
@@ -4153,6 +4401,188 @@
         osc.start(now);
         osc.stop(now + 0.13);
       } catch (e) {}
+    },
+
+    // 1. Waterlogged Road Puddle Aquatic Splash Sound
+    playWaterSplash() {
+      const ctx = this.getCtx();
+      if (!ctx) return;
+      try {
+        const now = ctx.currentTime;
+        // Low aquatic plunge thump
+        const osc = ctx.createOscillator();
+        const oscGain = ctx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(110, now);
+        osc.frequency.exponentialRampToValueAtTime(32, now + 0.28);
+        oscGain.gain.setValueAtTime(0.25, now);
+        oscGain.gain.exponentialRampToValueAtTime(0.001, now + 0.3);
+        osc.connect(oscGain);
+        oscGain.connect(ctx.destination);
+        osc.start(now);
+        osc.stop(now + 0.32);
+
+        // Filtered white noise water spray plume
+        const bufferSize = Math.floor(ctx.sampleRate * 0.35);
+        const noiseBuffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+        const output = noiseBuffer.getChannelData(0);
+        for (let i = 0; i < bufferSize; i++) output[i] = Math.random() * 2 - 1;
+        const noise = ctx.createBufferSource();
+        noise.buffer = noiseBuffer;
+
+        const filter = ctx.createBiquadFilter();
+        filter.type = 'lowpass';
+        filter.frequency.setValueAtTime(1600, now);
+        filter.frequency.exponentialRampToValueAtTime(260, now + 0.32);
+
+        const noiseGain = ctx.createGain();
+        noiseGain.gain.setValueAtTime(0.001, now);
+        noiseGain.gain.linearRampToValueAtTime(0.24, now + 0.04);
+        noiseGain.gain.exponentialRampToValueAtTime(0.001, now + 0.34);
+
+        noise.connect(filter);
+        filter.connect(noiseGain);
+        noiseGain.connect(ctx.destination);
+        noise.start(now);
+        noise.stop(now + 0.36);
+      } catch (e) {}
+    },
+
+    // 2. Authentic Bangladesh Railway Diesel Locomotive Horn (D#4, F#4, A4)
+    playTrainHorn() {
+      const ctx = this.getCtx();
+      if (!ctx) return;
+      try {
+        const now = ctx.currentTime;
+        const notes = [311.13, 369.99, 440.00];
+        notes.forEach((freq, idx) => {
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          const filter = ctx.createBiquadFilter();
+
+          osc.type = idx === 0 ? 'sawtooth' : 'triangle';
+          osc.frequency.setValueAtTime(freq, now);
+          osc.frequency.linearRampToValueAtTime(freq * 1.008, now + 1.2);
+
+          filter.type = 'bandpass';
+          filter.frequency.value = freq * 1.8;
+          filter.Q.value = 2.0;
+
+          gain.gain.setValueAtTime(0.001, now);
+          gain.gain.linearRampToValueAtTime(0.22, now + 0.12);
+          gain.gain.setValueAtTime(0.20, now + 0.9);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 1.4);
+
+          osc.connect(filter);
+          filter.connect(gain);
+          gain.connect(ctx.destination);
+          osc.start(now);
+          osc.stop(now + 1.45);
+        });
+      } catch (e) {}
+    },
+
+    // 3. Level Crossing Metallic Warning Bell
+    playTrainGateBell() {
+      const ctx = this.getCtx();
+      if (!ctx) return;
+      try {
+        const now = ctx.currentTime;
+        [880, 1760].forEach((freq, idx) => {
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(freq, now);
+          gain.gain.setValueAtTime(idx === 0 ? 0.22 : 0.11, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.22);
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+          osc.start(now);
+          osc.stop(now + 0.24);
+        });
+      } catch (e) {}
+    },
+
+    // 4. Traffic Police Sergeant Pea Whistle Trill (18Hz Flutter)
+    playPoliceWhistle() {
+      const ctx = this.getCtx();
+      if (!ctx) return;
+      try {
+        const now = ctx.currentTime;
+        [2850, 3180].forEach(freq => {
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          osc.type = 'sawtooth';
+          osc.frequency.setValueAtTime(freq, now);
+
+          const lfo = ctx.createOscillator();
+          const lfoGain = ctx.createGain();
+          lfo.frequency.value = 18;
+          lfoGain.gain.value = 45;
+          lfo.connect(osc.frequency);
+          lfo.start(now);
+          lfo.stop(now + 0.45);
+
+          gain.gain.setValueAtTime(0.001, now);
+          gain.gain.linearRampToValueAtTime(0.14, now + 0.02);
+          gain.gain.setValueAtTime(0.13, now + 0.38);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.45);
+
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+          osc.start(now);
+          osc.stop(now + 0.46);
+        });
+      } catch (e) {}
+    },
+
+    // 5. Cash Register Double Crystal Chime for Passenger Drop-off
+    playCashChime() {
+      const ctx = this.getCtx();
+      if (!ctx) return;
+      try {
+        const now = ctx.currentTime;
+        [1318.5, 1975.5].forEach((freq, idx) => {
+          const t = now + idx * 0.09;
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(freq, t);
+          gain.gain.setValueAtTime(0.001, t);
+          gain.gain.linearRampToValueAtTime(0.24, t + 0.015);
+          gain.gain.exponentialRampToValueAtTime(0.001, t + 0.4);
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+          osc.start(t);
+          osc.stop(t + 0.42);
+        });
+      } catch (e) {}
+    },
+
+    // 6. Windshield Rubber Wiper Blade Friction Sweep Sound
+    playWiperSweep() {
+      const ctx = this.getCtx();
+      if (!ctx) return;
+      try {
+        const now = ctx.currentTime;
+        const osc = ctx.createOscillator();
+        const filter = ctx.createBiquadFilter();
+        const gain = ctx.createGain();
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(1200, now);
+        osc.frequency.linearRampToValueAtTime(800, now + 0.22);
+        filter.type = 'bandpass';
+        filter.frequency.value = 1600;
+        filter.Q.value = 3.5;
+        gain.gain.setValueAtTime(0.001, now);
+        gain.gain.linearRampToValueAtTime(0.07, now + 0.03);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.24);
+        osc.connect(filter);
+        filter.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start(now);
+        osc.stop(now + 0.25);
+      } catch (e) {}
     }
   };
 
@@ -6063,6 +6493,1130 @@
   };
 
   // ----------------------------------------------------
+  // 29. Monsoon Waterlogging & Spray System (বর্ষার জলাবদ্ধতা ও স্প্রে)
+  // ----------------------------------------------------
+  const MonsoonWaterloggingSystem = {
+    initialized: false,
+    group: null,
+    puddles: [],
+    cycleDist: 1800,
+    puddleLength: 200,
+    dropsCanvas: null,
+    dropsCtx: null,
+    drops: [],
+    wiperAngle: -0.7,
+    wiperActive: false,
+    wiperDir: 1,
+    lastSplashT: 0,
+    lastWiperT: 0,
+
+    init(THREE, scene) {
+      if (this.initialized || !THREE || !scene) return;
+      this.initialized = true;
+
+      try {
+        this.group = new THREE.Group();
+
+        // High realism dark water material with reflective sheen
+        const waterMat = new THREE.StandardMat({
+          color: 0x0f2742,
+          roughness: 0.08,
+          metalness: 0.65
+        });
+
+        // Curb water froth / mud edge material
+        const foamMat = new THREE.StandardMat({
+          color: 0x64748b,
+          roughness: 0.6
+        });
+
+        // Create 2 waterlogged sections per cycle (at Z = -500m and Z = -1400m)
+        const offsets = [-500, -1400];
+        offsets.forEach((zOffset, idx) => {
+          const puddleGrp = new THREE.Group();
+          puddleGrp.position.set(0, 0.02, zOffset);
+
+          // Water surface plane (14.2m road width, 200m length)
+          const pGeo = new THREE.ct();
+          pGeo.box(0, 0, 0, 14.2, 0.03, this.puddleLength, null);
+          // Foam / muddy splash borders along roadside curbs
+          pGeo.box(-7.0, 0.02, 0, 0.8, 0.04, this.puddleLength, null);
+          pGeo.box(7.0, 0.02, 0, 0.8, 0.04, this.puddleLength, null);
+
+          puddleGrp.add(new THREE.Mesh(pGeo.build(), waterMat));
+
+          this.group.add(puddleGrp);
+          this.puddles.push({
+            id: 'puddle_' + idx,
+            baseZ: zOffset,
+            group: puddleGrp
+          });
+        });
+
+        scene.add(this.group);
+      } catch (e) {
+        console.warn('MonsoonWaterloggingSystem init error:', e);
+      }
+
+      this.initScreenWiper();
+    },
+
+    initScreenWiper() {
+      if (document.getElementById('lensDropsCanvas')) return;
+      const cv = document.createElement('canvas');
+      cv.id = 'lensDropsCanvas';
+      cv.className = 'lens-drops-canvas';
+      cv.style.cssText = 'position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:78;';
+      document.body.appendChild(cv);
+      this.dropsCanvas = cv;
+      this.dropsCtx = cv.getContext('2d');
+
+      const onResize = () => {
+        if (this.dropsCanvas) {
+          this.dropsCanvas.width = window.innerWidth;
+          this.dropsCanvas.height = window.innerHeight;
+        }
+      };
+      window.addEventListener('resize', onResize);
+      onResize();
+    },
+
+    addScreenDrop() {
+      if (!this.dropsCanvas || this.drops.length > 45) return;
+      const w = this.dropsCanvas.width;
+      const h = this.dropsCanvas.height;
+      this.drops.push({
+        x: Math.random() * w,
+        y: Math.random() * (h * 0.85),
+        r: 3 + Math.random() * 8,
+        alpha: 0.65 + Math.random() * 0.25,
+        speed: 0.2 + Math.random() * 0.5
+      });
+    },
+
+    triggerWiper() {
+      if (this.wiperActive) return;
+      this.wiperActive = true;
+      this.wiperAngle = -0.7;
+      this.wiperDir = 1;
+      if (window.RastarRaja && window.RastarRaja.DhakaAudioSFX && typeof window.RastarRaja.DhakaAudioSFX.playWiperSweep === 'function') {
+        window.RastarRaja.DhakaAudioSFX.playWiperSweep();
+      }
+    },
+
+    update(p, dt, inPlay, isRain) {
+      const THREE = window.__THREE_EXPORTS;
+      const at = window.__at;
+      if (!this.initialized && THREE && at && at.SCENE) {
+        this.init(THREE, at.SCENE);
+      }
+      if (!this.initialized) return;
+
+      const now = performance.now();
+      let inWater = false;
+
+      if (inPlay && p) {
+        // Recycle puddles around player
+        for (const pud of this.puddles) {
+          while (pud.group.position.z > p.z + 150) {
+            pud.group.position.z -= this.cycleDist;
+          }
+          while (pud.group.position.z < p.z - (this.cycleDist - 150)) {
+            pud.group.position.z += this.cycleDist;
+          }
+
+          // Check if player is driving through this puddle
+          const dz = Math.abs(p.z - pud.group.position.z);
+          if (dz < (this.puddleLength * 0.5)) {
+            inWater = true;
+          }
+        }
+
+        // Apply water resistance drag and spray physics
+        if (inWater && p.alive) {
+          // Dynamic water drag
+          p.v *= (1.0 - 0.08 * dt);
+
+          // Periodic splash sound
+          if (now - this.lastSplashT > 550 && Math.abs(p.v) > 3.0) {
+            this.lastSplashT = now;
+            if (window.RastarRaja && window.RastarRaja.DhakaAudioSFX && typeof window.RastarRaja.DhakaAudioSFX.playWaterSplash === 'function') {
+              window.RastarRaja.DhakaAudioSFX.playWaterSplash();
+            }
+            // Screen splash droplets
+            for (let i = 0; i < 4; i++) this.addScreenDrop();
+          }
+
+          // Trigger wiper if screen has droplets
+          if (this.drops.length >= 8 && now - this.lastWiperT > 2500) {
+            this.lastWiperT = now;
+            this.triggerWiper();
+          }
+
+          // Tire spray sparks/mist
+          if (at.FX && typeof at.FX.sparks === 'function' && Math.random() < 0.35) {
+            at.FX.sparks(p.x - 0.7, 0.05, p.z + 0.8, 3);
+            at.FX.sparks(p.x + 0.7, 0.05, p.z + 0.8, 3);
+          }
+        }
+
+        // When rain toggle is on, also add occasional droplets
+        if (isRain && Math.random() < 0.15) {
+          this.addScreenDrop();
+          if (this.drops.length >= 14 && now - this.lastWiperT > 2200) {
+            this.lastWiperT = now;
+            this.triggerWiper();
+          }
+        }
+      }
+
+      // Render Screen Droplets and Wiper Animation
+      if (this.dropsCtx && this.dropsCanvas) {
+        const ctx = this.dropsCtx;
+        const w = this.dropsCanvas.width;
+        const h = this.dropsCanvas.height;
+        ctx.clearRect(0, 0, w, h);
+
+        // Update & draw droplets
+        for (let i = this.drops.length - 1; i >= 0; i--) {
+          const d = this.drops[i];
+          d.y += d.speed;
+          d.alpha -= 0.002;
+
+          ctx.fillStyle = `rgba(255, 255, 255, ${d.alpha * 0.4})`;
+          ctx.beginPath();
+          ctx.arc(d.x, d.y, d.r, 0, Math.PI * 2);
+          ctx.fill();
+
+          // Droplet highlight
+          ctx.fillStyle = `rgba(255, 255, 255, ${d.alpha * 0.85})`;
+          ctx.beginPath();
+          ctx.arc(d.x - d.r * 0.3, d.y - d.r * 0.3, d.r * 0.3, 0, Math.PI * 2);
+          ctx.fill();
+
+          if (d.alpha <= 0 || d.y > h) {
+            this.drops.splice(i, 1);
+          }
+        }
+
+        // Wiper Blade Animation
+        if (this.wiperActive) {
+          this.wiperAngle += this.wiperDir * dt * 3.8;
+          if (this.wiperAngle > 0.7) {
+            this.wiperDir = -1;
+            if (window.RastarRaja && window.RastarRaja.DhakaAudioSFX && typeof window.RastarRaja.DhakaAudioSFX.playWiperSweep === 'function') {
+              window.RastarRaja.DhakaAudioSFX.playWiperSweep();
+            }
+          } else if (this.wiperAngle < -0.7 && this.wiperDir === -1) {
+            this.wiperActive = false;
+            this.wiperAngle = -0.7;
+            this.drops = []; // Clean screen!
+          }
+
+          // Draw wiper arm and rubber blade
+          const pivotX = w * 0.5;
+          const pivotY = h + 10;
+          const bladeLen = Math.max(w, h) * 0.95;
+
+          ctx.save();
+          ctx.translate(pivotX, pivotY);
+          ctx.rotate(this.wiperAngle);
+
+          // Wiper steel arm
+          ctx.strokeStyle = '#334155';
+          ctx.lineWidth = 10;
+          ctx.beginPath();
+          ctx.moveTo(0, 0);
+          ctx.lineTo(0, -bladeLen);
+          ctx.stroke();
+
+          // Rubber squeegee blade
+          ctx.strokeStyle = '#0f172a';
+          ctx.lineWidth = 16;
+          ctx.beginPath();
+          ctx.moveTo(-4, -bladeLen * 0.3);
+          ctx.lineTo(-4, -bladeLen);
+          ctx.stroke();
+
+          ctx.restore();
+        }
+      }
+    }
+  };
+
+  // ----------------------------------------------------
+  // 30. Active Railway Level Crossing & BR Train System (সক্রিয় রেলগেট ও বাংলাদেশ রেলওয়ে ট্রেন)
+  // ----------------------------------------------------
+  const RailwayLevelCrossingSystem = {
+    initialized: false,
+    group: null,
+    crossingZ: -1600,
+    cycleDist: 3200,
+    barrierLeft: null,
+    barrierRight: null,
+    trainGroup: null,
+    trainX: 120, // Moves from +120 to -120 across road
+    trainSpeed: 45, // m/s
+    state: 'OPEN', // OPEN, CLOSING, TRAIN_CROSSING, OPENING
+    stateTimer: 0,
+    lastBellT: 0,
+
+    init(THREE, scene) {
+      if (this.initialized || !THREE || !scene) return;
+      this.initialized = true;
+
+      try {
+        this.group = new THREE.Group();
+        this.group.position.set(0, 0, this.crossingZ);
+
+        // Materials
+        const steelRailMat = new THREE.StandardMat({ color: 0x94a3b8, roughness: 0.35, metalness: 0.9 });
+        const sleeperWoodMat = new THREE.StandardMat({ color: 0x3e2723, roughness: 0.95 });
+        const ballastStoneMat = new THREE.StandardMat({ color: 0x475569, roughness: 0.98 });
+        const barrierPostMat = new THREE.StandardMat({ color: 0x1e293b, roughness: 0.7 });
+        const hazardStripeMat = new THREE.BasicMat({ color: 0xdc2626 });
+        const whiteStripeMat = new THREE.BasicMat({ color: 0xffffff });
+
+        // 1. Crushed Stone Ballast Bed across road
+        const ballastGeo = new THREE.ct();
+        ballastGeo.box(0, 0.015, 0, 48, 0.04, 5.5, null);
+        this.group.add(new THREE.Mesh(ballastGeo.build(), ballastStoneMat));
+
+        // 2. Wooden Sleepers (Ties) spaced along tracks
+        const tiesGeo = new THREE.ct();
+        for (let x = -23; x <= 23; x += 1.3) {
+          tiesGeo.box(x, 0.025, 0, 0.45, 0.05, 4.2, null);
+        }
+        this.group.add(new THREE.Mesh(tiesGeo.build(), sleeperWoodMat));
+
+        // 3. Steel Rails (Double Track)
+        const railsGeo = new THREE.ct();
+        railsGeo.box(0, 0.05, -1.2, 48, 0.06, 0.12, null);
+        railsGeo.box(0, 0.05, 0.3, 48, 0.06, 0.12, null);
+        railsGeo.box(0, 0.05, 1.2, 48, 0.06, 0.12, null);
+        railsGeo.box(0, 0.05, 2.7, 48, 0.06, 0.12, null);
+        this.group.add(new THREE.Mesh(railsGeo.build(), steelRailMat));
+
+        // 4. Boom Barrier Gates (Left & Right)
+        const makeGateAssembly = (posX, isLeft) => {
+          const gateGrp = new THREE.Group();
+          gateGrp.position.set(posX, 0, isLeft ? -4.2 : 4.2);
+
+          // Vertical gate post
+          const postGeo = new THREE.ct();
+          postGeo.box(0, 1.6, 0, 0.6, 3.2, 0.6, null);
+          postGeo.box(0, 0.25, 0, 1.1, 0.5, 1.1, null);
+          gateGrp.add(new THREE.Mesh(postGeo.build(), barrierPostMat));
+
+          // Moving Boom Barrier Arm (Pivot at Y = 1.8)
+          const armPivot = new THREE.Group();
+          armPivot.position.set(0, 1.8, 0);
+
+          const dir = isLeft ? 1 : -1;
+          for (let s = 0; s < 7; s++) {
+            const mat = (s % 2 === 0) ? hazardStripeMat : whiteStripeMat;
+            const segGeo = new THREE.ct();
+            segGeo.box((s * 1.2 + 0.6) * dir, 0, 0, 1.2, 0.22, 0.14, null);
+            armPivot.add(new THREE.Mesh(segGeo.build(), mat));
+          }
+
+          gateGrp.add(armPivot);
+          return { gateGrp, armPivot };
+        };
+
+        const leftGate = makeGateAssembly(-8.2, true);
+        const rightGate = makeGateAssembly(8.2, false);
+        this.barrierLeft = leftGate.armPivot;
+        this.barrierRight = rightGate.armPivot;
+        this.group.add(leftGate.gateGrp);
+        this.group.add(rightGate.gateGrp);
+
+        // 5. Bangladesh Railway Locomotive & Passenger Coaches
+        this.trainGroup = new THREE.Group();
+        this.trainGroup.position.set(this.trainX, 0, 0);
+
+        const trainGreenMat = new THREE.StandardMat({ color: 0x006a4e, roughness: 0.45, metalness: 0.35 });
+        const trainRedMat = new THREE.BasicMat({ color: 0xdc2626 });
+        const trainGoldMat = new THREE.BasicMat({ color: 0xffcb1f });
+        const trainWindowMat = new THREE.BasicMat({ color: 0xfef08a });
+
+        // Locomotive Body
+        const locoGeo = new THREE.ct();
+        locoGeo.box(0, 2.2, 0, 18, 3.2, 3.3, null);
+        locoGeo.box(-8.5, 2.1, 0, 1.2, 2.4, 3.2, null); // Cab nose
+        locoGeo.box(-8.9, 0.5, 0, 0.6, 0.8, 3.4, null); // Cowcatcher
+        locoGeo.box(0, 3.9, 0, 14, 0.4, 3.1, null);    // Roof
+        this.trainGroup.add(new THREE.Mesh(locoGeo.build(), trainGreenMat));
+
+        // Red & Yellow Stripes on Locomotive
+        const stripeGeo = new THREE.ct();
+        stripeGeo.box(0, 1.8, 1.68, 18.2, 0.35, 0.05, null);
+        stripeGeo.box(0, 1.8, -1.68, 18.2, 0.35, 0.05, null);
+        this.trainGroup.add(new THREE.Mesh(stripeGeo.build(), trainRedMat));
+
+        const goldGeo = new THREE.ct();
+        goldGeo.box(0, 2.3, 1.68, 18.2, 0.2, 0.05, null);
+        goldGeo.box(0, 2.3, -1.68, 18.2, 0.2, 0.05, null);
+        goldGeo.box(-9.0, 1.8, 0, 0.05, 0.8, 2.4, null);
+        this.trainGroup.add(new THREE.Mesh(goldGeo.build(), trainGoldMat));
+
+        // Dual Headlights
+        const headGeo = new THREE.ct();
+        headGeo.box(-9.1, 2.4, -0.7, 0.2, 0.45, 0.45, null);
+        headGeo.box(-9.1, 2.4, 0.7, 0.2, 0.45, 0.45, null);
+        this.trainGroup.add(new THREE.Mesh(headGeo.build(), new THREE.BasicMat({ color: 0xffffff })));
+
+        // Passenger Coaches
+        [22, 42].forEach(offset => {
+          const coachGeo = new THREE.ct();
+          coachGeo.box(offset, 2.2, 0, 18, 3.1, 3.2, null);
+          this.trainGroup.add(new THREE.Mesh(coachGeo.build(), trainGreenMat));
+
+          const cStripeGeo = new THREE.ct();
+          cStripeGeo.box(offset, 1.8, 1.63, 18.2, 0.4, 0.05, null);
+          cStripeGeo.box(offset, 1.8, -1.63, 18.2, 0.4, 0.05, null);
+          this.trainGroup.add(new THREE.Mesh(cStripeGeo.build(), trainRedMat));
+
+          // Lit windows along coach
+          const winGeo = new THREE.ct();
+          for (let wx = offset - 7; wx <= offset + 7; wx += 2.4) {
+            winGeo.box(wx, 2.4, 1.64, 1.4, 0.8, 0.05, null);
+            winGeo.box(wx, 2.4, -1.64, 1.4, 0.8, 0.05, null);
+          }
+          this.trainGroup.add(new THREE.Mesh(winGeo.build(), trainWindowMat));
+        });
+
+        this.group.add(this.trainGroup);
+        scene.add(this.group);
+      } catch (e) {
+        console.warn('RailwayLevelCrossingSystem init error:', e);
+      }
+    },
+
+    update(p, dt, inPlay) {
+      const THREE = window.__THREE_EXPORTS;
+      const at = window.__at;
+      if (!this.initialized && THREE && at && at.SCENE) {
+        this.init(THREE, at.SCENE);
+      }
+      if (!this.initialized || !inPlay || !p) return;
+
+      const now = performance.now();
+
+      // Recycle Level Crossing with player along road
+      while (this.group.position.z > p.z + 180) {
+        this.group.position.z -= this.cycleDist;
+        this.resetCrossing();
+      }
+      while (this.group.position.z < p.z - (this.cycleDist - 180)) {
+        this.group.position.z += this.cycleDist;
+        this.resetCrossing();
+      }
+
+      const distToCrossing = Math.abs(p.z - this.group.position.z);
+      const isApproaching = (p.z > this.group.position.z) && (p.z - this.group.position.z < 160);
+
+      // Level Crossing State Machine
+      if (this.state === 'OPEN') {
+        if (this.barrierLeft) this.barrierLeft.rotation.z = Math.PI * 0.45;
+        if (this.barrierRight) this.barrierRight.rotation.z = -Math.PI * 0.45;
+
+        if (isApproaching && distToCrossing < 145) {
+          this.state = 'CLOSING';
+          this.stateTimer = 0;
+          RoadMicroDetailsSystem.spawnMicroToast("🚂 সাবধান! বাংলাদেশ রেলওয়ে এক্সপ্রেস আসছে! গেট নামছে!");
+        }
+      } else if (this.state === 'CLOSING') {
+        this.stateTimer += dt;
+        const prog = Math.min(1.0, this.stateTimer / 2.0);
+        if (this.barrierLeft) this.barrierLeft.rotation.z = (Math.PI * 0.45) * (1.0 - prog);
+        if (this.barrierRight) this.barrierRight.rotation.z = (-Math.PI * 0.45) * (1.0 - prog);
+
+        if (now - this.lastBellT > 380) {
+          this.lastBellT = now;
+          if (window.RastarRaja && window.RastarRaja.DhakaAudioSFX && typeof window.RastarRaja.DhakaAudioSFX.playTrainGateBell === 'function') {
+            window.RastarRaja.DhakaAudioSFX.playTrainGateBell();
+          }
+        }
+
+        if (this.stateTimer >= 2.0) {
+          this.state = 'TRAIN_CROSSING';
+          this.stateTimer = 0;
+          this.trainX = 110;
+          if (window.RastarRaja && window.RastarRaja.DhakaAudioSFX && typeof window.RastarRaja.DhakaAudioSFX.playTrainHorn === 'function') {
+            window.RastarRaja.DhakaAudioSFX.playTrainHorn();
+          }
+        }
+      } else if (this.state === 'TRAIN_CROSSING') {
+        this.stateTimer += dt;
+        this.trainX -= this.trainSpeed * dt;
+        if (this.trainGroup) this.trainGroup.position.x = this.trainX;
+
+        if (now - this.lastBellT > 380) {
+          this.lastBellT = now;
+          if (window.RastarRaja && window.RastarRaja.DhakaAudioSFX && typeof window.RastarRaja.DhakaAudioSFX.playTrainGateBell === 'function') {
+            window.RastarRaja.DhakaAudioSFX.playTrainGateBell();
+          }
+        }
+
+        // Severe Train Collision if player drives onto tracks while train crosses!
+        if (distToCrossing < 4.0 && Math.abs(p.x - this.trainX) < 18.0) {
+          if (at.G && typeof at.G.smash === 'function') {
+            at.G.smash(25000);
+          }
+          p.v = -8.0;
+          RoadMicroDetailsSystem.spawnMicroToast("💥 ট্রেনের সাথে পাঙ্গা লইছেন?! রিকশা দিয়া রেলরে ধাক্কা?!");
+        }
+
+        if (this.trainX < -110 || this.stateTimer > 5.5) {
+          this.state = 'OPENING';
+          this.stateTimer = 0;
+          RoadMicroDetailsSystem.spawnMicroToast("✅ ট্রেন পার হয়েছে! রেলগেট খোলা হচ্ছে!");
+        }
+      } else if (this.state === 'OPENING') {
+        this.stateTimer += dt;
+        const prog = Math.min(1.0, this.stateTimer / 1.8);
+        if (this.barrierLeft) this.barrierLeft.rotation.z = (Math.PI * 0.45) * prog;
+        if (this.barrierRight) this.barrierRight.rotation.z = (-Math.PI * 0.45) * prog;
+
+        if (this.stateTimer >= 1.8) {
+          this.state = 'OPEN';
+        }
+      }
+    },
+
+    resetCrossing() {
+      this.state = 'OPEN';
+      this.stateTimer = 0;
+      this.trainX = 120;
+      if (this.trainGroup) this.trainGroup.position.x = 120;
+      if (this.barrierLeft) this.barrierLeft.rotation.z = Math.PI * 0.45;
+      if (this.barrierRight) this.barrierRight.rotation.z = -Math.PI * 0.45;
+    }
+  };
+
+  // ----------------------------------------------------
+  // 31. Dhaka Passenger Pickup & Fare Mission System (ঢাকা প্যাসেঞ্জার ট্রিপ ও ভাড়া মিশন)
+  // ----------------------------------------------------
+  const DhakaPassengerMissionSystem = {
+    initialized: false,
+    group: null,
+    passengerMesh: null,
+    dropoffZoneMesh: null,
+    hasPassenger: false,
+    curPassenger: null,
+    fareReward: 70,
+    destLandmark: 'নীলক্ষেত মোড়',
+    destZ: -9999,
+    spawnZ: -350,
+    cycleDist: 900,
+    lastScreamT: 0,
+    wavingArm: null,
+    hudPill: null,
+
+    passengersInfo: [
+      {
+        id: 'student',
+        name: 'ভার্সিটির ছাত্র',
+        dest: 'নীলক্ষেত মোড়',
+        fare: 60,
+        intro: 'মামা নীলক্ষেত চলেন! ভার্সিটির ক্লাস আছে, ডাবল ভাড়া দিমু!',
+        screams: [
+          'আরে ও মামা আস্তে চালান! জানটা গেলো!',
+          'ভাই ভাই সামনে দেইখা! ব্রেক মারেন!',
+          'আমার কালকে সেমিস্টার ফাইনাল মামা, মাইরেন না!'
+        ]
+      },
+      {
+        id: 'uncle',
+        name: 'পুরান ঢাকার হাজী সাহেব',
+        dest: 'চকবাজার জামে মসজিদ',
+        fare: 80,
+        intro: 'বাবা চকবাজার জামে মসজিদে নামায়া দিবা? বিশ টাকা বেশি দিবানে!',
+        screams: [
+          'বাপরে বাপ! এ তো সাক্ষাৎ যমদূত!',
+          'আস্তে বাবা আস্তে! আমার ডায়াবেটিস ও প্রেসার দুইটাই বেশি!',
+          'আল্লাহ আল্লাহ জপতে জপতে জান শেষ!'
+        ]
+      },
+      {
+        id: 'corporate',
+        name: 'অফিসযাত্রী আপা',
+        dest: 'মতিঝিল শাপলা চত্বর',
+        fare: 90,
+        intro: 'ভাই মতিঝিল তাড়াতাড়ি চলেন, ১০টায় জরুরি মিটিং আছে!',
+        screams: [
+          'ও ভাইয়া আস্তে! হ্যান্ডব্যাগ পড়ে যাবে!',
+          'সামনে ট্রাক! ব্রেক করেন এক্ষুণি!',
+          'আল্লাহ ভরসা! এইটা রিকশা না বুলেট ট্রেন?!'
+        ]
+      }
+    ],
+
+    init(THREE, scene) {
+      if (this.initialized || !THREE || !scene) return;
+      this.initialized = true;
+
+      try {
+        this.group = new THREE.Group();
+
+        // 1. Roadside Passenger 3D Model
+        this.passengerMesh = new THREE.Group();
+        this.passengerMesh.position.set(-6.2, 0, this.spawnZ);
+
+        const bodyGeo = new THREE.ct();
+        bodyGeo.box(0, 0.8, 0, 0.65, 0.95, 0.45, null);
+        bodyGeo.box(0, 1.5, 0, 0.4, 0.45, 0.4, null); // Head
+        bodyGeo.box(-0.2, 0.25, 0, 0.22, 0.5, 0.22, null);
+        bodyGeo.box(0.2, 0.25, 0, 0.22, 0.5, 0.22, null);
+        const bodyMesh = new THREE.Mesh(bodyGeo.build(), new THREE.StandardMat({ color: 0x3b82f6, roughness: 0.8 }));
+        this.passengerMesh.add(bodyMesh);
+
+        // Animated Waving Arm
+        const armGeo = new THREE.ct();
+        armGeo.box(0, 0.35, 0, 0.18, 0.7, 0.18, null);
+        this.wavingArm = new THREE.Mesh(armGeo.build(), new THREE.StandardMat({ color: 0xf59e0b, roughness: 0.7 }));
+        this.wavingArm.position.set(-0.45, 1.1, 0);
+        this.passengerMesh.add(this.wavingArm);
+
+        // Floating Passenger Beacon Icon
+        const beaconCanvas = document.createElement('canvas');
+        beaconCanvas.width = 256; beaconCanvas.height = 128;
+        const bCtx = beaconCanvas.getContext('2d');
+        bCtx.fillStyle = '#ffd400';
+        bCtx.fillRect(8, 8, 240, 112);
+        bCtx.fillStyle = '#0f172a';
+        bCtx.font = 'bold 36px "Baloo Da 2", sans-serif';
+        bCtx.textAlign = 'center';
+        bCtx.fillText('🚖 যাত্রী ভাড়া', 128, 72);
+
+        const tex = new THREE.Tex.glow.constructor(beaconCanvas);
+        tex.needsUpdate = true;
+        const bGeo = new THREE.ct();
+        bGeo.box(0, 2.3, 0, 2.2, 1.1, 0.1, null);
+        this.passengerMesh.add(new THREE.Mesh(bGeo.build(), new THREE.BasicMat({ map: tex })));
+
+        this.group.add(this.passengerMesh);
+
+        // 2. Glowing Green Drop-off Zone Mesh
+        this.dropoffZoneMesh = new THREE.Group();
+        this.dropoffZoneMesh.position.set(-5.8, 0.03, -9999);
+
+        const zoneGeo = new THREE.ct();
+        zoneGeo.box(0, 0, 0, 4.2, 0.05, 14.0, null);
+        const zoneMat = new THREE.StandardMat({ color: 0x10b981, roughness: 0.2, metalness: 0.6 });
+        this.dropoffZoneMesh.add(new THREE.Mesh(zoneGeo.build(), zoneMat));
+
+        // Floating Target Beacon
+        const dropCanvas = document.createElement('canvas');
+        dropCanvas.width = 256; dropCanvas.height = 128;
+        const dCtx = dropCanvas.getContext('2d');
+        dCtx.fillStyle = '#10b981';
+        dCtx.fillRect(8, 8, 240, 112);
+        dCtx.fillStyle = '#ffffff';
+        dCtx.font = 'bold 34px "Baloo Da 2", sans-serif';
+        dCtx.textAlign = 'center';
+        dCtx.fillText('🎯 নামার স্থান', 128, 72);
+
+        const dTex = new THREE.Tex.glow.constructor(dropCanvas);
+        dTex.needsUpdate = true;
+        const dSignGeo = new THREE.ct();
+        dSignGeo.box(0, 2.4, 0, 2.4, 1.2, 0.1, null);
+        this.dropoffZoneMesh.add(new THREE.Mesh(dSignGeo.build(), new THREE.BasicMat({ map: dTex })));
+
+        this.group.add(this.dropoffZoneMesh);
+        scene.add(this.group);
+      } catch (e) {
+        console.warn('DhakaPassengerMissionSystem init error:', e);
+      }
+
+      this.initHUDPill();
+    },
+
+    initHUDPill() {
+      if (document.getElementById('passengerHUDPill')) return;
+      const el = document.createElement('div');
+      el.id = 'passengerHUDPill';
+      el.className = 'raja-passenger-hud-pill';
+      el.style.display = 'none';
+      document.body.appendChild(el);
+      this.hudPill = el;
+    },
+
+    update(p, dt, inPlay) {
+      const THREE = window.__THREE_EXPORTS;
+      const at = window.__at;
+      if (!this.initialized && THREE && at && at.SCENE) {
+        this.init(THREE, at.SCENE);
+      }
+      if (!this.initialized || !inPlay || !p) return;
+
+      const now = performance.now();
+
+      // Waving arm animation on sidewalk
+      if (this.wavingArm && !this.hasPassenger) {
+        this.wavingArm.rotation.z = Math.sin(now * 0.008) * 0.45 + 0.35;
+      }
+
+      // STATE A: Searching for Passenger
+      if (!this.hasPassenger) {
+        if (this.hudPill) this.hudPill.style.display = 'none';
+
+        // Move roadside passenger ahead of player along road
+        while (this.passengerMesh.position.z > p.z + 50) {
+          this.passengerMesh.position.z -= this.cycleDist;
+          this.curPassenger = this.passengersInfo[Math.floor(Math.random() * this.passengersInfo.length)];
+        }
+        while (this.passengerMesh.position.z < p.z - (this.cycleDist - 50)) {
+          this.passengerMesh.position.z += this.cycleDist;
+          this.curPassenger = this.passengersInfo[Math.floor(Math.random() * this.passengersInfo.length)];
+        }
+
+        // Proximity Pickup Detection
+        const dist = Math.hypot(p.x - this.passengerMesh.position.x, p.z - this.passengerMesh.position.z);
+        const isSlowEnough = Math.abs(p.v || 0) < 4.5; // < 16 km/h
+
+        if (dist < 4.2 && isSlowEnough && p.alive) {
+          this.hasPassenger = true;
+          this.passengerMesh.visible = false;
+          if (!this.curPassenger) this.curPassenger = this.passengersInfo[0];
+          this.destLandmark = this.curPassenger.dest;
+          this.fareReward = this.curPassenger.fare;
+          this.destZ = p.z - (380 + Math.random() * 140);
+          this.dropoffZoneMesh.position.set(-5.8, 0.03, this.destZ);
+          this.dropoffZoneMesh.visible = true;
+
+          if (window.RastarRaja && window.RastarRaja.DhakaAudioSFX && typeof window.RastarRaja.DhakaAudioSFX.playClickSound === 'function') {
+            window.RastarRaja.DhakaAudioSFX.playClickSound();
+          }
+          if (DhakaStreetHumorSystem && DhakaStreetHumorSystem.boxEl) {
+            DhakaStreetHumorSystem.sayRandom([`🚖 ${this.curPassenger.name}: "${this.curPassenger.intro}"`], 'fare');
+          }
+        }
+      } else {
+        // STATE B: Passenger In-Transit
+        this.passengerMesh.visible = false;
+        const distRem = Math.max(0, Math.round(p.z - this.destZ));
+
+        // Update HUD Mission Pill
+        if (this.hudPill) {
+          this.hudPill.style.display = 'flex';
+          this.hudPill.innerHTML = `🚖 <b>যাত্রী ট্রিপ:</b> ${this.destLandmark} (${distRem} মি.) · ভাড়া: <b style="color:#a8ff78">৳${this.fareReward}</b>`;
+        }
+
+        // In-transit Passenger Screams during high speed
+        const speedKmh = Math.abs(p.v || 0) * 7.5;
+        if (speedKmh > 72 && now - this.lastScreamT > 8000) {
+          this.lastScreamT = now;
+          if (this.curPassenger && this.curPassenger.screams) {
+            const scream = this.curPassenger.screams[Math.floor(Math.random() * this.curPassenger.screams.length)];
+            if (DhakaStreetHumorSystem && DhakaStreetHumorSystem.boxEl) {
+              DhakaStreetHumorSystem.sayRandom([`😱 ${this.curPassenger.name}: "${scream}"`], 'speed');
+            }
+          }
+        }
+
+        // Destination Drop-off Detection
+        const distToDrop = Math.abs(p.z - this.destZ);
+        const nearCurb = Math.abs(p.x - (-5.8)) < 3.2;
+        const isStopped = Math.abs(p.v || 0) < 4.0;
+
+        if (distToDrop < 10.0 && nearCurb && isStopped) {
+          this.hasPassenger = false;
+          this.dropoffZoneMesh.visible = false;
+          this.passengerMesh.visible = true;
+          this.passengerMesh.position.z = p.z - this.cycleDist;
+
+          // Award Cash Bonus
+          if (CockpitHUD) {
+            CockpitHUD.fareAmount += this.fareReward;
+            const fareEl = document.getElementById('fareVal');
+            if (fareEl) fareEl.textContent = `৳${Math.floor(CockpitHUD.fareAmount).toLocaleString('bn-BD')}`;
+          }
+          if (at.G) {
+            at.G.loss = Math.max(0, (at.G.loss || 0) + this.fareReward * 10);
+          }
+
+          if (window.RastarRaja && window.RastarRaja.DhakaAudioSFX && typeof window.RastarRaja.DhakaAudioSFX.playCashChime === 'function') {
+            window.RastarRaja.DhakaAudioSFX.playCashChime();
+          }
+
+          RoadMicroDetailsSystem.spawnMicroToast(`⭐ যাত্রী নামানো সম্পন্ন! +৳${this.fareReward} ভাড়া আদায়! ⭐`);
+          if (DhakaStreetHumorSystem && DhakaStreetHumorSystem.boxEl) {
+            DhakaStreetHumorSystem.sayRandom([`💵 ${this.curPassenger.name}: "খুব চমৎকার চালাইছেন মামা! এই নেন বকশিশ সহ ভাড়া!"`], 'fare');
+          }
+        }
+      }
+    }
+  };
+
+  // ----------------------------------------------------
+  // 32. Traffic Police Sergeant Checkpost & Speed Trap (ট্রাফিক পুলিশ সার্জেন্ট চেকপোস্ট)
+  // ----------------------------------------------------
+  const PoliceCheckpostSystem = {
+    initialized: false,
+    group: null,
+    checkpostZ: -2600,
+    cycleDist: 3200,
+    barrierArm: null,
+    sergeantMesh: null,
+    beaconLight: null,
+    isTrapped: false,
+    trapResolved: false,
+    promptEl: null,
+    lastWhistleT: 0,
+
+    init(THREE, scene) {
+      if (this.initialized || !THREE || !scene) return;
+      this.initialized = true;
+
+      try {
+        this.group = new THREE.Group();
+        this.group.position.set(0, 0, this.checkpostZ);
+
+        const boothWhiteMat = new THREE.StandardMat({ color: 0xf8fafc, roughness: 0.7 });
+        const yellowHazardMat = new THREE.BasicMat({ color: 0xfacc15 });
+        const blackStripeMat = new THREE.BasicMat({ color: 0x0f172a });
+        const vestLimeMat = new THREE.BasicMat({ color: 0xa3e635 });
+
+        // 1. DMP Police Outpost Shelter
+        const boothGeo = new THREE.ct();
+        boothGeo.box(-8.5, 1.6, 0, 3.2, 3.2, 3.2, null);
+        boothGeo.box(-8.5, 3.4, 0, 3.8, 0.4, 3.8, null);
+        this.group.add(new THREE.Mesh(boothGeo.build(), boothWhiteMat));
+
+        // DMP Police Banner
+        const bannerCanvas = document.createElement('canvas');
+        bannerCanvas.width = 256; bannerCanvas.height = 128;
+        const bCtx = bannerCanvas.getContext('2d');
+        bCtx.fillStyle = '#1e3a8a';
+        bCtx.fillRect(0, 0, 256, 128);
+        bCtx.fillStyle = '#facc15';
+        bCtx.font = 'bold 32px "Baloo Da 2", sans-serif';
+        bCtx.textAlign = 'center';
+        bCtx.fillText('👮 ডিএমপি চেকপোস্ট', 128, 56);
+        bCtx.font = '22px "Baloo Da 2", sans-serif';
+        bCtx.fillText('গতিসীমা ৬০ কিমি/ঘণ্টা', 128, 96);
+
+        const bTex = new THREE.Tex.glow.constructor(bannerCanvas);
+        bTex.needsUpdate = true;
+        const bSignGeo = new THREE.ct();
+        bSignGeo.box(-8.5, 2.0, 1.65, 3.0, 1.2, 0.1, null);
+        this.group.add(new THREE.Mesh(bSignGeo.build(), new THREE.BasicMat({ map: bTex })));
+
+        // 2. 3D Traffic Police Sergeant
+        this.sergeantMesh = new THREE.Group();
+        this.sergeantMesh.position.set(-6.2, 0, 1.2);
+
+        const sGeo = new THREE.ct();
+        sGeo.box(0, 0.4, 0, 0.5, 0.8, 0.35, null);
+        sGeo.box(0, 1.1, 0, 0.55, 0.7, 0.4, null);
+        sGeo.box(0, 1.15, 0, 0.58, 0.65, 0.42, null);
+        sGeo.box(0, 1.65, 0, 0.35, 0.4, 0.35, null);
+        sGeo.box(0, 1.88, 0.05, 0.48, 0.15, 0.48, null); // Cap
+        sGeo.box(0.35, 1.25, 0.3, 0.16, 0.16, 0.45, null); // Radar gun
+        this.sergeantMesh.add(new THREE.Mesh(sGeo.build(), vestLimeMat));
+        this.group.add(this.sergeantMesh);
+
+        // 3. Swing Police Barricade Arm
+        const armPivot = new THREE.Group();
+        armPivot.position.set(-6.5, 0.75, 0);
+
+        const armGeo = new THREE.ct();
+        for (let s = 0; s < 7; s++) {
+          const mat = (s % 2 === 0) ? yellowHazardMat : blackStripeMat;
+          const segGeo = new THREE.ct();
+          segGeo.box(s * 1.6 + 0.8, 0, 0, 1.6, 0.35, 0.12, null);
+          armPivot.add(new THREE.Mesh(segGeo.build(), mat));
+        }
+        this.barrierArm = armPivot;
+        this.barrierArm.rotation.y = -Math.PI * 0.48; // Initially open
+        this.group.add(armPivot);
+
+        // 4. Flashing Police Beacon
+        const beaconGeo = new THREE.ct();
+        beaconGeo.box(-8.5, 3.8, 0, 0.4, 0.5, 0.4, null);
+        this.beaconLight = new THREE.Mesh(beaconGeo.build(), new THREE.BasicMat({ color: 0x00f0ff }));
+        this.group.add(this.beaconLight);
+
+        scene.add(this.group);
+      } catch (e) {
+        console.warn('PoliceCheckpostSystem init error:', e);
+      }
+
+      this.initPromptUI();
+    },
+
+    initPromptUI() {
+      if (document.getElementById('policeTrapPrompt')) return;
+      const el = document.createElement('div');
+      el.id = 'policeTrapPrompt';
+      el.className = 'raja-police-trap-prompt';
+      el.style.display = 'none';
+      el.innerHTML = `
+        <div class="trap-card">
+          <div class="trap-title">🚨 ট্রাফিক পুলিশ স্পিড ট্র্যাপ!</div>
+          <div class="trap-msg" id="trapMsgText">ওভারস্পিড ধরা খাইছেন! ৬০ কিমি সীমার বেশি!</div>
+          <div class="trap-actions">
+            <button id="trapBribeBtn" class="trap-btn bribe-choice">🤝 ২০০৳ চা-নাস্তা দিন (নিরাপদে যান)</button>
+            <button id="trapSmashBtn" class="trap-btn smash-choice">🚀 নাইট্রো দিয়া ব্যারিকেড ভাইঙ্গা ভাগুন!</button>
+          </div>
+        </div>
+      `;
+      document.body.appendChild(el);
+      this.promptEl = el;
+
+      const bribeBtn = document.getElementById('trapBribeBtn');
+      if (bribeBtn) bribeBtn.addEventListener('click', () => this.resolveBribe());
+
+      const smashBtn = document.getElementById('trapSmashBtn');
+      if (smashBtn) smashBtn.addEventListener('click', () => this.resolveSmash());
+
+      window.addEventListener('keydown', (e) => {
+        if (!this.isTrapped || this.trapResolved) return;
+        if (e.key === '1' || e.key === 'e' || e.key === 'E') this.resolveBribe();
+        else if (e.key === '2' || e.code === 'Space') this.resolveSmash();
+      });
+    },
+
+    resolveBribe() {
+      if (this.trapResolved) return;
+      this.trapResolved = true;
+      this.isTrapped = false;
+      if (this.promptEl) this.promptEl.style.display = 'none';
+
+      if (CockpitHUD) {
+        CockpitHUD.fareAmount = Math.max(0, CockpitHUD.fareAmount - 200);
+        const fareEl = document.getElementById('fareVal');
+        if (fareEl) fareEl.textContent = `৳${Math.floor(CockpitHUD.fareAmount).toLocaleString('bn-BD')}`;
+      }
+
+      if (this.barrierArm) this.barrierArm.rotation.y = -Math.PI * 0.48;
+
+      RoadMicroDetailsSystem.spawnMicroToast("🤝 সার্জেন্ট: ঠিক আছে মামা, চা খাওয়ার টাকা পাইসি! সাবধানে যান!");
+      if (DhakaStreetHumorSystem && DhakaStreetHumorSystem.boxEl) {
+        DhakaStreetHumorSystem.sayRandom(['👮 সার্জেন্ট: "আইচ্ছা যান, আগামীতে স্পিড কম রাখবেন!"'], 'normal');
+      }
+    },
+
+    resolveSmash() {
+      if (this.trapResolved) return;
+      this.trapResolved = true;
+      this.isTrapped = false;
+      if (this.promptEl) this.promptEl.style.display = 'none';
+
+      const at = window.__at;
+      if (at && at.P) {
+        at.P.boost = 2.5;
+      }
+      if (at && at.G && typeof at.G.smash === 'function') {
+        at.G.smash(2000);
+      }
+
+      if (this.barrierArm) this.barrierArm.rotation.y = -Math.PI * 0.75;
+
+      if (WantedSystem && typeof WantedSystem.addStar === 'function') {
+        WantedSystem.addStar();
+      }
+
+      RoadMicroDetailsSystem.spawnMicroToast("💥 ব্যারিকেড চুরমার! পুলিশ সাইরেন শুরু!");
+      if (DhakaStreetHumorSystem && DhakaStreetHumorSystem.boxEl) {
+        DhakaStreetHumorSystem.sayRandom(['👮 সার্জেন্ট: "আরে ধর ধর! ব্যারিকেড ভাইঙ্গা পালাইল রে!"'], 'bribe');
+      }
+    },
+
+    update(p, dt, inPlay) {
+      const THREE = window.__THREE_EXPORTS;
+      const at = window.__at;
+      if (!this.initialized && THREE && at && at.SCENE) {
+        this.init(THREE, at.SCENE);
+      }
+      if (!this.initialized || !inPlay || !p) return;
+
+      const now = performance.now();
+
+      // Beacon strobe flash
+      if (this.beaconLight) {
+        const isRed = Math.floor(now * 0.006) % 2 === 0;
+        this.beaconLight.material.color.setHex(isRed ? 0xdc2626 : 0x00f0ff);
+      }
+
+      // Recycle checkpost along road
+      while (this.group.position.z > p.z + 180) {
+        this.group.position.z -= this.cycleDist;
+        this.resetCheckpost();
+      }
+      while (this.group.position.z < p.z - (this.cycleDist - 180)) {
+        this.group.position.z += this.cycleDist;
+        this.resetCheckpost();
+      }
+
+      const dist = p.z - this.group.position.z;
+      const speedKmh = Math.abs(p.v || 0) * 7.5;
+
+      // Speed Trap Proximity Trigger
+      if (dist > 10 && dist < 68 && !this.trapResolved && !this.isTrapped) {
+        if (speedKmh > 55) {
+          this.isTrapped = true;
+          if (this.barrierArm) this.barrierArm.rotation.y = 0;
+
+          if (now - this.lastWhistleT > 2000) {
+            this.lastWhistleT = now;
+            if (window.RastarRaja && window.RastarRaja.DhakaAudioSFX && typeof window.RastarRaja.DhakaAudioSFX.playPoliceWhistle === 'function') {
+              window.RastarRaja.DhakaAudioSFX.playPoliceWhistle();
+            }
+          }
+
+          if (this.promptEl) {
+            const msgEl = document.getElementById('trapMsgText');
+            if (msgEl) msgEl.textContent = `স্পিডগান: ${Math.round(speedKmh)} KM/H! ওভারস্পিড ধরা খাইছেন!`;
+            this.promptEl.style.display = 'flex';
+          }
+        }
+      }
+
+      // If player passed checkpost slowly, salute
+      if (dist <= 0 && dist > -15 && !this.trapResolved && speedKmh <= 52) {
+        this.trapResolved = true;
+        RoadMicroDetailsSystem.spawnMicroToast("👮 সার্জেন্ট: ঠিক আছে মামা, গতি নিয়ন্ত্রিত! সাবধানে যান!");
+      }
+    },
+
+    resetCheckpost() {
+      this.isTrapped = false;
+      this.trapResolved = false;
+      if (this.promptEl) this.promptEl.style.display = 'none';
+      if (this.barrierArm) this.barrierArm.rotation.y = -Math.PI * 0.48;
+    }
+  };
+
+  // ----------------------------------------------------
+  // 33. First-Person Interior Cockpit View System (প্রথম ব্যক্তি ককপিট ভিউ)
+  // ----------------------------------------------------
+  const FirstPersonCockpitCameraSystem = {
+    active: false,
+    hooked: false,
+    talismanAngle: 0,
+    cockpitOverlay: null,
+    camBtn: null,
+
+    init() {
+      this.initOverlay();
+      this.hookRenderer();
+      this.setupControls();
+    },
+
+    initOverlay() {
+      if (document.getElementById('cockpitOverlay')) return;
+      const el = document.createElement('div');
+      el.id = 'cockpitOverlay';
+      el.className = 'raja-cockpit-overlay';
+      el.style.display = 'none';
+      el.innerHTML = `
+        <div class="cockpit-glass-frame"></div>
+        <div class="cockpit-dash">
+          <div class="handlebar-container">
+            <div class="handlebar-stem"></div>
+            <div class="handlebar-bar">
+              <div class="grip-left"></div>
+              <div class="cycle-bell" title="টিং টিং সাইকেল বেল">🔔</div>
+              <div class="talisman-cord" id="talismanCord">
+                <div class="talisman-beads"></div>
+                <div class="chili-bundle">🌶️🌶️🌶️</div>
+                <div class="lemon-charm">🍋</div>
+              </div>
+              <div class="grip-right"></div>
+            </div>
+          </div>
+        </div>
+      `;
+      document.body.appendChild(el);
+      this.cockpitOverlay = el;
+    },
+
+    hookRenderer() {
+      const at = window.__at;
+      if (!at || !at.RENDERER || this.hooked) return;
+      this.hooked = true;
+
+      const origRender = at.RENDERER.render.bind(at.RENDERER);
+      const self = this;
+
+      at.RENDERER.render = function(scene, camera) {
+        if (self.active && at.P && at.CAM) {
+          const p = at.P;
+          const bump = p.bumpY || 0;
+          const bounce = (SuspensionDynamics && SuspensionDynamics.bounceY) || 0;
+          const camY = 1.34 + bump + bounce * 0.35;
+
+          at.CAM.position.set(
+            p.x + (p.fx || 0) * 0.32,
+            camY,
+            p.z + (p.fz || 0) * 0.32
+          );
+
+          at.CAM.lookAt(
+            p.x + (p.fx || 0) * 35.0,
+            1.22 + bump * 0.2,
+            p.z + (p.fz || 0) * 35.0
+          );
+
+          at.CAM.rotation.z = -(p.steer || 0) * 0.06;
+        }
+
+        return origRender(scene, camera);
+      };
+    },
+
+    setupControls() {
+      window.addEventListener('keydown', (e) => {
+        if (e.key === 'c' || e.key === 'C') {
+          this.toggle();
+        }
+      });
+
+      if (!document.getElementById('camToggleBtn')) {
+        const btn = document.createElement('button');
+        btn.id = 'camToggleBtn';
+        btn.className = 'raja-cam-btn';
+        btn.innerHTML = `🎥 <span>ভিউ</span>`;
+        btn.title = "ক্যামেরা মোড পরিবর্তন (ককপিট / ৩য় ব্যক্তি - C)";
+        btn.addEventListener('click', () => this.toggle());
+        document.body.appendChild(btn);
+        this.camBtn = btn;
+      }
+    },
+
+    toggle() {
+      this.active = !this.active;
+      if (this.cockpitOverlay) {
+        this.cockpitOverlay.style.display = this.active ? 'block' : 'none';
+      }
+      if (this.camBtn) {
+        this.camBtn.classList.toggle('active', this.active);
+        this.camBtn.innerHTML = this.active ? `🎥 <span>ককপিট</span>` : `🎥 <span>ভিউ</span>`;
+      }
+      if (window.RastarRaja && window.RastarRaja.DhakaAudioSFX && typeof window.RastarRaja.DhakaAudioSFX.playClickSound === 'function') {
+        window.RastarRaja.DhakaAudioSFX.playClickSound();
+      }
+      RoadMicroDetailsSystem.spawnMicroToast(this.active ? "🎥 ককপিট ড্রাইভার ভিউ সক্রিয় (First Person)" : "🎥 থার্ড পারসন চেজ ভিউ সক্রিয় (3rd Person)");
+    },
+
+    update(p, dt, inPlay) {
+      if (!this.hooked) this.hookRenderer();
+      if (!this.active || !inPlay || !p) return;
+
+      const targetAngle = -(p.steer || 0) * 28.0;
+      this.talismanAngle += (targetAngle - this.talismanAngle) * Math.min(1.0, dt * 8.0);
+
+      const cordEl = document.getElementById('talismanCord');
+      if (cordEl) {
+        cordEl.style.transform = `rotate(${this.talismanAngle.toFixed(1)}deg)`;
+      }
+    }
+  };
+
+  // ----------------------------------------------------
   // 11. Real-time Engine Loop (Synchronous 60 FPS)
   // ----------------------------------------------------
   let lastTime = performance.now();
@@ -6135,6 +7689,13 @@
     // v3.2 Roadside Posters & Dhaka Street Dialogues
     DhakaRoadsideBannersSystem.update(at.P, dt, inPlay);
     DhakaStreetHumorSystem.update(at.P, dt, inPlay);
+
+    // v3.4 Monsoon Waterlogging, Level Crossing, Passenger Trips, Police Checkpost & Cockpit FPP
+    MonsoonWaterloggingSystem.update(at.P, dt, inPlay, isRain);
+    RailwayLevelCrossingSystem.update(at.P, dt, inPlay);
+    DhakaPassengerMissionSystem.update(at.P, dt, inPlay);
+    PoliceCheckpostSystem.update(at.P, dt, inPlay);
+    FirstPersonCockpitCameraSystem.update(at.P, dt, inPlay);
   }
   requestAnimationFrame(engineLoop);
 
@@ -6149,6 +7710,7 @@
     ZoneProgressionSystem.init();
     NextGenGraphicsSystem.init();
     DhakaStreetHumorSystem.init();
+    FirstPersonCockpitCameraSystem.init();
 
     // Mobile & Desktop Fullscreen Button Toggle
     const fsBtn = document.createElement('button');
@@ -6199,6 +7761,11 @@
     window.RastarRaja.DhakaRoadsideBannersSystem = DhakaRoadsideBannersSystem;
     window.RastarRaja.DhakaStreetHumorSystem = DhakaStreetHumorSystem;
     window.RastarRaja.DhakaAudioSFX = DhakaAudioSFX;
+    window.RastarRaja.MonsoonWaterloggingSystem = MonsoonWaterloggingSystem;
+    window.RastarRaja.RailwayLevelCrossingSystem = RailwayLevelCrossingSystem;
+    window.RastarRaja.DhakaPassengerMissionSystem = DhakaPassengerMissionSystem;
+    window.RastarRaja.PoliceCheckpostSystem = PoliceCheckpostSystem;
+    window.RastarRaja.FirstPersonCockpitCameraSystem = FirstPersonCockpitCameraSystem;
 
     // Global User-Gesture Audio Unlocker for Mobile & Desktop
     const unlockAudio = () => {
