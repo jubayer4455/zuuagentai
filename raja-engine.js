@@ -398,6 +398,218 @@
         color: #fff !important;
         box-shadow: 0 0 18px rgba(224, 36, 43, 0.9) !important;
       }
+
+      /* GTA Wanted Stars Box */
+      .raja-stars-box {
+        position: fixed;
+        top: 14px;
+        left: 50%;
+        transform: translateX(-50%);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        background: rgba(15, 12, 10, 0.85);
+        border: 1.5px solid rgba(255, 203, 31, 0.4);
+        padding: 4px 14px;
+        border-radius: 20px;
+        box-shadow: 0 4px 16px rgba(0,0,0,0.6);
+        z-index: 92;
+        pointer-events: none;
+        transition: all 0.3s ease;
+      }
+      .raja-stars-box .stars-label {
+        font-family: 'Hind Siliguri', sans-serif;
+        font-size: 11px;
+        font-weight: 800;
+        letter-spacing: 2px;
+        color: #ffcb1f;
+        text-shadow: 0 0 8px rgba(255, 203, 31, 0.6);
+        margin-bottom: -2px;
+      }
+      .raja-stars-box .stars-row {
+        display: flex;
+        gap: 4px;
+      }
+      .raja-stars-box .star {
+        font-size: 20px;
+        color: rgba(255, 255, 255, 0.2);
+        transition: color 0.2s, transform 0.2s;
+      }
+      .raja-stars-box .star.lit {
+        color: #ffd400;
+        text-shadow: 0 0 10px #ffd400, 0 0 20px #ff9900;
+        transform: scale(1.15);
+      }
+      .raja-stars-box.chase .star.lit {
+        animation: starChaseFlash 0.4s infinite alternate;
+      }
+      @keyframes starChaseFlash {
+        0% { color: #ff0055; text-shadow: 0 0 12px #ff0055; }
+        100% { color: #0088ff; text-shadow: 0 0 12px #0088ff; }
+      }
+
+      /* Police Flashing Screen Vignette */
+      .police-vignette {
+        position: fixed;
+        inset: 0;
+        pointer-events: none;
+        z-index: 80;
+        opacity: 0;
+        transition: opacity 0.3s;
+      }
+      .police-vignette.active {
+        opacity: 1;
+        animation: policeFlash 0.4s infinite alternate;
+      }
+      @keyframes policeFlash {
+        0% { box-shadow: inset 0 0 90px rgba(255, 0, 0, 0.55); }
+        100% { box-shadow: inset 0 0 90px rgba(0, 100, 255, 0.55); }
+      }
+
+      /* Bribe Police Button */
+      .bribe-btn {
+        position: fixed;
+        top: 70px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: linear-gradient(135deg, #e0242b, #8b0000);
+        color: #fff;
+        font-family: 'Hind Siliguri', sans-serif;
+        font-weight: 800;
+        font-size: 14px;
+        padding: 8px 20px;
+        border-radius: 30px;
+        border: 2px solid #ffd400;
+        box-shadow: 0 4px 20px rgba(224, 36, 43, 0.7);
+        cursor: pointer;
+        z-index: 100;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        animation: bribePulse 0.9s infinite alternate;
+        transition: transform 0.15s, background 0.15s;
+      }
+      .bribe-btn:hover {
+        transform: translateX(-50%) scale(1.06);
+        background: linear-gradient(135deg, #ff3333, #a00000);
+      }
+      @keyframes bribePulse {
+        0% { box-shadow: 0 0 12px rgba(255, 212, 0, 0.6); }
+        100% { box-shadow: 0 0 26px rgba(224, 36, 43, 0.9); }
+      }
+
+      /* Circular SVG Speedometer Gauge */
+      .raja-gauge {
+        position: fixed;
+        bottom: 90px;
+        left: 20px;
+        width: 124px;
+        height: 124px;
+        background: rgba(12, 16, 24, 0.88);
+        border: 2px solid rgba(255, 203, 31, 0.4);
+        border-radius: 50%;
+        backdrop-filter: blur(8px);
+        box-shadow: 0 4px 20px rgba(0,0,0,0.7), inset 0 0 18px rgba(79, 195, 247, 0.18);
+        z-index: 92;
+        pointer-events: none;
+        transition: border-color 0.3s, box-shadow 0.3s;
+      }
+      .raja-gauge.overspeed {
+        border-color: #ff0055;
+        box-shadow: 0 0 25px rgba(255, 0, 85, 0.8), inset 0 0 20px rgba(255, 0, 85, 0.5);
+        animation: overspeedPulse 0.4s infinite alternate;
+      }
+      @keyframes overspeedPulse {
+        0% { transform: scale(1); }
+        100% { transform: scale(1.04); }
+      }
+      .gauge-svg {
+        width: 100%;
+        height: 100%;
+      }
+      .gauge-bg {
+        fill: none;
+        stroke: rgba(255, 255, 255, 0.08);
+        stroke-width: 8;
+      }
+      .gauge-arc {
+        fill: none;
+        stroke: url(#gaugeGrad);
+        stroke-width: 8;
+        stroke-linecap: round;
+        stroke-dasharray: 240;
+        stroke-dashoffset: 0;
+      }
+      .gauge-needle {
+        stroke: #ffd400;
+        stroke-width: 3.5;
+        stroke-linecap: round;
+        filter: drop-shadow(0 0 6px #ffd400);
+        transition: transform 0.08s ease-out;
+      }
+      .gauge-readout {
+        position: absolute;
+        bottom: 24px;
+        left: 0;
+        right: 0;
+        text-align: center;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+      .speed-number {
+        font-family: 'Baloo Da 2', monospace;
+        font-weight: 800;
+        font-size: 24px;
+        color: #fff;
+        line-height: 1;
+        text-shadow: 0 0 10px rgba(255, 203, 31, 0.8);
+      }
+      .speed-unit {
+        font-family: sans-serif;
+        font-size: 9px;
+        font-weight: 700;
+        letter-spacing: 1px;
+        color: #4fc3f7;
+      }
+
+      /* Dhaka Taxi Fare Meter */
+      .raja-fare-meter {
+        position: fixed;
+        top: 14px;
+        right: 80px;
+        background: rgba(10, 15, 22, 0.9);
+        border: 1.5px solid #38ef7d;
+        padding: 5px 12px;
+        border-radius: 10px;
+        box-shadow: 0 2px 14px rgba(56, 239, 125, 0.35);
+        z-index: 92;
+        pointer-events: none;
+        text-align: right;
+      }
+      .fare-badge {
+        font-family: 'Hind Siliguri', sans-serif;
+        font-size: 11px;
+        font-weight: 700;
+        color: #a8ff78;
+        letter-spacing: 0.5px;
+      }
+      .fare-num {
+        font-family: 'Baloo Da 2', monospace;
+        font-size: 18px;
+        font-weight: 800;
+        color: #38ef7d;
+        text-shadow: 0 0 8px rgba(56, 239, 125, 0.6);
+        line-height: 1.1;
+      }
+
+      /* Motion Blur Wind Speed Streaks */
+      .speed-streaks-canvas {
+        position: fixed;
+        inset: 0;
+        pointer-events: none;
+        z-index: 75;
+      }
     `;
     document.head.appendChild(style);
   }
@@ -681,14 +893,452 @@
     }
   }, 10000);
 
+
+  // ----------------------------------------------------
+  // 7. GTA Wanted Star System & Police Chase
+  // ----------------------------------------------------
+  const WantedSystem = {
+    stars: 0,
+    bribed: false,
+    bribedDamage: 0,
+    sirenOsc: null,
+    sirenGain: null,
+    sirenTimer: null,
+    lastStarNotice: 0,
+
+    init() {
+      const hud = document.getElementById('hud');
+      if (!hud || document.getElementById('wantedStarsBox')) return;
+
+      const starBox = document.createElement('div');
+      starBox.id = 'wantedStarsBox';
+      starBox.className = 'raja-stars-box';
+      starBox.innerHTML = `
+        <div class="stars-label">WANTED</div>
+        <div class="stars-row">
+          <span class="star" data-s="1">★</span>
+          <span class="star" data-s="2">★</span>
+          <span class="star" data-s="3">★</span>
+          <span class="star" data-s="4">★</span>
+          <span class="star" data-s="5">★</span>
+        </div>
+      `;
+      hud.appendChild(starBox);
+
+      if (!document.getElementById('policeVignette')) {
+        const vig = document.createElement('div');
+        vig.id = 'policeVignette';
+        vig.className = 'police-vignette';
+        document.body.appendChild(vig);
+      }
+
+      if (!document.getElementById('bribeBtn')) {
+        const bribe = document.createElement('button');
+        bribe.id = 'bribeBtn';
+        bribe.type = 'button';
+        bribe.className = 'bribe-btn';
+        bribe.innerHTML = `<span>👮 মামা চা-পানি খান (৳১০০ ঘুষ দিন) [B]</span>`;
+        bribe.hidden = true;
+        bribe.addEventListener('click', () => this.bribePolice());
+        hud.appendChild(bribe);
+
+        window.addEventListener('keydown', (e) => {
+          if ((e.key === 'b' || e.key === 'B') && this.stars >= 2 && !bribe.hidden) {
+            this.bribePolice();
+          }
+        });
+      }
+    },
+
+    update(damage, isAlive, inPlay) {
+      if (!inPlay || !isAlive) {
+        if (this.stars > 0) this.setStars(0);
+        return;
+      }
+
+      let targetStars = 0;
+      if (damage >= 80000) targetStars = 5;
+      else if (damage >= 45000) targetStars = 4;
+      else if (damage >= 20000) targetStars = 3;
+      else if (damage >= 6000) targetStars = 2;
+      else if (damage >= 1000) targetStars = 1;
+
+      if (this.bribed) {
+        if (damage > this.bribedDamage + 12000) {
+          this.bribed = false;
+        } else {
+          targetStars = Math.max(0, targetStars - 2);
+        }
+      }
+
+      if (targetStars !== this.stars) {
+        this.setStars(targetStars);
+      }
+    },
+
+    setStars(num) {
+      this.stars = num;
+      const box = document.getElementById('wantedStarsBox');
+      const bribeBtn = document.getElementById('bribeBtn');
+      const vig = document.getElementById('policeVignette');
+
+      if (box) {
+        box.classList.toggle('active', num > 0);
+        box.classList.toggle('chase', num >= 2);
+        box.querySelectorAll('.star').forEach(st => {
+          const sIdx = parseInt(st.getAttribute('data-s'), 10);
+          st.classList.toggle('lit', sIdx <= num);
+        });
+      }
+
+      if (bribeBtn) {
+        bribeBtn.hidden = num < 2;
+      }
+
+      if (vig) {
+        vig.classList.toggle('active', num >= 2);
+      }
+
+      if (num >= 2) {
+        this.startSiren();
+      } else {
+        this.stopSiren();
+      }
+
+      const now = Date.now();
+      if (num > 0 && now - this.lastStarNotice > 5000) {
+        this.lastStarNotice = now;
+        const dialogueBox = document.getElementById('dialogue');
+        if (dialogueBox) {
+          let msg = "⚠️ ট্রাফিক পুলিশ নজর রাখছে!";
+          if (num === 2) msg = "🚨 ২ স্টার: ট্রাফিক পুলিশ পিছু নিচ্ছে!";
+          else if (num === 3) msg = "🚨 ৩ স্টার: পুলিশের পিকআপ সাইরেন বাজাচ্ছে!";
+          else if (num === 4) msg = "🚨 ৪ স্টার: পুলিশ চারপাশ ঘিরে ফেলছে!";
+          else if (num === 5) msg = "🔥 ৫ স্টার: সামনে রোড ব্যারিকেড অ্যালার্ট!";
+          dialogueBox.textContent = msg;
+          dialogueBox.hidden = false;
+          setTimeout(() => { dialogueBox.hidden = true; }, 3200);
+        }
+      }
+    },
+
+    startSiren() {
+      if (this.sirenOsc) return;
+      try {
+        const AudioCtx = window.AudioContext || window.webkitAudioContext;
+        if (!window.RastarRaja.audioCtx) window.RastarRaja.audioCtx = new AudioCtx();
+        const ctx = window.RastarRaja.audioCtx;
+        if (ctx.state === 'suspended') ctx.resume();
+
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(650, ctx.currentTime);
+
+        let up = true;
+        const sweep = () => {
+          if (!this.sirenOsc) return;
+          const t = ctx.currentTime;
+          if (up) {
+            osc.frequency.exponentialRampToValueAtTime(950, t + 0.55);
+          } else {
+            osc.frequency.exponentialRampToValueAtTime(650, t + 0.55);
+          }
+          up = !up;
+          this.sirenTimer = setTimeout(sweep, 550);
+        };
+        sweep();
+
+        gain.gain.setValueAtTime(0.06, ctx.currentTime);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start();
+
+        this.sirenOsc = osc;
+        this.sirenGain = gain;
+      } catch (e) {}
+    },
+
+    stopSiren() {
+      if (this.sirenTimer) {
+        clearTimeout(this.sirenTimer);
+        this.sirenTimer = null;
+      }
+      if (this.sirenOsc) {
+        try {
+          this.sirenGain.gain.exponentialRampToValueAtTime(0.0001, window.RastarRaja.audioCtx.currentTime + 0.2);
+          setTimeout(() => {
+            try { this.sirenOsc.stop(); this.sirenOsc.disconnect(); } catch(e){}
+            this.sirenOsc = null;
+            this.sirenGain = null;
+          }, 250);
+        } catch(e) {
+          this.sirenOsc = null;
+        }
+      }
+    },
+
+    bribePolice() {
+      this.bribed = true;
+      this.bribedDamage = (window.__at && window.__at.G && window.__at.G.loss) || 0;
+      this.setStars(0);
+
+      try {
+        const ctx = window.RastarRaja.audioCtx;
+        if (ctx) {
+          const osc = ctx.createOscillator();
+          const g = ctx.createGain();
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(800, ctx.currentTime);
+          osc.frequency.setValueAtTime(1200, ctx.currentTime + 0.08);
+          g.gain.setValueAtTime(0.3, ctx.currentTime);
+          g.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.25);
+          osc.connect(g);
+          g.connect(ctx.destination);
+          osc.start();
+          osc.stop(ctx.currentTime + 0.26);
+        }
+      } catch(e) {}
+
+      const dialogueBox = document.getElementById('dialogue');
+      if (dialogueBox) {
+        dialogueBox.textContent = "👮 সার্জেন্ট: 'আইচ্ছা যান মামা, চা-পানি পাইসি! এইবার মাফ!'";
+        dialogueBox.hidden = false;
+        setTimeout(() => { dialogueBox.hidden = true; }, 3500);
+      }
+    }
+  };
+
+  // ----------------------------------------------------
+  // 8. Digital Cockpit & Cyber Speedometer HUD
+  // ----------------------------------------------------
+  const CockpitHUD = {
+    fareAmount: 0,
+    speedCanvas: null,
+    speedCtx: null,
+    streaks: [],
+
+    init() {
+      const hud = document.getElementById('hud');
+      if (!hud || document.getElementById('cockpitGauge')) return;
+
+      const gauge = document.createElement('div');
+      gauge.id = 'cockpitGauge';
+      gauge.className = 'raja-gauge';
+      gauge.innerHTML = `
+        <svg class="gauge-svg" viewBox="0 0 160 160">
+          <defs>
+            <linearGradient id="gaugeGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#4fc3f7" />
+              <stop offset="60%" stop-color="#ffcb1f" />
+              <stop offset="100%" stop-color="#ff0055" />
+            </linearGradient>
+          </defs>
+          <circle class="gauge-bg" cx="80" cy="80" r="66"></circle>
+          <path class="gauge-arc" d="M 28 126 A 66 66 0 1 1 132 126"></path>
+          <g class="gauge-ticks">
+            <line x1="28" y1="126" x2="38" y2="116" stroke="#4fc3f7" stroke-width="2"/>
+            <line x1="20" y1="80" x2="32" y2="80" stroke="#4fc3f7" stroke-width="2"/>
+            <line x1="42" y1="42" x2="50" y2="50" stroke="#4fc3f7" stroke-width="2"/>
+            <line x1="80" y1="14" x2="80" y2="28" stroke="#ffcb1f" stroke-width="3"/>
+            <line x1="118" y1="42" x2="110" y2="50" stroke="#ff4b4b" stroke-width="2"/>
+            <line x1="140" y1="80" x2="128" y2="80" stroke="#ff4b4b" stroke-width="2"/>
+            <line x1="132" y1="126" x2="122" y2="116" stroke="#ff0055" stroke-width="3"/>
+          </g>
+          <line id="gaugeNeedle" class="gauge-needle" x1="80" y1="80" x2="80" y2="24"></line>
+          <circle cx="80" cy="80" r="7" fill="#ffd400"></circle>
+        </svg>
+        <div class="gauge-readout">
+          <span id="speedVal" class="speed-number">০</span>
+          <span class="speed-unit">KM/H</span>
+        </div>
+      `;
+      hud.appendChild(gauge);
+
+      const fareMeter = document.createElement('div');
+      fareMeter.id = 'fareMeter';
+      fareMeter.className = 'raja-fare-meter';
+      fareMeter.innerHTML = `
+        <div class="fare-badge">🚖 চাঁদা ও ভাড়া মিটার</div>
+        <div class="fare-num" id="fareVal">৳০</div>
+      `;
+      hud.appendChild(fareMeter);
+
+      const c = document.createElement('canvas');
+      c.id = 'speedCanvas';
+      c.className = 'speed-streaks-canvas';
+      c.width = window.innerWidth;
+      c.height = window.innerHeight;
+      document.body.appendChild(c);
+      this.speedCanvas = c;
+      this.speedCtx = c.getContext('2d');
+
+      window.addEventListener('resize', () => {
+        if (this.speedCanvas) {
+          this.speedCanvas.width = window.innerWidth;
+          this.speedCanvas.height = window.innerHeight;
+        }
+      });
+    },
+
+    update(speedMps, dt, inPlay) {
+      if (!inPlay) {
+        if (this.speedCtx && this.speedCanvas) {
+          this.speedCtx.clearRect(0, 0, this.speedCanvas.width, this.speedCanvas.height);
+        }
+        return;
+      }
+
+      const kmh = Math.round(Math.abs(speedMps) * 7.5);
+      const needle = document.getElementById('gaugeNeedle');
+      if (needle) {
+        const clampedKmh = Math.min(140, kmh);
+        const deg = -135 + (clampedKmh / 140) * 270;
+        needle.style.transform = `rotate(${deg}deg)`;
+        needle.style.transformOrigin = '80px 80px';
+      }
+
+      const speedValEl = document.getElementById('speedVal');
+      if (speedValEl) {
+        speedValEl.textContent = kmh;
+      }
+
+      const gaugeEl = document.getElementById('cockpitGauge');
+      if (gaugeEl) {
+        gaugeEl.classList.toggle('overspeed', kmh >= 90);
+      }
+
+      if (kmh > 5) {
+        this.fareAmount += (kmh * dt * 0.45);
+        const fareEl = document.getElementById('fareVal');
+        if (fareEl) {
+          fareEl.textContent = `৳${Math.floor(this.fareAmount).toLocaleString('bn-BD')}`;
+        }
+      }
+
+      this.renderSpeedLines(kmh, dt);
+    },
+
+    renderSpeedLines(kmh, dt) {
+      if (!this.speedCtx || !this.speedCanvas) return;
+      const ctx = this.speedCtx;
+      const w = this.speedCanvas.width;
+      const h = this.speedCanvas.height;
+
+      ctx.clearRect(0, 0, w, h);
+      if (kmh < 85) {
+        this.streaks.length = 0;
+        return;
+      }
+
+      const count = Math.min(25, Math.floor((kmh - 80) * 0.8));
+      const cx = w / 2;
+      const cy = h / 2;
+
+      while (this.streaks.length < count) {
+        const angle = Math.random() * Math.PI * 2;
+        const dist = 70 + Math.random() * (w * 0.3);
+        this.streaks.push({
+          angle,
+          dist,
+          len: 35 + Math.random() * 80,
+          speed: 400 + Math.random() * 600,
+          opacity: 0.3 + Math.random() * 0.45
+        });
+      }
+
+      ctx.lineWidth = 2.5;
+      for (let i = this.streaks.length - 1; i >= 0; i--) {
+        const st = this.streaks[i];
+        st.dist += st.speed * dt;
+        if (st.dist > Math.max(w, h)) {
+          this.streaks.splice(i, 1);
+          continue;
+        }
+
+        const x1 = cx + Math.cos(st.angle) * st.dist;
+        const y1 = cy + Math.sin(st.angle) * st.dist;
+        const x2 = cx + Math.cos(st.angle) * (st.dist + st.len);
+        const y2 = cy + Math.sin(st.angle) * (st.dist + st.len);
+
+        ctx.strokeStyle = `rgba(255, 230, 100, ${st.opacity})`;
+        ctx.beginPath();
+        ctx.moveTo(x1, y1);
+        ctx.lineTo(x2, y2);
+        ctx.stroke();
+      }
+    }
+  };
+
+  // ----------------------------------------------------
+  // 9. Dhaka Speed Bumps Detection & Launch System
+  // ----------------------------------------------------
+  let lastSpeedBumpZ = -9999;
+  function checkSpeedBumps(p, dt) {
+    if (!p || !p.alive) return;
+
+    const bumpZ = Math.round(p.z / 120) * 120;
+    if (Math.abs(p.z - bumpZ) < 1.4 && Math.abs(p.z - lastSpeedBumpZ) > 12) {
+      lastSpeedBumpZ = p.z;
+
+      if (Math.abs(p.v) > 4.5) {
+        p.air = Math.max(p.air || 0, 0.45);
+        p.bumpY = 0.35;
+        p.v *= 0.78;
+
+        if (window.__at) {
+          if (window.__at.sfx && window.__at.sfx.bump) window.__at.sfx.bump();
+          if (window.__at.FX && window.__at.FX.shake) window.__at.FX.shake(0.35);
+        }
+
+        const dialogueBox = document.getElementById('dialogue');
+        if (dialogueBox) {
+          dialogueBox.textContent = "💥 মামা স্পিড ব্রেকার দেখেন না? গাড়ি উড়ায় দিলেন!";
+          dialogueBox.hidden = false;
+          setTimeout(() => { dialogueBox.hidden = true; }, 2600);
+        }
+      }
+    }
+  }
+
+  // ----------------------------------------------------
+  // 10. Real-time Engine Loop (Synchronous 60 FPS)
+  // ----------------------------------------------------
+  let lastTime = performance.now();
+  function engineLoop(timestamp) {
+    requestAnimationFrame(engineLoop);
+    const dt = Math.min(0.05, Math.max(0.001, (timestamp - lastTime) / 1000));
+    lastTime = timestamp;
+
+    const at = window.__at;
+    if (!at || !at.G) return;
+
+    const inPlay = at.G.state === 'play';
+    const isAlive = at.P ? at.P.alive : false;
+    const damage = at.G.loss || 0;
+    const speed = at.P ? at.P.v : 0;
+
+    WantedSystem.update(damage, isAlive, inPlay);
+    CockpitHUD.update(speed, dt, inPlay);
+
+    if (inPlay && isAlive && at.P) {
+      checkSpeedBumps(at.P, dt);
+    }
+  }
+  requestAnimationFrame(engineLoop);
+
   // Initialize UI once DOM is ready
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', () => {
       injectStyles();
       injectUI();
+      WantedSystem.init();
+      CockpitHUD.init();
     });
   } else {
     injectStyles();
     injectUI();
+    WantedSystem.init();
+    CockpitHUD.init();
   }
 })();
