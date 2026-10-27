@@ -49,13 +49,27 @@
       icon: '🚌',
       len: 10.5, wid: 2.5, mass: 7200,
       cruise: 9.5, boost: 14.2, camScale: 1.65
+    },
+    micro: {
+      name: 'কালা গ্লাস মাইক্রো',
+      subtitle: 'নোহা হাইয়েস · স্পিড ১১৫ · ভিআইপি প্রটোকল',
+      icon: '🚐',
+      len: 4.8, wid: 1.85, mass: 2100,
+      cruise: 12.5, boost: 18.0, camScale: 1.35
+    },
+    police: {
+      name: 'হাইওয়ে পুলিশ ভ্যান',
+      subtitle: 'র‍্যাব ইন্টারসেপ্টর · স্পিড ১২০ · সাইরেন সহ ধাওয়া',
+      icon: '🚓',
+      len: 4.6, wid: 1.8, mass: 1900,
+      cruise: 14.0, boost: 21.0, camScale: 1.32
     }
   };
 
   const FUNNY_QUOTES = [
     "মামা সাইড দেন, ব্রেক নাই!",
     "ধর ধর, গাড়ি আটকাইসে!",
-    "এইডা বাপের রাস্তা পাইছস? আমি রাস্তার রাজা!",
+    "রাস্তার রাজা আমি! সাইড দে মামা!",
     "পুলিশ আইসা গেছে রে, ভাগেন!",
     "ড্রাইভার সাব দেইখা চালান!",
     "আজকে তোর লাইসেন্স ক্যানসেল!",
@@ -610,6 +624,279 @@
         pointer-events: none;
         z-index: 75;
       }
+
+      /* Live TV News & Police FIR Challan Game Over Screen */
+      #paper {
+        background: rgba(4, 8, 18, 0.94) !important;
+        backdrop-filter: blur(14px) !important;
+      }
+      .np {
+        background: linear-gradient(145deg, #0b1120 0%, #172338 100%) !important;
+        border: 2.5px solid #e0242b !important;
+        box-shadow: 0 0 40px rgba(224, 36, 43, 0.6), 0 12px 48px rgba(0, 0, 0, 0.9) !important;
+        border-radius: 16px !important;
+        color: #f1f5f9 !important;
+      }
+      .np header {
+        border-bottom: 2px solid #e0242b !important;
+        background: #0f172a !important;
+        border-radius: 14px 14px 0 0 !important;
+        padding: 12px 16px !important;
+      }
+      .np-name {
+        color: #ffcb1f !important;
+        font-family: 'Baloo Da 2', sans-serif !important;
+        font-weight: 800 !important;
+        font-size: 28px !important;
+        letter-spacing: 1.5px !important;
+        text-shadow: 0 0 16px rgba(255, 203, 31, 0.8) !important;
+      }
+      .np-mast {
+        display: flex !important;
+        justify-content: space-between !important;
+        align-items: center !important;
+      }
+      .np-kicker {
+        background: #e0242b !important;
+        color: #fff !important;
+        font-weight: 800 !important;
+        display: inline-block !important;
+        padding: 5px 16px !important;
+        border-radius: 6px !important;
+        letter-spacing: 1px !important;
+        box-shadow: 0 0 14px rgba(224, 36, 43, 0.9) !important;
+      }
+      .np h2 {
+        color: #ffffff !important;
+        font-family: 'Anek Bangla', sans-serif !important;
+        font-weight: 800 !important;
+        text-shadow: 0 2px 10px rgba(0,0,0,0.9) !important;
+      }
+      .np-photo {
+        border: 2.5px solid #38ef7d !important;
+        border-radius: 10px !important;
+        overflow: hidden !important;
+        position: relative !important;
+        box-shadow: 0 6px 24px rgba(0,0,0,0.8) !important;
+      }
+      .np-stamp {
+        background: #e0242b !important;
+        color: #ffffff !important;
+        border: 2px solid #ffd400 !important;
+        border-radius: 8px !important;
+        box-shadow: 0 0 22px rgba(224, 36, 43, 0.95) !important;
+        padding: 4px 10px !important;
+      }
+      .np-stamp small {
+        color: #ffcb1f !important;
+        font-weight: 800 !important;
+      }
+      .np-body p {
+        color: #cbd5e1 !important;
+        line-height: 1.65 !important;
+      }
+      .np-actions .cta {
+        background: linear-gradient(135deg, #ffd400, #ff9900) !important;
+        color: #111 !important;
+        font-weight: 800 !important;
+        box-shadow: 0 4px 20px rgba(255, 203, 31, 0.7) !important;
+      }
+
+      /* Camera Flash Animation */
+      .tv-camera-flash {
+        position: fixed;
+        inset: 0;
+        background: #ffffff;
+        opacity: 0;
+        pointer-events: none;
+        z-index: 99999;
+      }
+      .tv-camera-flash.flashing {
+        animation: cameraFlashAnim 0.35s ease-out;
+      }
+      @keyframes cameraFlashAnim {
+        0% { opacity: 0.92; }
+        25% { opacity: 0; }
+        45% { opacity: 0.85; }
+        100% { opacity: 0; }
+      }
+
+      /* TV Photo Overlays & CRT Scanlines */
+      .tv-photo-overlay {
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+      }
+      .tv-live-pill {
+        position: absolute;
+        top: 8px;
+        left: 8px;
+        background: rgba(224, 36, 43, 0.95);
+        color: #ffffff;
+        padding: 3px 8px;
+        border-radius: 4px;
+        font-size: 11px;
+        font-weight: 800;
+        box-shadow: 0 0 10px rgba(224, 36, 43, 0.8);
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        z-index: 2;
+        letter-spacing: 0.5px;
+      }
+      .rec-blink {
+        width: 7px;
+        height: 7px;
+        background: #ffffff;
+        border-radius: 50%;
+        animation: recBlink 0.8s infinite alternate;
+      }
+      @keyframes recBlink {
+        0% { opacity: 1; }
+        100% { opacity: 0.2; }
+      }
+      .tv-rec-time {
+        position: absolute;
+        top: 8px;
+        right: 8px;
+        background: rgba(15, 23, 42, 0.85);
+        color: #ffd400;
+        padding: 3px 8px;
+        border-radius: 4px;
+        font-size: 11px;
+        font-family: monospace;
+        font-weight: 700;
+        z-index: 2;
+        border: 1px solid rgba(255, 212, 0, 0.3);
+      }
+      .tv-scanlines {
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.35) 50%);
+        background-size: 100% 4px;
+        z-index: 1;
+      }
+
+      /* Police FIR Challan Docket */
+      .police-fir-box {
+        background: rgba(15, 23, 42, 0.92);
+        border: 2px solid #ffcb1f;
+        border-radius: 10px;
+        padding: 12px 14px;
+        margin: 12px 0;
+        box-shadow: inset 0 0 15px rgba(255, 203, 31, 0.15), 0 4px 18px rgba(0, 0, 0, 0.6);
+        font-family: 'Anek Bangla', 'Hind Siliguri', sans-serif;
+      }
+      .fir-top-bar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 1.5px solid rgba(255, 203, 31, 0.4);
+        padding-bottom: 6px;
+        margin-bottom: 8px;
+      }
+      .fir-emblem {
+        color: #ffcb1f;
+        font-weight: 800;
+        font-size: 13px;
+        letter-spacing: 0.5px;
+      }
+      .fir-doc-badge {
+        background: #e0242b;
+        color: #ffffff;
+        padding: 2px 8px;
+        border-radius: 4px;
+        font-size: 11px;
+        font-weight: 800;
+        letter-spacing: 0.5px;
+      }
+      .fir-meta-row {
+        display: flex;
+        justify-content: space-between;
+        font-size: 12px;
+        color: #94a3b8;
+        margin-bottom: 10px;
+      }
+      .fir-details-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px 14px;
+      }
+      .fir-grid-item small {
+        display: block;
+        font-size: 11px;
+        color: #94a3b8;
+        margin-bottom: 2px;
+      }
+      .fir-grid-item strong {
+        display: block;
+        font-size: 13px;
+        color: #f8fafc;
+        line-height: 1.3;
+      }
+      .fir-grid-item .fir-amount {
+        color: #ff3344;
+        font-size: 18px;
+        font-weight: 900;
+        text-shadow: 0 0 12px rgba(255, 51, 68, 0.6);
+      }
+      .fir-seal-banner {
+        margin-top: 10px;
+        text-align: center;
+        border-top: 1px dashed rgba(255, 203, 31, 0.3);
+        padding-top: 6px;
+      }
+      .fir-seal-badge {
+        color: #38ef7d;
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: 0.5px;
+      }
+
+      /* Bottom TV Breaking News Marquee Scroller */
+      .tv-breaking-ticker {
+        background: #0b1120;
+        border-top: 2px solid #e0242b;
+        border-bottom: 2px solid #ffd400;
+        display: flex;
+        align-items: center;
+        overflow: hidden;
+        padding: 6px 0;
+        border-radius: 0 0 14px 14px;
+        margin-top: 12px;
+      }
+      .ticker-badge {
+        background: #e0242b;
+        color: #ffffff;
+        font-weight: 900;
+        padding: 4px 12px;
+        font-size: 12px;
+        white-space: nowrap;
+        margin-left: 8px;
+        margin-right: 10px;
+        border-radius: 4px;
+        box-shadow: 0 0 10px rgba(224, 36, 43, 0.8);
+        flex-shrink: 0;
+      }
+      .ticker-marquee-wrap {
+        overflow: hidden;
+        white-space: nowrap;
+        width: 100%;
+      }
+      .ticker-marquee-track {
+        display: inline-block;
+        padding-left: 100%;
+        animation: tickerScroll 20s linear infinite;
+        font-size: 13px;
+        font-weight: 700;
+        color: #ffd400;
+        letter-spacing: 0.5px;
+      }
+      @keyframes tickerScroll {
+        0% { transform: translateX(0); }
+        100% { transform: translateX(-100%); }
+      }
+
     `;
     document.head.appendChild(style);
   }
@@ -1674,6 +1961,443 @@
   };
 
   // ----------------------------------------------------
+  // 12. Hydraulic Bus Horn with 3D Shockwave & Crowd Scatter
+  // ----------------------------------------------------
+  const HydraulicHorn = {
+    shockwaveMesh: null,
+    expanding: false,
+    waveT: 0,
+
+    init(THREE, scene) {
+      if (this.shockwaveMesh || !THREE || !scene) return;
+      try {
+        const ringGeo = new THREE.Plane(1.2, 1.2);
+        ringGeo.rotateX(-THREE.PI / 2);
+        const ringCanvas = document.createElement('canvas');
+        ringCanvas.width = 128; ringCanvas.height = 128;
+        const rCtx = ringCanvas.getContext('2d');
+        rCtx.strokeStyle = '#00f0ff';
+        rCtx.lineWidth = 14;
+        rCtx.beginPath(); rCtx.arc(64, 64, 52, 0, Math.PI * 2); rCtx.stroke();
+        rCtx.strokeStyle = '#ffffff';
+        rCtx.lineWidth = 4;
+        rCtx.beginPath(); rCtx.arc(64, 64, 52, 0, Math.PI * 2); rCtx.stroke();
+
+        const ringTex = new THREE.Tex.glow.constructor(ringCanvas);
+        ringTex.needsUpdate = true;
+        const ringMat = new THREE.BasicMat({
+          map: ringTex,
+          transparent: true,
+          opacity: 0,
+          depthWrite: false,
+          blending: THREE.AdditiveBlending
+        });
+        this.shockwaveMesh = new THREE.Mesh(ringGeo, ringMat);
+        this.shockwaveMesh.position.y = 0.2;
+        this.shockwaveMesh.visible = false;
+        scene.add(this.shockwaveMesh);
+      } catch(e) {}
+    },
+
+    blast() {
+      try {
+        const AudioCtx = window.AudioContext || window.webkitAudioContext;
+        if (!window.RastarRaja.audioCtx) window.RastarRaja.audioCtx = new AudioCtx();
+        const ctx = window.RastarRaja.audioCtx;
+        if (ctx.state === 'suspended') ctx.resume();
+
+        const osc1 = ctx.createOscillator();
+        const osc2 = ctx.createOscillator();
+        const gain = ctx.createGain();
+
+        osc1.type = 'sawtooth';
+        osc1.frequency.setValueAtTime(185, ctx.currentTime);
+        osc1.frequency.exponentialRampToValueAtTime(175, ctx.currentTime + 0.65);
+
+        osc2.type = 'triangle';
+        osc2.frequency.setValueAtTime(230, ctx.currentTime);
+        osc2.frequency.exponentialRampToValueAtTime(220, ctx.currentTime + 0.65);
+
+        gain.gain.setValueAtTime(0.35, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.7);
+
+        osc1.connect(gain);
+        osc2.connect(gain);
+        gain.connect(ctx.destination);
+
+        osc1.start();
+        osc2.start();
+        osc1.stop(ctx.currentTime + 0.72);
+        osc2.stop(ctx.currentTime + 0.72);
+      } catch(e) {}
+
+      const at = window.__at;
+      if (at && at.P && this.shockwaveMesh) {
+        const p = at.P;
+        this.shockwaveMesh.position.set(p.x - p.fx * 2, 0.25, p.z - p.fz * 2);
+        this.shockwaveMesh.rotation.y = p.yaw;
+        this.shockwaveMesh.scale.set(1, 1, 1);
+        this.shockwaveMesh.material.opacity = 0.9;
+        this.shockwaveMesh.visible = true;
+        this.expanding = true;
+        this.waveT = 0;
+
+        if (at.FX && at.FX.shake) at.FX.shake(0.22);
+
+        if (at.PEOPLE && at.PEOPLE.list) {
+          for (const person of at.PEOPLE.list) {
+            const dx = person.x - p.x;
+            const dz = person.z - p.z;
+            const dist = Math.hypot(dx, dz);
+            if (dist < 18 && (dx * p.fx + dz * p.fz) < 0) {
+              person.mode = 'flee';
+              person.speed = 4.5;
+            }
+          }
+        }
+
+        const quotes = [
+          "🔊 'মামা সাইড দেন, ব্রেক নাই!'",
+          "🔊 'ডানে চাপেন ওস্তাদ! সোজা গাবতলী!'",
+          "🔊 'প্যাঁক প্যাঁক প্যাঁক! সামনে থাইকা সরেন!'"
+        ];
+        const dialogueBox = document.getElementById('dialogue');
+        if (dialogueBox) {
+          dialogueBox.textContent = quotes[Math.floor(Math.random() * quotes.length)];
+          dialogueBox.hidden = false;
+          setTimeout(() => { dialogueBox.hidden = true; }, 2600);
+        }
+      }
+    },
+
+    update(dt) {
+      if (this.expanding && this.shockwaveMesh) {
+        this.waveT += dt * 4.5;
+        const s = 1.0 + this.waveT * 8.0;
+        this.shockwaveMesh.scale.set(s, 1, s * 1.5);
+        this.shockwaveMesh.material.opacity = Math.max(0, 0.9 - this.waveT);
+        if (this.waveT >= 0.9) {
+          this.expanding = false;
+          this.shockwaveMesh.visible = false;
+        }
+      }
+    }
+  };
+
+  // ----------------------------------------------------
+  // 13. Road Pickups & God Mode Energy Shield
+  // ----------------------------------------------------
+  const SuperPickups = {
+    pickups: [],
+    godModeActive: false,
+    godModeTimer: 0,
+    shieldMesh: null,
+    initialized: false,
+
+    init(THREE, scene) {
+      if (this.initialized || !THREE || !scene) return;
+      this.initialized = true;
+
+      try {
+        const shieldGeo = new THREE.Plane(4.5, 4.5);
+        shieldGeo.rotateX(-THREE.PI / 2);
+        const sCanvas = document.createElement('canvas');
+        sCanvas.width = 128; sCanvas.height = 128;
+        const sCtx = sCanvas.getContext('2d');
+        const sGrad = sCtx.createRadialGradient(64, 64, 15, 64, 64, 60);
+        sGrad.addColorStop(0, 'rgba(0, 240, 255, 0.9)');
+        sGrad.addColorStop(0.5, 'rgba(0, 120, 255, 0.6)');
+        sGrad.addColorStop(1, 'rgba(0, 0, 0, 0)');
+        sCtx.fillStyle = sGrad;
+        sCtx.fillRect(0, 0, 128, 128);
+
+        const sTex = new THREE.Tex.glow.constructor(sCanvas);
+        sTex.needsUpdate = true;
+        const sMat = new THREE.BasicMat({
+          map: sTex,
+          transparent: true,
+          opacity: 0,
+          depthWrite: false,
+          blending: THREE.AdditiveBlending
+        });
+        this.shieldMesh = new THREE.Mesh(shieldGeo, sMat);
+        this.shieldMesh.position.y = 0.5;
+        this.shieldMesh.visible = false;
+        scene.add(this.shieldMesh);
+
+        const pCanvas = document.createElement('canvas');
+        pCanvas.width = 64; pCanvas.height = 64;
+        const pCtx = pCanvas.getContext('2d');
+        pCtx.fillStyle = '#ffd400';
+        pCtx.beginPath(); pCtx.arc(32, 32, 28, 0, Math.PI * 2); pCtx.fill();
+        const pTex = new THREE.Tex.glow.constructor(pCanvas);
+        pTex.needsUpdate = true;
+
+        const pGeo = new THREE.Plane(1.6, 1.6);
+        const types = ['shield', 'battery', 'cash'];
+        for (let i = 0; i < 9; i++) {
+          const type = types[i % 3];
+          const color = type === 'shield' ? 0x00f0ff : type === 'battery' ? 0xffea00 : 0x00e676;
+          const mat = new THREE.BasicMat({
+            map: pTex,
+            color,
+            transparent: true,
+            opacity: 0.9,
+            blending: THREE.AdditiveBlending
+          });
+          const mesh = new THREE.Mesh(pGeo, mat);
+          mesh.position.set((i % 2 === 0 ? -3.5 : 3.5), 0.9, -(i * 110 + 60));
+          scene.add(mesh);
+          this.pickups.push({ mesh, type, active: true });
+        }
+      } catch(e) {}
+    },
+
+    update(p, dt, inPlay) {
+      const THREE = window.__THREE_EXPORTS;
+      const at = window.__at;
+      if (!this.initialized && THREE && at && at.SCENE) {
+        this.init(THREE, at.SCENE);
+        HydraulicHorn.init(THREE, at.SCENE);
+      }
+      if (!inPlay || !p) return;
+
+      const now = performance.now();
+
+      for (const pk of this.pickups) {
+        if (!pk.active) continue;
+        pk.mesh.rotation.y += dt * 3.0;
+        pk.mesh.position.y = 0.9 + Math.sin(now * 0.005 + pk.mesh.position.z) * 0.2;
+
+        if (pk.mesh.position.z > p.z + 20) {
+          pk.mesh.position.z -= 900;
+          pk.active = true;
+          pk.mesh.visible = true;
+        }
+
+        const dist = Math.hypot(p.x - pk.mesh.position.x, p.z - pk.mesh.position.z);
+        if (dist < 2.0 && pk.active) {
+          pk.active = false;
+          pk.mesh.visible = false;
+          this.triggerPickup(pk.type, p);
+        }
+      }
+
+      if (this.godModeActive) {
+        this.godModeTimer -= dt;
+        if (this.shieldMesh) {
+          this.shieldMesh.position.set(p.x, 0.4, p.z);
+          this.shieldMesh.rotation.y += dt * 4;
+          const s = 1.0 + 0.15 * Math.sin(now * 0.015);
+          this.shieldMesh.scale.set(s, 1, s);
+          this.shieldMesh.material.opacity = 0.85;
+          this.shieldMesh.visible = true;
+        }
+
+        if (at && at.TRAFFIC && at.TRAFFIC.list) {
+          for (const v of at.TRAFFIC.list) {
+            if (v.dead) continue;
+            const dist = Math.hypot(p.x - v.x, p.z - v.z);
+            if (dist < 4.2) {
+              v.kx = (v.x - p.x) * 12;
+              v.kz = (v.z - p.z) * 12;
+              v.v = -8;
+              at.FX.sparks(v.x, 1, v.z, 8);
+              at.FX.shake(0.35);
+              if (at.sfx && at.sfx.thud) at.sfx.thud(v.x, v.z, 1.0);
+            }
+          }
+        }
+
+        if (this.godModeTimer <= 0) {
+          this.godModeActive = false;
+          if (this.shieldMesh) this.shieldMesh.visible = false;
+        }
+      }
+    },
+
+    triggerPickup(type, p) {
+      const dialogueBox = document.getElementById('dialogue');
+      const at = window.__at;
+
+      if (type === 'shield') {
+        this.godModeActive = true;
+        this.godModeTimer = 7.0;
+        if (dialogueBox) {
+          dialogueBox.textContent = "🛡️ রাজার ঢাল অ্যাক্টিভ! যেকোনো গাড়ি উড়িয়ে দিন!";
+          dialogueBox.hidden = false;
+          setTimeout(() => { dialogueBox.hidden = true; }, 3200);
+        }
+        if (at && at.sfx && at.sfx.technologia) at.sfx.technologia();
+      } else if (type === 'battery') {
+        p.charge = 1.0;
+        if (dialogueBox) {
+          dialogueBox.textContent = "⚡ ফুল চার্জ! ব্যাটারি ১০০% রিচার্জড!";
+          dialogueBox.hidden = false;
+          setTimeout(() => { dialogueBox.hidden = true; }, 2600);
+        }
+        if (at && at.sfx && at.sfx.chime) at.sfx.chime();
+      } else if (type === 'cash') {
+        CockpitHUD.fareAmount += 5000;
+        const fareEl = document.getElementById('fareVal');
+        if (fareEl) fareEl.textContent = `৳${Math.floor(CockpitHUD.fareAmount).toLocaleString('bn-BD')}`;
+        if (dialogueBox) {
+          dialogueBox.textContent = "💰 নগদ চাঁদা আদায়: ৳৫,০০০ যোগ হয়েছে!";
+          dialogueBox.hidden = false;
+          setTimeout(() => { dialogueBox.hidden = true; }, 2600);
+        }
+      }
+    }
+  };
+
+  // ----------------------------------------------------
+  // 14. Game Over Enhancer (Live TV News & Police FIR Challan)
+  // ----------------------------------------------------
+  const GameOverEnhancer = {
+    initialized: false,
+    flashEl: null,
+
+    init() {
+      if (this.initialized) return;
+      this.initialized = true;
+
+      const paper = document.getElementById('paper');
+      if (!paper) return;
+
+      this.flashEl = document.getElementById('tvCameraFlash');
+      if (!this.flashEl) {
+        this.flashEl = document.createElement('div');
+        this.flashEl.id = 'tvCameraFlash';
+        this.flashEl.className = 'tv-camera-flash';
+        document.body.appendChild(this.flashEl);
+      }
+
+      const observer = new MutationObserver(() => {
+        const isHidden = paper.hidden || getComputedStyle(paper).display === 'none';
+        if (!isHidden && !paper.dataset.enhanced) {
+          paper.dataset.enhanced = 'true';
+          this.triggerFlash();
+          this.enhanceDOM(paper);
+        } else if (isHidden) {
+          paper.dataset.enhanced = '';
+        }
+      });
+      observer.observe(paper, { attributes: true, attributeFilter: ['hidden', 'style'] });
+    },
+
+    triggerFlash() {
+      try {
+        const AudioCtx = window.AudioContext || window.webkitAudioContext;
+        if (!window.RastarRaja.audioCtx) window.RastarRaja.audioCtx = new AudioCtx();
+        const ctx = window.RastarRaja.audioCtx;
+        if (ctx.state === 'suspended') ctx.resume();
+        const now = ctx.currentTime;
+        const buf = ctx.createBuffer(1, ctx.sampleRate * 0.06, ctx.sampleRate);
+        const data = buf.getChannelData(0);
+        for (let i = 0; i < data.length; i++) data[i] = (Math.random() * 2 - 1) * Math.exp(-i / (ctx.sampleRate * 0.01));
+        const src = ctx.createBufferSource();
+        src.buffer = buf;
+        const g = ctx.createGain();
+        g.gain.setValueAtTime(0.4, now);
+        src.connect(g);
+        g.connect(ctx.destination);
+        src.start(now);
+      } catch(e) {}
+
+      if (this.flashEl) {
+        this.flashEl.classList.remove('flashing');
+        void this.flashEl.offsetWidth;
+        this.flashEl.classList.add('flashing');
+      }
+    },
+
+    enhanceDOM(paper) {
+      const npArticle = paper.querySelector('.np');
+      const npBody = paper.querySelector('.np-body');
+      if (!npArticle || !npBody) return;
+
+      // 1. CRT Scanlines & Live Broadcast Pill on Photo
+      const photo = paper.querySelector('.np-photo');
+      if (photo && !photo.querySelector('.tv-photo-overlay')) {
+        const overlay = document.createElement('div');
+        overlay.className = 'tv-photo-overlay';
+        overlay.innerHTML = `
+          <div class="tv-live-pill"><span class="rec-blink"></span> LIVE · ডিটিভি HD</div>
+          <div class="tv-rec-time">${new Date().toLocaleTimeString('bn-BD', { hour: '2-digit', minute: '2-digit' })}</div>
+          <div class="tv-scanlines"></div>
+        `;
+        photo.appendChild(overlay);
+      }
+
+      // 2. Police FIR Challan Docket Card
+      let firBox = document.getElementById('policeFirBox');
+      const lossVal = document.getElementById('npStamp') ? document.getElementById('npStamp').textContent : '৳০';
+      const caseNum = 'DMP-RR-' + (202600 + Math.floor(Math.random() * 8999));
+
+      if (!firBox) {
+        firBox = document.createElement('div');
+        firBox.id = 'policeFirBox';
+        firBox.className = 'police-fir-box';
+        const buyBox = paper.querySelector('.np-buy');
+        if (buyBox) {
+          buyBox.after(firBox);
+        } else {
+          npBody.appendChild(firBox);
+        }
+      }
+
+      firBox.innerHTML = `
+        <div class="fir-top-bar">
+          <div class="fir-emblem">🇧🇩 ঢাকা মেট্রোপলিটন পুলিশ (DMP)</div>
+          <div class="fir-doc-badge">ট্রাফিক মামলা ও জব্দ তালিকা</div>
+        </div>
+        <div class="fir-meta-row">
+          <span>কেস নং: <b>${caseNum}</b></span>
+          <span>তারিখ: <b>${new Date().toLocaleDateString('bn-BD')}</b></span>
+        </div>
+        <div class="fir-details-grid">
+          <div class="fir-grid-item">
+            <small>অভিযুক্ত চালক:</small>
+            <strong>"রাস্তার রাজা" (লাইসেন্সবিহীন)</strong>
+          </div>
+          <div class="fir-grid-item">
+            <small>মামলার ধারা:</small>
+            <strong>সড়ক পরিবহন আইন ২০১৮ (ধারা ২৭৯/৩৩৮)</strong>
+          </div>
+          <div class="fir-grid-item">
+            <small>দণ্ড / ধার্যকৃত ক্ষতিপূরণ:</small>
+            <strong class="fir-amount">${lossVal}</strong>
+          </div>
+          <div class="fir-grid-item">
+            <small>তদন্ত কর্মকর্তা:</small>
+            <strong>আব্দুল আল যুবায়ের (চিফ সার্জেন্ট)</strong>
+          </div>
+        </div>
+        <div class="fir-seal-banner">
+          <span class="fir-seal-badge">✔ ট্রাফিক সদর দপ্তর কর্তৃক সিলমোহরকৃত ও আদালত প্রদেয় চালান পত্র</span>
+        </div>
+      `;
+
+      // 3. Bottom TV Breaking News Marquee Scroller
+      let ticker = document.getElementById('tvBreakingTicker');
+      if (!ticker) {
+        ticker = document.createElement('div');
+        ticker.id = 'tvBreakingTicker';
+        ticker.className = 'tv-breaking-ticker';
+        ticker.innerHTML = `
+          <div class="ticker-badge">🔴 ব্রেকিং নিউজ</div>
+          <div class="ticker-marquee-wrap">
+            <div class="ticker-marquee-track">
+              🚨 ব্রেকিং: ঢাকার রাজপথে "রাস্তার রাজা"র তাণ্ডব • কোটি টাকার জাতীয় ক্ষয়ক্ষতি • পুলিশি মামলা ও গ্রেফতারি পরোয়ানা জারি • প্রত্যক্ষদর্শীদের ছুটোছুটি • বিস্তারিত সম্প্রচার দেখতে চোখ রাখুন ডিটিভি পর্দায় 🚨
+            </div>
+          </div>
+        `;
+        npArticle.appendChild(ticker);
+      }
+    }
+  };
+
+  // ----------------------------------------------------
   // 11. Real-time Engine Loop (Synchronous 60 FPS)
   // ----------------------------------------------------
   let lastTime = performance.now();
@@ -1701,21 +2425,34 @@
     }
 
     VisualsFX.update(at.P, dt, inPlay, isNight, isRain);
+    HydraulicHorn.update(dt);
+    SuperPickups.update(at.P, dt, inPlay);
   }
   requestAnimationFrame(engineLoop);
 
-  // Initialize UI once DOM is ready
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', () => {
-      injectStyles();
-      injectUI();
-      WantedSystem.init();
-      CockpitHUD.init();
-    });
-  } else {
+  function setupInteractiveHooks() {
     injectStyles();
     injectUI();
     WantedSystem.init();
     CockpitHUD.init();
+    GameOverEnhancer.init();
+
+    // Keyboard H or Horn button for Hydraulic Bus Horn
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'h' || e.key === 'H') {
+        HydraulicHorn.blast();
+      }
+    });
+    const tHornBtn = document.getElementById('tHorn');
+    if (tHornBtn) {
+      tHornBtn.addEventListener('click', () => HydraulicHorn.blast());
+    }
+  }
+
+  // Initialize UI once DOM is ready
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', setupInteractiveHooks);
+  } else {
+    setupInteractiveHooks();
   }
 })();

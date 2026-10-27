@@ -26,7 +26,7 @@
 <meta name="theme-color" content="#15110e">
 <script>
 (function () {
-  var NEW = "/", OLD = "baper-rasta.pages.dev", KEYS = ["baperRasta.best","baperRasta.device","baperRasta.devicePass","baperRasta.wantedName","baperRasta.wanted","baperRasta.wantedCut","baperRasta.subscribed","baperRasta.issue","baperRasta.seen","baperRasta.quality","baperRasta.helpClosed"];
+  var NEW = "/", OLD = "rastar-raja", KEYS = ["rastarRaja.best","rastarRaja.device","rastarRaja.devicePass","rastarRaja.wantedName","rastarRaja.wanted","rastarRaja.wantedCut","rastarRaja.subscribed","rastarRaja.issue","rastarRaja.seen","rastarRaja.quality","rastarRaja.helpClosed"];
   if (location.hostname === OLD && !/[?&]stay\b/.test(location.search)) {
     var hash = '';
     try {
@@ -58,7 +58,7 @@
     for (var k in got) {
       if (KEYS.indexOf(k) < 0 || typeof got[k] !== 'string') continue;
       var have = localStorage.getItem(k);
-      if (k === 'baperRasta.best') { if (!(Number(have) >= Number(got[k]))) localStorage.setItem(k, got[k]); }
+      if (k === 'rastarRaja.best') { if (!(Number(have) >= Number(got[k]))) localStorage.setItem(k, got[k]); }
       else if (have === null) localStorage.setItem(k, got[k]);
     }
   } catch (e) { /* a broken or blocked hand-over: the player starts afresh */ }
@@ -1072,7 +1072,7 @@ h1.title { text-shadow: 3px 3px 0 #ae2941, 6px 6px 0 #14372f; }
   </script>
   <script nomodule>window.__bootFail && window.__bootFail('old');</script>
 </div>
-<script src="raja-engine.js?v=2.5.0"></script>
-<script type="module" src="game.8070c56a37.js?v=2.5.0"></script>
+<script src="raja-engine.js?v=2.7.0"></script>
+<script type="module" src="game.8070c56a37.js?v=2.7.0"></script>
 </body>
 </html>
