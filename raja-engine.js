@@ -853,6 +853,156 @@
         letter-spacing: 0.5px;
       }
 
+      
+      /* Mini-Map Cyber Radar HUD */
+      .mini-map-radar {
+        position: fixed;
+        top: 14px;
+        right: 14px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        background: rgba(11, 17, 32, 0.88);
+        border: 2px solid #00f0ff;
+        border-radius: 14px;
+        padding: 6px 8px;
+        box-shadow: 0 0 20px rgba(0, 240, 255, 0.4), 0 8px 32px rgba(0, 0, 0, 0.8);
+        backdrop-filter: blur(10px);
+        z-index: 90;
+        cursor: pointer;
+        transition: transform 0.2s ease, opacity 0.2s ease;
+      }
+      .mini-map-radar:hover {
+        transform: scale(1.04);
+      }
+      .mini-map-radar.minimized #radarCanvas,
+      .mini-map-radar.minimized .radar-gps-hint {
+        display: none;
+      }
+      .radar-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        width: 100%;
+        margin-bottom: 4px;
+        padding: 0 4px;
+      }
+      .radar-live-dot {
+        width: 8px;
+        height: 8px;
+        background: #00f0ff;
+        border-radius: 50%;
+        box-shadow: 0 0 8px #00f0ff;
+        animation: recBlink 0.9s infinite alternate;
+      }
+      .radar-title {
+        font-family: 'Baloo Da 2', 'Anek Bangla', sans-serif;
+        font-size: 11px;
+        font-weight: 800;
+        color: #00f0ff;
+        letter-spacing: 0.5px;
+      }
+      .radar-heading {
+        font-family: monospace;
+        font-size: 11px;
+        font-weight: 900;
+        color: #ffd400;
+      }
+      #radarCanvas {
+        border-radius: 50%;
+        background: #070d18;
+      }
+      .radar-gps-hint {
+        font-family: 'Anek Bangla', sans-serif;
+        font-size: 11px;
+        font-weight: 700;
+        color: #ffd400;
+        margin-top: 4px;
+        text-shadow: 0 1px 4px rgba(0,0,0,0.9);
+      }
+
+      /* Near-Miss Cinematic Flash Banner */
+      .near-miss-toast {
+        position: fixed;
+        top: 22%;
+        left: 50%;
+        transform: translate(-50%, -50%) scale(0.6);
+        background: linear-gradient(135deg, rgba(255, 51, 68, 0.95), rgba(255, 153, 0, 0.95));
+        color: #ffffff;
+        font-family: 'Baloo Da 2', 'Anek Bangla', sans-serif;
+        font-size: clamp(16px, 4vw, 24px);
+        font-weight: 900;
+        padding: 8px 24px;
+        border-radius: 30px;
+        border: 2px solid #ffd400;
+        box-shadow: 0 0 25px rgba(255, 203, 31, 0.9), 0 4px 20px rgba(0, 0, 0, 0.8);
+        pointer-events: none;
+        z-index: 100;
+        opacity: 0;
+        transition: all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      }
+      .near-miss-toast.active {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1.15);
+      }
+
+      /* Mobile Perfection: Touch Ergonomics & Responsive UI */
+      @media (max-width: 768px) {
+        .mini-map-radar {
+          top: 8px;
+          right: 8px;
+          padding: 4px;
+          transform: scale(0.85);
+          transform-origin: top right;
+        }
+        .raja-cockpit-hud {
+          bottom: 12px !important;
+          left: 12px !important;
+          transform: scale(0.82) !important;
+          transform-origin: bottom left !important;
+        }
+        .raja-chada-meter {
+          top: 8px !important;
+          left: 8px !important;
+          padding: 4px 10px !important;
+          font-size: 12px !important;
+        }
+        .raja-stars-box {
+          top: 8px !important;
+          padding: 3px 10px !important;
+          transform: translateX(-50%) scale(0.85) !important;
+        }
+        .bribe-police-btn {
+          top: 48px !important;
+          font-size: 12px !important;
+          padding: 5px 12px !important;
+        }
+        #touch .tbtn {
+          touch-action: manipulation;
+          -webkit-tap-highlight-color: transparent;
+        }
+        #touch .pedal {
+          font-weight: 900 !important;
+          letter-spacing: 0.5px !important;
+        }
+        #touch #tGas {
+          border: 2px solid #38ef7d !important;
+          box-shadow: 0 0 15px rgba(56, 239, 125, 0.4) !important;
+        }
+        #touch #tBrake {
+          border: 2px solid #ff3344 !important;
+          box-shadow: 0 0 15px rgba(255, 51, 68, 0.4) !important;
+        }
+        #touch #tBoost {
+          border: 2px solid #00f0ff !important;
+          box-shadow: 0 0 15px rgba(0, 240, 255, 0.5) !important;
+        }
+        #touch #tHorn {
+          border: 2px solid #ffd400 !important;
+          box-shadow: 0 0 15px rgba(255, 212, 0, 0.4) !important;
+        }
+      }
+
       /* Bottom TV Breaking News Marquee Scroller */
       .tv-breaking-ticker {
         background: #0b1120;
@@ -2398,6 +2548,703 @@
   };
 
   // ----------------------------------------------------
+  // 15. Dhaka Metro Rail (MRT Line 6) Overpass & High-Speed Train
+  // ----------------------------------------------------
+  const MetroRailSystem = {
+    initialized: false,
+    trackGroup: null,
+    trainGroup: null,
+    trainActive: false,
+    trainX: 0,
+    trainZ: 0,
+    trainSpeed: 42.0,
+    trainDir: 1,
+    spawnTimer: 16.0,
+    whistled: false,
+    whistleDist: 85,
+    carriages: [],
+
+    init(THREE, scene) {
+      if (this.initialized || !THREE || !scene) return;
+      this.initialized = true;
+
+      try {
+        this.trackGroup = new THREE.Group();
+        this.trainGroup = new THREE.Group();
+
+        const pierMat = new THREE.StandardMat({ color: 0x8a929a, roughness: 0.85 });
+        const railMat = new THREE.BasicMat({ color: 0x334155 });
+        const deckMat = new THREE.StandardMat({ color: 0x475569, roughness: 0.9 });
+
+        // Continuous viaduct deck
+        const deckGeo = new THREE.ct();
+        deckGeo.box(0, 8.2, 0, 5.2, 0.7, 1400, null);
+        deckGeo.box(-2.5, 8.8, 0, 0.35, 0.8, 1400, null);
+        deckGeo.box(2.5, 8.8, 0, 0.35, 0.8, 1400, null);
+        deckGeo.box(-1.2, 8.6, 0, 0.12, 0.1, 1400, null);
+        deckGeo.box(-0.4, 8.6, 0, 0.12, 0.1, 1400, null);
+        deckGeo.box(0.4, 8.6, 0, 0.12, 0.1, 1400, null);
+        deckGeo.box(1.2, 8.6, 0, 0.12, 0.1, 1400, null);
+
+        const deckMesh = new THREE.Mesh(deckGeo.build(), deckMat);
+        this.trackGroup.add(deckMesh);
+
+        // T-piers spaced every 65m
+        const pierGeo = new THREE.ct();
+        for (let z = -700; z <= 700; z += 65) {
+          pierGeo.box(0, 4.0, z, 1.2, 7.8, 1.2, null);
+          pierGeo.box(0, 7.8, z, 4.8, 0.8, 1.6, null);
+        }
+        const pierMesh = new THREE.Mesh(pierGeo.build(), pierMat);
+        this.trackGroup.add(pierMesh);
+
+        scene.add(this.trackGroup);
+
+        // Build MRT Line 6 Train (5 Cars)
+        const trainBodyMat = new THREE.StandardMat({ color: 0xe2e8f0, roughness: 0.4, metalness: 0.6 });
+        const greenStripeMat = new THREE.BasicMat({ color: 0x006a4e });
+        const carriageLen = 12.0;
+        const carriageWid = 2.4;
+        const carriageHgt = 2.3;
+
+        for (let i = 0; i < 5; i++) {
+          const carGrp = new THREE.Group();
+          const carGeo = new THREE.ct();
+          const isLead = (i === 0);
+          const isTail = (i === 4);
+
+          carGeo.box(0, 1.2, 0, carriageWid, carriageHgt, carriageLen, null);
+          carGeo.box(0, 1.1, 0, carriageWid + 0.04, 0.35, carriageLen + 0.02, null);
+          carGeo.box(0, 1.4, 0, carriageWid + 0.05, 0.08, carriageLen + 0.03, null);
+
+          // Windows
+          for (let wz = -4.5; wz <= 4.5; wz += 2.2) {
+            carGeo.box(carriageWid / 2 + 0.03, 1.4, wz, 0.04, 0.65, 1.4, null);
+            carGeo.box(-carriageWid / 2 - 0.03, 1.4, wz, 0.04, 0.65, 1.4, null);
+          }
+
+          if (isLead) {
+            carGeo.box(0, 1.1, -carriageLen / 2 - 0.8, carriageWid * 0.85, carriageHgt * 0.85, 1.6, null);
+            carGeo.box(0, 1.6, -carriageLen / 2 - 0.6, carriageWid * 0.75, 0.7, 0.1, null);
+            carGeo.box(0.65, 0.6, -carriageLen / 2 - 1.55, 0.3, 0.2, 0.1, null);
+            carGeo.box(-0.65, 0.6, -carriageLen / 2 - 1.55, 0.3, 0.2, 0.1, null);
+          }
+          if (isTail) {
+            carGeo.box(0, 1.1, carriageLen / 2 + 0.8, carriageWid * 0.85, carriageHgt * 0.85, 1.6, null);
+            carGeo.box(0.65, 0.6, carriageLen / 2 + 1.55, 0.25, 0.18, 0.1, null);
+            carGeo.box(-0.65, 0.6, carriageLen / 2 + 1.55, 0.25, 0.18, 0.1, null);
+          }
+
+          const carMesh = new THREE.Mesh(carGeo.build(), trainBodyMat);
+          carGrp.add(carMesh);
+
+          if (i === 1 || i === 3) {
+            const pantoGeo = new THREE.ct();
+            pantoGeo.box(0, carriageHgt + 0.4, 0, 1.4, 0.06, 0.8, null);
+            pantoGeo.box(0, carriageHgt + 0.7, 0, 1.1, 0.06, 0.06, null);
+            const pantoMesh = new THREE.Mesh(pantoGeo.build(), railMat);
+            carGrp.add(pantoMesh);
+          }
+
+          carGrp.position.z = i * (carriageLen + 0.3);
+          this.trainGroup.add(carGrp);
+          this.carriages.push(carGrp);
+        }
+
+        this.trainGroup.position.set(0.8, 8.6, 9999);
+        scene.add(this.trainGroup);
+      } catch (err) {
+        console.warn('MetroRailSystem error:', err);
+      }
+    },
+
+    whistle() {
+      try {
+        const AudioCtx = window.AudioContext || window.webkitAudioContext;
+        if (!window.RastarRaja.audioCtx) window.RastarRaja.audioCtx = new AudioCtx();
+        const ctx = window.RastarRaja.audioCtx;
+        if (ctx.state === 'suspended') ctx.resume();
+        const now = ctx.currentTime;
+
+        const osc1 = ctx.createOscillator();
+        const osc2 = ctx.createOscillator();
+        const gain = ctx.createGain();
+
+        osc1.type = 'sine';
+        osc1.frequency.setValueAtTime(440, now);
+        osc1.frequency.exponentialRampToValueAtTime(435, now + 0.8);
+
+        osc2.type = 'triangle';
+        osc2.frequency.setValueAtTime(554.37, now);
+        osc2.frequency.exponentialRampToValueAtTime(550, now + 0.8);
+
+        gain.gain.setValueAtTime(0.001, now);
+        gain.gain.linearRampToValueAtTime(0.28, now + 0.08);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.85);
+
+        osc1.connect(gain);
+        osc2.connect(gain);
+        gain.connect(ctx.destination);
+
+        osc1.start(now);
+        osc2.start(now);
+        osc1.stop(now + 0.9);
+        osc2.stop(now + 0.9);
+
+        const dialogueBox = document.getElementById('dialogue');
+        if (dialogueBox && Math.random() < 0.6) {
+          dialogueBox.textContent = "🚇 'পিপপপপ! মাথার উপর দিয়া মেট্রোরেল ছুটতাছে!'";
+          dialogueBox.hidden = false;
+          setTimeout(() => { dialogueBox.hidden = true; }, 2600);
+        }
+      } catch (e) {}
+    },
+
+    update(p, dt, inPlay) {
+      const THREE = window.__THREE_EXPORTS;
+      const at = window.__at;
+      if (!this.initialized && THREE && at && at.SCENE) {
+        this.init(THREE, at.SCENE);
+      }
+      if (!this.initialized || !inPlay || !p) return;
+
+      if (this.trackGroup) {
+        const chunkZ = Math.floor(p.z / 65) * 65;
+        this.trackGroup.position.z = chunkZ;
+      }
+
+      if (!this.trainActive) {
+        this.spawnTimer -= dt;
+        if (this.spawnTimer <= 0) {
+          this.trainActive = true;
+          this.whistled = false;
+          this.trainDir = Math.random() < 0.5 ? 1 : -1;
+          this.trainSpeed = 38 + Math.random() * 8;
+          const trackSide = this.trainDir === 1 ? -0.8 : 0.8;
+          this.trainX = trackSide;
+          this.trainZ = this.trainDir === 1 ? p.z - 350 : p.z + 350;
+          this.trainGroup.position.set(this.trainX, 8.6, this.trainZ);
+          this.trainGroup.rotation.y = this.trainDir === 1 ? 0 : Math.PI;
+        }
+      } else {
+        this.trainZ += this.trainDir * this.trainSpeed * dt;
+        this.trainGroup.position.z = this.trainZ;
+
+        const dist = Math.abs(this.trainZ - p.z);
+        if (!this.whistled && dist < this.whistleDist) {
+          this.whistled = true;
+          this.whistle();
+        }
+
+        if (Math.abs(this.trainZ - p.z) > 420) {
+          this.trainActive = false;
+          this.spawnTimer = 28 + Math.random() * 15;
+          this.trainGroup.position.set(0, 8.6, 9999);
+        }
+      }
+    }
+  };
+
+  // ----------------------------------------------------
+  // 16. Realistic Physical Suspension & Asphalt Tire Skids
+  // ----------------------------------------------------
+  const SuspensionDynamics = {
+    prevV: 0,
+    pitchAngle: 0,
+    rollAngle: 0,
+    bounceY: 0,
+    skidPool: [],
+    lastSkidT: 0,
+
+    init(THREE, scene) {
+      if (!THREE || !scene) return;
+      try {
+        const sGeo = new THREE.Plane(0.32, 1.8);
+        sGeo.rotateX(-THREE.PI / 2);
+        const sMat = new THREE.BasicMat({
+          color: 0x111115,
+          transparent: true,
+          opacity: 0.65,
+          depthWrite: false
+        });
+
+        for (let i = 0; i < 24; i++) {
+          const m = new THREE.Mesh(sGeo, sMat);
+          m.position.set(0, 0.02, 9999);
+          m.visible = false;
+          scene.add(m);
+          this.skidPool.push({ mesh: m, life: 0 });
+        }
+      } catch (e) {}
+    },
+
+    spawnSkid(x, z, yaw) {
+      const now = performance.now();
+      if (now - this.lastSkidT < 70) return;
+      this.lastSkidT = now;
+
+      const free = this.skidPool.find(s => s.life <= 0);
+      if (free) {
+        free.mesh.position.set(x, 0.025, z);
+        free.mesh.rotation.y = yaw;
+        free.mesh.visible = true;
+        free.life = 7.0;
+      }
+    },
+
+    update(p, dt, inPlay) {
+      if (!inPlay || !p || !p.alive) return;
+
+      const THREE = window.__THREE_EXPORTS;
+      const at = window.__at;
+      if (this.skidPool.length === 0 && THREE && at && at.SCENE) {
+        this.init(THREE, at.SCENE);
+      }
+
+      for (const s of this.skidPool) {
+        if (s.life > 0) {
+          s.life -= dt;
+          s.mesh.material.opacity = Math.max(0, (s.life / 7.0) * 0.65);
+          if (s.life <= 0) s.mesh.visible = false;
+        }
+      }
+
+      const accel = (p.v - this.prevV) / dt;
+      this.prevV = p.v;
+
+      const kind = window.__PLAYER_VEHICLE || 'auto';
+      const rollFactor = kind === 'cng' ? 0.42 : kind === 'leguna' ? 0.46 : kind === 'bus' ? 0.16 : 0.30;
+
+      let targetPitch = 0;
+      if (accel > 1.2 || p.boost) {
+        targetPitch = -0.12 - (p.boost ? 0.07 : 0);
+      } else if (accel < -2.2) {
+        targetPitch = 0.22 + Math.min(0.12, Math.abs(accel) * 0.015);
+      }
+      this.pitchAngle += (targetPitch - this.pitchAngle) * Math.min(1, dt * 9.0);
+
+      const targetRoll = p.steer * Math.min(1.2, Math.abs(p.v) / 10.0) * rollFactor;
+      this.rollAngle += (targetRoll - this.rollAngle) * Math.min(1, dt * 8.0);
+
+      this.bounceY = Math.sin(performance.now() * 0.018 * Math.abs(p.v)) * 0.018;
+
+      if (at && at.PLAYER && at.PLAYER.beat) {
+        at.PLAYER.beat.pitch = this.pitchAngle;
+        at.PLAYER.beat.roll = this.rollAngle;
+        at.PLAYER.beat.y = this.bounceY;
+      }
+
+      const isSkidding = (accel < -3.2 && p.v > 4.5) || (Math.abs(p.steer) > 0.42 && p.v > 6.0);
+      if (isSkidding) {
+        const rearDist = (p.len || 2.6) * 0.44;
+        const halfWid = (p.wid || 1.3) * 0.46;
+        const leftX = p.x - p.rx * halfWid + p.fx * rearDist;
+        const leftZ = p.z - p.rz * halfWid + p.fz * rearDist;
+        const rightX = p.x + p.rx * halfWid + p.fx * rearDist;
+        const rightZ = p.z + p.rz * halfWid + p.fz * rearDist;
+        this.spawnSkid(leftX, leftZ, p.yaw);
+        this.spawnSkid(rightX, rightZ, p.yaw);
+      }
+    }
+  };
+
+  // ----------------------------------------------------
+  // 17. Animated Dhaka Bus Helper on Traffic Buses
+  // ----------------------------------------------------
+  const BusHelperSystem = {
+    helpers: new Map(),
+    lastShoutT: 0,
+
+    initHelper(THREE, bus) {
+      if (!THREE || !bus || !bus.grp) return null;
+      try {
+        const grp = new THREE.Group();
+        const shirtMat = new THREE.BasicMat({ color: 0x0284c7 });
+        const skinMat = new THREE.BasicMat({ color: 0xb45309 });
+
+        const hGeo = new THREE.ct();
+        hGeo.box(0, 1.25, 0, 0.42, 0.55, 0.28, null);
+        hGeo.box(0, 1.68, 0, 0.26, 0.28, 0.26, null);
+        hGeo.box(0, 1.78, 0, 0.28, 0.08, 0.28, null);
+        hGeo.box(0, 0.65, 0, 0.38, 0.68, 0.28, null);
+        hGeo.box(-0.25, 1.35, 0.2, 0.1, 0.1, 0.45, null);
+
+        const bodyMesh = new THREE.Mesh(hGeo.build(), shirtMat);
+        grp.add(bodyMesh);
+
+        const armGeo = new THREE.ct();
+        armGeo.box(0, -0.22, 0, 0.1, 0.44, 0.1, null);
+        const armMesh = new THREE.Mesh(armGeo.build(), skinMat);
+        armMesh.position.set(0.24, 1.45, 0);
+        grp.add(armMesh);
+        grp.userData.wavingArm = armMesh;
+
+        const busWid = bus.wid || 2.5;
+        const busLen = bus.len || 10.5;
+        grp.position.set(-busWid / 2 - 0.15, 0.4, -busLen / 2 + 2.8);
+        grp.rotation.y = -0.25;
+
+        bus.grp.add(grp);
+        return grp;
+      } catch (e) {
+        return null;
+      }
+    },
+
+    update(p, dt, inPlay) {
+      if (!inPlay || !p) return;
+      const THREE = window.__THREE_EXPORTS;
+      const at = window.__at;
+      if (!THREE || !at || !at.TRAFFIC || !at.TRAFFIC.list) return;
+
+      const now = performance.now();
+      const buses = at.TRAFFIC.list.filter(v => v.kind === 'bus' && !v.dead);
+
+      for (const bus of buses) {
+        let helper = this.helpers.get(bus);
+        if (!helper) {
+          helper = this.initHelper(THREE, bus);
+          if (helper) this.helpers.set(bus, helper);
+        }
+
+        if (helper && helper.userData.wavingArm) {
+          helper.userData.wavingArm.rotation.x = Math.sin(now * 0.008 + bus.z) * 0.65;
+          helper.userData.wavingArm.rotation.z = Math.cos(now * 0.007 + bus.z) * 0.35 + 0.4;
+        }
+
+        const dist = Math.hypot(p.x - bus.x, p.z - bus.z);
+        if (dist < 6.8 && now - this.lastShoutT > 5500) {
+          this.lastShoutT = now;
+          const dialogueBox = document.getElementById('dialogue');
+          if (dialogueBox) {
+            const shouts = [
+              "🔊 বাস হেলপার: 'ওস্তাদ ডানে চাপেন! মিরপুর ১০! গাবতলী সোজা!'",
+              "🔊 বাস হেলপার: 'মামা সাইড দেন! প্যাসেঞ্জার নামবে!'",
+              "🔊 বাস হেলপার: 'এই ড্রাইভার দেইখা চালান! ব্রেক নাই নাকি!'"
+            ];
+            dialogueBox.textContent = shouts[Math.floor(Math.random() * shouts.length)];
+            dialogueBox.hidden = false;
+            setTimeout(() => { dialogueBox.hidden = true; }, 2600);
+          }
+        }
+      }
+    }
+  };
+
+  // ----------------------------------------------------
+  // 18. Modern 3D Cyberpunk Mini-Map Radar HUD
+  // ----------------------------------------------------
+  const MiniMapRadar = {
+    canvas: null,
+    ctx: null,
+    container: null,
+    initialized: false,
+
+    init() {
+      if (this.initialized) return;
+      this.initialized = true;
+
+      this.container = document.createElement('div');
+      this.container.id = 'miniMapRadar';
+      this.container.className = 'mini-map-radar';
+      this.container.innerHTML = `
+        <div class="radar-header">
+          <span class="radar-live-dot"></span>
+          <span class="radar-title">রাডার জিপিএস</span>
+          <span class="radar-heading" id="radarHeading">N</span>
+        </div>
+        <canvas id="radarCanvas" width="130" height="130"></canvas>
+        <div class="radar-gps-hint" id="radarGpsHint">🛣️ রাজপথ ক্লিয়ার, টানেন!</div>
+      `;
+      document.body.appendChild(this.container);
+
+      this.canvas = document.getElementById('radarCanvas');
+      if (this.canvas) this.ctx = this.canvas.getContext('2d');
+
+      this.container.addEventListener('click', () => {
+        this.container.classList.toggle('minimized');
+      });
+    },
+
+    update(p, dt, inPlay) {
+      if (!this.initialized) this.init();
+      if (!this.ctx || !inPlay || !p) {
+        if (this.container) this.container.style.display = inPlay ? 'flex' : 'none';
+        return;
+      }
+      this.container.style.display = 'flex';
+
+      const ctx = this.ctx;
+      const w = 130, h = 130;
+      const cx = 65, cy = 65;
+      const scale = 0.58;
+
+      ctx.clearRect(0, 0, w, h);
+
+      // Radar disc
+      ctx.beginPath();
+      ctx.arc(cx, cy, 62, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(11, 17, 32, 0.88)';
+      ctx.fill();
+      ctx.lineWidth = 1.5;
+      ctx.strokeStyle = '#00f0ff';
+      ctx.stroke();
+
+      // Range Rings
+      ctx.strokeStyle = 'rgba(0, 240, 255, 0.2)';
+      ctx.lineWidth = 1;
+      [22, 42, 60].forEach(r => {
+        ctx.beginPath();
+        ctx.arc(cx, cy, r, 0, Math.PI * 2);
+        ctx.stroke();
+      });
+
+      // Crosshairs
+      ctx.beginPath();
+      ctx.moveTo(cx, 5); ctx.lineTo(cx, 125);
+      ctx.moveTo(5, cy); ctx.lineTo(125, cy);
+      ctx.strokeStyle = 'rgba(0, 240, 255, 0.15)';
+      ctx.stroke();
+
+      // Traffic Blips
+      const at = window.__at;
+      if (at && at.TRAFFIC && at.TRAFFIC.list) {
+        for (const v of at.TRAFFIC.list) {
+          if (v.dead) continue;
+          const dx = v.x - p.x;
+          const dz = v.z - p.z;
+          if (Math.hypot(dx, dz) > 95) continue;
+
+          const cos = Math.cos(-p.yaw);
+          const sin = Math.sin(-p.yaw);
+          const rx = dx * cos - dz * sin;
+          const rz = dx * sin + dz * cos;
+          const px = cx + rx * scale;
+          const py = cy + rz * scale;
+
+          if (px < 5 || px > 125 || py < 5 || py > 125) continue;
+
+          if (v.kind === 'bus') {
+            ctx.fillStyle = '#ff3344';
+            ctx.fillRect(px - 3, py - 6, 6, 12);
+          } else if (v.kind === 'police') {
+            const flash = (performance.now() * 0.008) % 1 < 0.5;
+            ctx.fillStyle = flash ? '#ff0044' : '#0088ff';
+            ctx.beginPath();
+            ctx.arc(px, py, 4, 0, Math.PI * 2);
+            ctx.fill();
+          } else if (v.kind === 'leguna' || v.kind === 'micro') {
+            ctx.fillStyle = '#ff9900';
+            ctx.fillRect(px - 2.5, py - 4, 5, 8);
+          } else {
+            ctx.fillStyle = '#38ef7d';
+            ctx.beginPath();
+            ctx.arc(px, py, 2.5, 0, Math.PI * 2);
+            ctx.fill();
+          }
+        }
+      }
+
+      // Pickups on Radar
+      if (SuperPickups && SuperPickups.pickups) {
+        for (const pk of SuperPickups.pickups) {
+          if (!pk.active) continue;
+          const dx = pk.mesh.position.x - p.x;
+          const dz = pk.mesh.position.z - p.z;
+          if (Math.hypot(dx, dz) > 95) continue;
+
+          const cos = Math.cos(-p.yaw);
+          const sin = Math.sin(-p.yaw);
+          const rx = dx * cos - dz * sin;
+          const rz = dx * sin + dz * cos;
+          const px = cx + rx * scale;
+          const py = cy + rz * scale;
+
+          ctx.fillStyle = pk.type === 'shield' ? '#00f0ff' : pk.type === 'battery' ? '#ffea00' : '#00e676';
+          ctx.beginPath();
+          ctx.arc(px, py, 3.5, 0, Math.PI * 2);
+          ctx.fill();
+        }
+      }
+
+      // Player Center Arrow
+      ctx.save();
+      ctx.translate(cx, cy);
+      ctx.fillStyle = '#ffd400';
+      ctx.shadowColor = '#ffd400';
+      ctx.shadowBlur = 8;
+      ctx.beginPath();
+      ctx.moveTo(0, -6);
+      ctx.lineTo(-4.5, 5);
+      ctx.lineTo(0, 2.5);
+      ctx.lineTo(4.5, 5);
+      ctx.closePath();
+      ctx.fill();
+      ctx.restore();
+
+      // Heading
+      const headingEl = document.getElementById('radarHeading');
+      if (headingEl) {
+        const deg = ((-p.yaw * 180 / Math.PI) % 360 + 360) % 360;
+        const dirs = ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW'];
+        headingEl.textContent = dirs[Math.floor((deg + 22.5) / 45) % 8];
+      }
+    }
+  };
+
+  // ----------------------------------------------------
+  // 19. Cinematic Near-Miss Slow-Mo & Bonus System
+  // ----------------------------------------------------
+  const NearMissSystem = {
+    lastNearMissT: 0,
+    toastEl: null,
+
+    init() {
+      if (this.toastEl) return;
+      this.toastEl = document.createElement('div');
+      this.toastEl.id = 'nearMissToast';
+      this.toastEl.className = 'near-miss-toast';
+      document.body.appendChild(this.toastEl);
+    },
+
+    update(p, dt, inPlay) {
+      if (!inPlay || !p || !p.alive || Math.abs(p.v) < 8.5) return;
+      this.init();
+
+      const at = window.__at;
+      if (!at || !at.TRAFFIC || !at.TRAFFIC.list) return;
+
+      const now = performance.now();
+      if (now - this.lastNearMissT < 2800) return;
+
+      const pWid = (p.wid || 1.3) * 0.5;
+      const pLen = (p.len || 2.6) * 0.5;
+
+      for (const v of at.TRAFFIC.list) {
+        if (v.dead) continue;
+        const vWid = (v.wid || 1.8) * 0.5;
+        const vLen = (v.len || 4.5) * 0.5;
+
+        const dx = Math.abs(p.x - v.x) - (pWid + vWid);
+        const dz = Math.abs(p.z - v.z) - (pLen + vLen);
+
+        if (dx > 0.12 && dx < 0.92 && dz < 1.0) {
+          this.lastNearMissT = now;
+          this.triggerNearMiss(v);
+          break;
+        }
+      }
+    },
+
+    triggerNearMiss(vehicle) {
+      const at = window.__at;
+      if (!at) return;
+
+      if (at.G && typeof at.G.slow === 'function') {
+        at.G.slow(0.35, 0.32);
+      }
+
+      if (at.sfx && typeof at.sfx.chime === 'function') {
+        at.sfx.chime();
+      }
+
+      CockpitHUD.fareAmount += 1000;
+      const fareEl = document.getElementById('fareVal');
+      if (fareEl) {
+        fareEl.textContent = `৳${Math.floor(CockpitHUD.fareAmount).toLocaleString('bn-BD')}`;
+      }
+
+      if (this.toastEl) {
+        this.toastEl.textContent = "🔥 গা ঘেঁষা ওভারটেক! +৳১,০০০";
+        this.toastEl.classList.remove('active');
+        void this.toastEl.offsetWidth;
+        this.toastEl.classList.add('active');
+        setTimeout(() => {
+          if (this.toastEl) this.toastEl.classList.remove('active');
+        }, 1600);
+      }
+    }
+  };
+
+  // ----------------------------------------------------
+  // 20. Krishnachura Falling Petals & Contact Shadows
+  // ----------------------------------------------------
+  const FallingPetalsSystem = {
+    petals: [],
+    initialized: false,
+
+    init(THREE, scene) {
+      if (this.initialized || !THREE || !scene) return;
+      this.initialized = true;
+
+      try {
+        const pCanvas = document.createElement('canvas');
+        pCanvas.width = 32; pCanvas.height = 32;
+        const pCtx = pCanvas.getContext('2d');
+        pCtx.fillStyle = '#e11d48';
+        pCtx.beginPath();
+        pCtx.ellipse(16, 16, 14, 7, Math.PI / 4, 0, Math.PI * 2);
+        pCtx.fill();
+
+        const pTex = new THREE.Tex.glow.constructor(pCanvas);
+        pTex.needsUpdate = true;
+
+        const pGeo = new THREE.Plane(0.35, 0.35);
+        const colors = [0xe11d48, 0xf43f5e, 0xfbbf24, 0xd97706];
+
+        for (let i = 0; i < 35; i++) {
+          const mat = new THREE.BasicMat({
+            map: pTex,
+            color: colors[i % colors.length],
+            transparent: true,
+            opacity: 0.85
+          });
+          const m = new THREE.Mesh(pGeo, mat);
+          m.position.set((Math.random() - 0.5) * 18, 1.5 + Math.random() * 4.5, (Math.random() - 0.5) * 80);
+          scene.add(m);
+          this.petals.push({
+            mesh: m,
+            vy: -0.45 - Math.random() * 0.4,
+            swayFreq: 2.0 + Math.random() * 2.0,
+            swayAmp: 0.6 + Math.random() * 0.5,
+            rotSpeed: (Math.random() - 0.5) * 3.0
+          });
+        }
+      } catch (e) {}
+    },
+
+    update(p, dt, inPlay) {
+      if (!inPlay || !p) return;
+      const THREE = window.__THREE_EXPORTS;
+      const at = window.__at;
+      if (!this.initialized && THREE && at && at.SCENE) {
+        this.init(THREE, at.SCENE);
+      }
+
+      const now = performance.now() * 0.001;
+
+      for (const pt of this.petals) {
+        const m = pt.mesh;
+        m.position.y += pt.vy * dt;
+        m.position.x += Math.sin(now * pt.swayFreq + m.position.z) * pt.swayAmp * dt;
+        m.rotation.z += pt.rotSpeed * dt;
+
+        if (m.position.y < 0.08 || Math.abs(m.position.z - p.z) > 65) {
+          m.position.y = 4.0 + Math.random() * 3.5;
+          m.position.z = p.z - 35 - Math.random() * 45;
+          m.position.x = p.x + (Math.random() - 0.5) * 16;
+        }
+
+        const dist = Math.hypot(p.x - m.position.x, p.z - m.position.z);
+        if (dist < 3.2 && Math.abs(p.v) > 6.0) {
+          m.position.y += 1.8 * dt;
+          m.position.x += p.rx * 2.5 * dt;
+        }
+      }
+    }
+  };
+
+  // ----------------------------------------------------
   // 11. Real-time Engine Loop (Synchronous 60 FPS)
   // ----------------------------------------------------
   let lastTime = performance.now();
@@ -2427,6 +3274,12 @@
     VisualsFX.update(at.P, dt, inPlay, isNight, isRain);
     HydraulicHorn.update(dt);
     SuperPickups.update(at.P, dt, inPlay);
+    MetroRailSystem.update(at.P, dt, inPlay);
+    SuspensionDynamics.update(at.P, dt, inPlay);
+    BusHelperSystem.update(at.P, dt, inPlay);
+    MiniMapRadar.update(at.P, dt, inPlay);
+    NearMissSystem.update(at.P, dt, inPlay);
+    FallingPetalsSystem.update(at.P, dt, inPlay);
   }
   requestAnimationFrame(engineLoop);
 
@@ -2436,6 +3289,8 @@
     WantedSystem.init();
     CockpitHUD.init();
     GameOverEnhancer.init();
+    MiniMapRadar.init();
+    NearMissSystem.init();
 
     // Keyboard H or Horn button for Hydraulic Bus Horn
     window.addEventListener('keydown', (e) => {
