@@ -1302,7 +1302,379 @@
   }
 
   // ----------------------------------------------------
-  // 10. Real-time Engine Loop (Synchronous 60 FPS)
+  // 10. Advanced Hyper-Realistic Visuals Engine (VisualsFX)
+  // ----------------------------------------------------
+  const VisualsFX = {
+    initialized: false,
+    underglowMesh: null,
+    headlightGroup: null,
+    exhaustMesh: null,
+    moonGroup: null,
+    puddlesGroup: null,
+    propsGroup: null,
+    puddleList: [],
+    lastSparkT: 0,
+    lastSmokeT: 0,
+    lastSprayT: 0,
+
+    init(THREE, scene) {
+      if (this.initialized || !THREE || !scene) return;
+      this.initialized = true;
+
+      // --- 1. Neon Underglow Mesh ---
+      try {
+        const uCanvas = document.createElement('canvas');
+        uCanvas.width = 128;
+        uCanvas.height = 128;
+        const uCtx = uCanvas.getContext('2d');
+        const grad = uCtx.createRadialGradient(64, 64, 8, 64, 64, 64);
+        grad.addColorStop(0, '#00f0ff');
+        grad.addColorStop(0.35, 'rgba(0, 210, 255, 0.8)');
+        grad.addColorStop(0.7, 'rgba(0, 150, 255, 0.35)');
+        grad.addColorStop(1, 'rgba(0, 0, 0, 0)');
+        uCtx.fillStyle = grad;
+        uCtx.fillRect(0, 0, 128, 128);
+
+        const uTex = new THREE.Tex.glow.constructor(uCanvas);
+        uTex.needsUpdate = true;
+
+        const uGeo = new THREE.Plane(3.6, 5.2);
+        uGeo.rotateX(-THREE.PI / 2);
+        const uMat = new THREE.BasicMat({
+          map: uTex,
+          transparent: true,
+          opacity: 0.85,
+          depthWrite: false,
+          blending: THREE.AdditiveBlending
+        });
+        this.underglowMesh = new THREE.Mesh(uGeo, uMat);
+        this.underglowMesh.position.y = 0.04;
+        scene.add(this.underglowMesh);
+      } catch(e) { console.warn('Underglow init error:', e); }
+
+      // --- 2. Volumetric 3D Headlight Projection Beams ---
+      try {
+        this.headlightGroup = new THREE.Group();
+        const beamCanvas = document.createElement('canvas');
+        beamCanvas.width = 64;
+        beamCanvas.height = 256;
+        const bCtx = beamCanvas.getContext('2d');
+        const bGrad = bCtx.createLinearGradient(0, 0, 0, 256);
+        bGrad.addColorStop(0, 'rgba(255, 250, 220, 0.65)');
+        bGrad.addColorStop(0.3, 'rgba(255, 240, 180, 0.35)');
+        bGrad.addColorStop(0.7, 'rgba(255, 230, 140, 0.12)');
+        bGrad.addColorStop(1, 'rgba(0, 0, 0, 0)');
+        bCtx.fillStyle = bGrad;
+        bCtx.fillRect(0, 0, 64, 256);
+
+        const beamTex = new THREE.Tex.glow.constructor(beamCanvas);
+        beamTex.needsUpdate = true;
+
+        const beamGeo = new THREE.Plane(2.8, 14);
+        beamGeo.rotateX(-THREE.PI / 2);
+        const beamMat = new THREE.BasicMat({
+          map: beamTex,
+          transparent: true,
+          opacity: 0.65,
+          depthWrite: false,
+          blending: THREE.AdditiveBlending
+        });
+
+        // Left and Right Headlight Beams
+        const leftBeam = new THREE.Mesh(beamGeo, beamMat);
+        leftBeam.position.set(-0.55, 0.05, -7.5);
+        const rightBeam = new THREE.Mesh(beamGeo, beamMat);
+        rightBeam.position.set(0.55, 0.05, -7.5);
+
+        this.headlightGroup.add(leftBeam, rightBeam);
+        scene.add(this.headlightGroup);
+      } catch(e) { console.warn('Headlight beams init error:', e); }
+
+      // --- 3. Nitro Exhaust Backfire Flame ---
+      try {
+        const fCanvas = document.createElement('canvas');
+        fCanvas.width = 64;
+        fCanvas.height = 128;
+        const fCtx = fCanvas.getContext('2d');
+        const fGrad = fCtx.createLinearGradient(0, 0, 0, 128);
+        fGrad.addColorStop(0, '#ffffff');
+        fGrad.addColorStop(0.2, '#00d4ff');
+        fGrad.addColorStop(0.5, '#ff6600');
+        fGrad.addColorStop(0.85, '#ff0033');
+        fGrad.addColorStop(1, 'rgba(0,0,0,0)');
+        fCtx.fillStyle = fGrad;
+        fCtx.beginPath();
+        fCtx.moveTo(32, 0);
+        fCtx.lineTo(58, 128);
+        fCtx.lineTo(6, 128);
+        fCtx.closePath();
+        fCtx.fill();
+
+        const fTex = new THREE.Tex.glow.constructor(fCanvas);
+        fTex.needsUpdate = true;
+
+        const fGeo = new THREE.Plane(0.45, 1.3);
+        fGeo.rotateX(THREE.PI / 2);
+        const fMat = new THREE.BasicMat({
+          map: fTex,
+          transparent: true,
+          opacity: 0.9,
+          depthWrite: false,
+          blending: THREE.AdditiveBlending
+        });
+
+        this.exhaustMesh = new THREE.Mesh(fGeo, fMat);
+        this.exhaustMesh.visible = false;
+        scene.add(this.exhaustMesh);
+      } catch(e) { console.warn('Exhaust flame init error:', e); }
+
+      // --- 4. Night Full Moon & Lunar Halo ---
+      try {
+        this.moonGroup = new THREE.Group();
+        const moonCanvas = document.createElement('canvas');
+        moonCanvas.width = 128;
+        moonCanvas.height = 128;
+        const mCtx = moonCanvas.getContext('2d');
+
+        // Moon disc with craters
+        mCtx.fillStyle = '#fffdf0';
+        mCtx.beginPath();
+        mCtx.arc(64, 64, 52, 0, Math.PI * 2);
+        mCtx.fill();
+
+        // Realistic craters
+        mCtx.fillStyle = 'rgba(180, 175, 150, 0.45)';
+        for (const [cx, cy, cr] of [[50, 48, 14], [72, 70, 18], [42, 76, 10], [78, 44, 12], [62, 85, 8]]) {
+          mCtx.beginPath();
+          mCtx.arc(cx, cy, cr, 0, Math.PI * 2);
+          mCtx.fill();
+        }
+
+        const moonTex = new THREE.Tex.glow.constructor(moonCanvas);
+        moonTex.needsUpdate = true;
+
+        const moonGeo = new THREE.Plane(18, 18);
+        const moonMat = new THREE.BasicMat({
+          map: moonTex,
+          transparent: true,
+          depthWrite: false
+        });
+        const moonMesh = new THREE.Mesh(moonGeo, moonMat);
+
+        // Soft Lunar Halo
+        const haloGeo = new THREE.Plane(45, 45);
+        const haloMat = new THREE.BasicMat({
+          map: THREE.Tex.glow,
+          color: 0xfff3c4,
+          transparent: true,
+          opacity: 0.55,
+          depthWrite: false,
+          blending: THREE.AdditiveBlending
+        });
+        const haloMesh = new THREE.Mesh(haloGeo, haloMat);
+        haloMesh.position.z = -0.5;
+
+        this.moonGroup.add(haloMesh, moonMesh);
+        this.moonGroup.visible = false;
+        scene.add(this.moonGroup);
+      } catch(e) { console.warn('Moon init error:', e); }
+
+      // --- 5. Road Puddle Reflection Patches ---
+      try {
+        this.puddlesGroup = new THREE.Group();
+        const pudCanvas = document.createElement('canvas');
+        pudCanvas.width = 128;
+        pudCanvas.height = 128;
+        const pCtx = pudCanvas.getContext('2d');
+        const pGrad = pCtx.createRadialGradient(64, 64, 10, 64, 64, 60);
+        pGrad.addColorStop(0, 'rgba(180, 220, 255, 0.75)');
+        pGrad.addColorStop(0.4, 'rgba(80, 140, 200, 0.5)');
+        pGrad.addColorStop(0.8, 'rgba(30, 60, 100, 0.25)');
+        pGrad.addColorStop(1, 'rgba(0, 0, 0, 0)');
+        pCtx.fillStyle = pGrad;
+        pCtx.fillRect(0, 0, 128, 128);
+
+        const pudTex = new THREE.Tex.glow.constructor(pudCanvas);
+        pudTex.needsUpdate = true;
+
+        const pudMat = new THREE.BasicMat({
+          map: pudTex,
+          transparent: true,
+          opacity: 0.7,
+          depthWrite: false,
+          blending: THREE.AdditiveBlending
+        });
+
+        // Spawn 16 shimmering puddle patches along the road
+        for (let i = 0; i < 16; i++) {
+          const w = 2.4 + (i % 3) * 0.8;
+          const l = 3.2 + (i % 4) * 0.9;
+          const geo = new THREE.Plane(w, l);
+          geo.rotateX(-THREE.PI / 2);
+          const pMesh = new THREE.Mesh(geo, pudMat);
+          const side = (i % 2 === 0 ? 1 : -1) * (2.5 + (i % 5) * 1.5);
+          pMesh.position.set(side, 0.025, -(i * 45 + 15));
+          this.puddleList.push(pMesh);
+          this.puddlesGroup.add(pMesh);
+        }
+        this.puddlesGroup.visible = false;
+        scene.add(this.puddlesGroup);
+      } catch(e) { console.warn('Puddles init error:', e); }
+
+      // --- 6. 3D Cast-Iron Manhole Covers & Traffic Signal Lights ---
+      try {
+        this.propsGroup = new THREE.Group();
+        const mhCanvas = document.createElement('canvas');
+        mhCanvas.width = 128;
+        mhCanvas.height = 128;
+        const mCtx = mhCanvas.getContext('2d');
+
+        // Cast iron manhole texture
+        mCtx.fillStyle = '#222222';
+        mCtx.beginPath();
+        mCtx.arc(64, 64, 60, 0, Math.PI * 2);
+        mCtx.fill();
+        mCtx.strokeStyle = '#444444';
+        mCtx.lineWidth = 4;
+        mCtx.stroke();
+        mCtx.strokeStyle = '#333333';
+        mCtx.lineWidth = 2;
+        mCtx.beginPath();
+        mCtx.arc(64, 64, 40, 0, Math.PI * 2);
+        mCtx.arc(64, 64, 20, 0, Math.PI * 2);
+        mCtx.stroke();
+
+        const mhTex = new THREE.Tex.glow.constructor(mhCanvas);
+        mhTex.needsUpdate = true;
+        const mhGeo = new THREE.Plane(1.4, 1.4);
+        mhGeo.rotateX(-THREE.PI / 2);
+        const mhMat = new THREE.BasicMat({ map: mhTex, transparent: true });
+
+        // Place manholes along road lanes
+        for (let i = 0; i < 12; i++) {
+          const mh = new THREE.Mesh(mhGeo, mhMat);
+          mh.position.set(i % 2 === 0 ? -4.5 : 4.5, 0.022, -(i * 80 + 25));
+          this.propsGroup.add(mh);
+        }
+
+        scene.add(this.propsGroup);
+      } catch(e) { console.warn('Props3D init error:', e); }
+    },
+
+    update(p, dt, inPlay, isNight, isRain) {
+      const THREE = window.__THREE_EXPORTS;
+      const at = window.__at;
+      if (!this.initialized && THREE && at && at.SCENE) {
+        this.init(THREE, at.SCENE);
+      }
+      if (!this.initialized || !p) return;
+
+      const now = performance.now();
+
+      // 1. Update Neon Underglow
+      if (this.underglowMesh) {
+        this.underglowMesh.visible = inPlay && p.alive;
+        if (this.underglowMesh.visible) {
+          this.underglowMesh.position.set(p.x, 0.04, p.z);
+          this.underglowMesh.rotation.y = p.yaw;
+          const sx = (p.wid || 1.3) * 1.6;
+          const sz = (p.len || 2.6) * 1.35;
+          this.underglowMesh.scale.set(sx, 1, sz);
+
+          // Pulse opacity with acceleration and boost
+          const pulse = 0.75 + 0.25 * Math.sin(now * 0.006) + (p.boost ? 0.35 : 0);
+          this.underglowMesh.material.opacity = Math.min(1.0, pulse);
+        }
+      }
+
+      // 2. Update Volumetric Headlight Beams
+      if (this.headlightGroup) {
+        this.headlightGroup.visible = inPlay && p.alive && (isNight || isRain);
+        if (this.headlightGroup.visible) {
+          this.headlightGroup.position.set(p.x, 0.05, p.z);
+          this.headlightGroup.rotation.y = p.yaw;
+        }
+      }
+
+      // 3. Update Nitro Exhaust Backfire Flame
+      if (this.exhaustMesh) {
+        const isBoosting = p.boost || (p.throttle && Math.abs(p.v) > 8);
+        this.exhaustMesh.visible = inPlay && p.alive && isBoosting;
+        if (this.exhaustMesh.visible) {
+          const tailDist = (p.len || 2.6) * 0.52;
+          const tx = p.x + p.fx * tailDist;
+          const tz = p.z + p.fz * tailDist;
+          this.exhaustMesh.position.set(tx, 0.32, tz);
+          this.exhaustMesh.rotation.y = p.yaw;
+
+          const fScale = 0.9 + Math.random() * 0.45 + (p.boost ? 0.4 : 0);
+          this.exhaustMesh.scale.set(fScale, 1, fScale);
+
+          // Fire sparks on backfire
+          if (at && at.FX && now - this.lastSparkT > 90) {
+            this.lastSparkT = now;
+            at.FX.sparks(tx, 0.32, tz, 2);
+          }
+        }
+      }
+
+      // 4. Update Night Full Moon
+      if (this.moonGroup) {
+        this.moonGroup.visible = isNight;
+        if (isNight) {
+          this.moonGroup.position.set(p.x + 120, 85, p.z - 240);
+          if (at && at.CAM) {
+            this.moonGroup.lookAt(at.CAM.position);
+          }
+        }
+      }
+
+      // 5. Update Puddles & Recycle along road
+      if (this.puddlesGroup) {
+        this.puddlesGroup.visible = isRain;
+        if (isRain) {
+          // Recycle puddles to stay around player
+          for (const pud of this.puddleList) {
+            if (pud.position.z > p.z + 30) {
+              pud.position.z -= 720;
+            } else if (pud.position.z < p.z - 690) {
+              pud.position.z += 720;
+            }
+          }
+        }
+      }
+
+      // 6. Drift Smoke & Rain Water Spray
+      if (inPlay && p.alive && at && at.FX) {
+        const speed = Math.abs(p.v);
+        const rearDist = (p.len || 2.6) * 0.42;
+        const halfWid = (p.wid || 1.3) * 0.45;
+
+        // Tire contact points
+        const t1x = p.x - p.rx * halfWid + p.fx * rearDist;
+        const t1z = p.z - p.rz * halfWid + p.fz * rearDist;
+        const t2x = p.x + p.rx * halfWid + p.fx * rearDist;
+        const t2z = p.z + p.rz * halfWid + p.fz * rearDist;
+
+        // Drift smoke
+        if (Math.abs(p.steer) > 0.35 && speed > 5.5 && now - this.lastSmokeT > 100) {
+          this.lastSmokeT = now;
+          at.FX.puff(t1x, 0.12, t1z, 1.3, 0.4, 0xeeeeee);
+          at.FX.puff(t2x, 0.12, t2z, 1.3, 0.4, 0xeeeeee);
+        }
+
+        // Water spray in rain
+        if (isRain && speed > 3.5 && now - this.lastSprayT > 120) {
+          this.lastSprayT = now;
+          at.FX.puff(t1x, 0.08, t1z, 0.85, 0.25, 0x90caf9);
+          at.FX.puff(t2x, 0.08, t2z, 0.85, 0.25, 0x90caf9);
+        }
+      }
+    }
+  };
+
+  // ----------------------------------------------------
+  // 11. Real-time Engine Loop (Synchronous 60 FPS)
   // ----------------------------------------------------
   let lastTime = performance.now();
   function engineLoop(timestamp) {
@@ -1318,12 +1690,17 @@
     const damage = at.G.loss || 0;
     const speed = at.P ? at.P.v : 0;
 
+    const isNight = at.DAY && at.DAY.cur && at.DAY.cur.key === 'night';
+    const isRain = !!(window.RastarRaja && window.RastarRaja.rain);
+
     WantedSystem.update(damage, isAlive, inPlay);
     CockpitHUD.update(speed, dt, inPlay);
 
     if (inPlay && isAlive && at.P) {
       checkSpeedBumps(at.P, dt);
     }
+
+    VisualsFX.update(at.P, dt, inPlay, isNight, isRain);
   }
   requestAnimationFrame(engineLoop);
 
