@@ -145,6 +145,9 @@
 
       garageBox.querySelectorAll('.v-pill').forEach(btn => {
         btn.addEventListener('click', () => {
+          if (window.RastarRaja && window.RastarRaja.DhakaAudioSFX) {
+            window.RastarRaja.DhakaAudioSFX.playClickSound();
+          }
           garageBox.querySelectorAll('.v-pill').forEach(b => b.classList.remove('active'));
           btn.classList.add('active');
           const v = btn.getAttribute('data-vehicle');
@@ -176,6 +179,9 @@
 
       envBox.querySelectorAll('[data-time]').forEach(btn => {
         btn.addEventListener('click', () => {
+          if (window.RastarRaja && window.RastarRaja.DhakaAudioSFX) {
+            window.RastarRaja.DhakaAudioSFX.playClickSound();
+          }
           envBox.querySelectorAll('[data-time]').forEach(b => b.classList.remove('active'));
           btn.classList.add('active');
           const t = btn.getAttribute('data-time');
@@ -187,6 +193,9 @@
 
       const rainBtn = document.getElementById('rajaRainBtn');
       rainBtn.addEventListener('click', () => {
+        if (window.RastarRaja && window.RastarRaja.DhakaAudioSFX) {
+          window.RastarRaja.DhakaAudioSFX.playClickSound();
+        }
         window.RastarRaja.rain = !window.RastarRaja.rain;
         localStorage.setItem('rastarRaja.rain', window.RastarRaja.rain ? '1' : '0');
         rainBtn.classList.toggle('active', window.RastarRaja.rain);
@@ -3334,6 +3343,36 @@
       ctx.strokeStyle = 'rgba(0, 240, 255, 0.15)';
       ctx.stroke();
 
+      // Forward Road Track Corridor on Radar (Smooth vs Broken Road 25% vs Flyover)
+      const isBroken = window.__isBrokenRoad || false;
+      const isFlyover = (window.__flyoverElevation || 0) > 0.5;
+      ctx.save();
+      ctx.beginPath();
+      ctx.rect(cx - 10, cy - 42, 20, 84);
+      ctx.clip();
+
+      // Road background lane
+      ctx.fillStyle = isBroken ? 'rgba(255, 51, 68, 0.22)' : isFlyover ? 'rgba(255, 212, 0, 0.18)' : 'rgba(0, 240, 255, 0.12)';
+      ctx.fillRect(cx - 8, cy - 40, 16, 80);
+
+      // Road boundaries
+      ctx.strokeStyle = isBroken ? '#ff3344' : isFlyover ? '#ffd400' : '#00f0ff';
+      ctx.lineWidth = 1.5;
+      ctx.beginPath();
+      ctx.moveTo(cx - 8, cy - 40); ctx.lineTo(cx - 8, cy + 40);
+      ctx.moveTo(cx + 8, cy - 40); ctx.lineTo(cx + 8, cy + 40);
+      ctx.stroke();
+
+      // Center dashed line
+      ctx.strokeStyle = isBroken ? '#ffcb1f' : 'rgba(255, 255, 255, 0.5)';
+      ctx.lineWidth = 1;
+      ctx.setLineDash([3, 3]);
+      ctx.beginPath();
+      ctx.moveTo(cx, cy - 40); ctx.lineTo(cx, cy + 40);
+      ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.restore();
+
       // Traffic Blips
       const at = window.__at;
       if (at && at.TRAFFIC && at.TRAFFIC.list) {
@@ -3727,6 +3766,104 @@
           osc.stop(t + 0.13);
         });
       } catch (e) {}
+    },
+
+    // Tactile UI Mechanical Click
+    playClickSound() {
+      const ctx = this.getCtx();
+      if (!ctx) return;
+      try {
+        const now = ctx.currentTime;
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(1100, now);
+        osc.frequency.exponentialRampToValueAtTime(180, now + 0.024);
+        gain.gain.setValueAtTime(0.16, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.028);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start(now);
+        osc.stop(now + 0.032);
+      } catch (e) {}
+    },
+
+    // Hazard Road Warning Chime (2-tone Beep)
+    playRoadWarning() {
+      const ctx = this.getCtx();
+      if (!ctx) return;
+      try {
+        const now = ctx.currentTime;
+        [0, 0.09].forEach((delay, idx) => {
+          const t = now + delay;
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(idx === 0 ? 740 : 580, t);
+          gain.gain.setValueAtTime(0.001, t);
+          gain.gain.linearRampToValueAtTime(0.18, t + 0.012);
+          gain.gain.exponentialRampToValueAtTime(0.001, t + 0.075);
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+          osc.start(t);
+          osc.stop(t + 0.08);
+        });
+      } catch (e) {}
+    },
+
+    // Continuous Loose Gravel Rumble on Broken Road
+    gravelNode: null,
+    gravelGain: null,
+    playGravelRumble(speed, dt) {
+      const ctx = this.getCtx();
+      if (!ctx || speed < 2.0) {
+        if (this.gravelGain && ctx) {
+          this.gravelGain.gain.setValueAtTime(0.0001, ctx.currentTime);
+        }
+        return;
+      }
+      try {
+        const now = ctx.currentTime;
+        if (!this.gravelNode) {
+          const bufferSize = Math.floor(ctx.sampleRate * 0.45);
+          const noiseBuffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+          const output = noiseBuffer.getChannelData(0);
+          for (let i = 0; i < bufferSize; i++) {
+            output[i] = Math.random() * 2 - 1;
+          }
+          const whiteNoise = ctx.createBufferSource();
+          whiteNoise.buffer = noiseBuffer;
+          whiteNoise.loop = true;
+
+          const filter = ctx.createBiquadFilter();
+          filter.type = 'bandpass';
+          filter.frequency.value = 340;
+          filter.Q.value = 2.4;
+
+          const gain = ctx.createGain();
+          gain.gain.setValueAtTime(0.0001, now);
+
+          whiteNoise.connect(filter);
+          filter.connect(gain);
+          gain.connect(ctx.destination);
+          whiteNoise.start();
+
+          this.gravelNode = whiteNoise;
+          this.gravelGain = gain;
+        }
+
+        const targetGain = Math.min(0.22, 0.03 + (speed / 18.0) * 0.15);
+        this.gravelGain.gain.setValueAtTime(targetGain, now);
+      } catch (e) {}
+    },
+
+    stopGravelRumble() {
+      if (this.gravelGain) {
+        try {
+          const ctx = this.getCtx();
+          if (ctx) this.gravelGain.gain.setValueAtTime(0.0001, ctx.currentTime);
+        } catch (e) {}
+      }
     }
   };
 
@@ -4271,15 +4408,18 @@
           at.PLAYER.beat.y = (at.PLAYER.beat.y || 0) + yElev;
           at.PLAYER.beat.pitch = (at.PLAYER.beat.pitch || 0) + pitch;
         }
-        if (at.PLAYER.o) {
+        if (at.PLAYER.o && at.PLAYER.o.position) {
           at.PLAYER.o.position.y = yElev + (p.bumpY || 0);
         }
       }
 
       // Smooth Panoramic Camera Elevation
       if (at && at.CAM && yElev > 0.05) {
-        at.CAM.position.y += yElev * 0.82;
-        if (at.CAM.target) at.CAM.target.y += yElev * 0.82;
+        if (at.CAM.position) at.CAM.position.y += yElev * 0.82;
+        if (at.CAM.target) {
+          if (typeof at.CAM.target.y === 'number') at.CAM.target.y += yElev * 0.82;
+          else if (at.CAM.target.position) at.CAM.target.position.y += yElev * 0.82;
+        }
       }
     }
   };
@@ -4453,6 +4593,307 @@
       for (const zm of this.zebras) {
         if (zm.position.z > p.z + 50) zm.position.z -= 960;
         else if (zm.position.z < p.z - 910) zm.position.z += 960;
+      }
+    }
+  };
+
+  // ----------------------------------------------------
+  // 24B. Dhaka Road Condition & Environment System
+  // (25% Broken Road / খানাখন্দ vs 75% Smooth Road + Overbridges & Tea Stalls)
+  // ----------------------------------------------------
+  const DhakaRoadEnvironmentSystem = {
+    initialized: false,
+    brokenRoadGroup: null,
+    overbridgeGroup: null,
+    teaStallGroup: null,
+    isBrokenRoad: false,
+    lastWarningCycle: -1,
+    lastPuffT: 0,
+    cycleDist: 800,
+    brokenStart: 600,
+    brokenLen: 200,
+
+    init(THREE, scene) {
+      if (this.initialized || !THREE || !scene) return;
+      this.initialized = true;
+
+      try {
+        this.brokenRoadGroup = new THREE.Group();
+        this.overbridgeGroup = new THREE.Group();
+        this.teaStallGroup = new THREE.Group();
+
+        // 1. Procedural 200m Broken Road Canvas Texture (Bitumen, Cracks, Red Brick খোয়া, Potholes)
+        const brCanvas = document.createElement('canvas');
+        brCanvas.width = 256; brCanvas.height = 256;
+        const bCtx = brCanvas.getContext('2d');
+
+        // Dark weathered bitumen base
+        bCtx.fillStyle = '#1c1917';
+        bCtx.fillRect(0, 0, 256, 256);
+
+        // Asphalt cracks and jagged fissures
+        bCtx.strokeStyle = '#0c0a09';
+        bCtx.lineWidth = 3;
+        for (let i = 0; i < 18; i++) {
+          bCtx.beginPath();
+          let cx = (i * 27) % 256;
+          let cy = (i * 43) % 256;
+          bCtx.moveTo(cx, cy);
+          for (let j = 0; j < 4; j++) {
+            cx += (Math.random() - 0.5) * 45;
+            cy += (Math.random() - 0.5) * 45;
+            bCtx.lineTo(cx, cy);
+          }
+          bCtx.stroke();
+        }
+
+        // Red brick aggregate / খোয়া patches (authentic Dhaka road construction)
+        for (let i = 0; i < 90; i++) {
+          const rx = Math.random() * 256;
+          const ry = Math.random() * 256;
+          const rw = 4 + Math.random() * 8;
+          const rh = 3 + Math.random() * 6;
+          bCtx.fillStyle = (i % 3 === 0) ? '#991b1b' : (i % 3 === 1) ? '#b45309' : '#44403c';
+          bCtx.fillRect(rx, ry, rw, rh);
+        }
+
+        // Deep potholes with wet glossy sheen centers
+        const potholes = [
+          { x: 65, y: 75, r: 24 },
+          { x: 190, y: 130, r: 28 },
+          { x: 105, y: 195, r: 22 }
+        ];
+        potholes.forEach(ph => {
+          bCtx.fillStyle = '#0a0a0c';
+          bCtx.beginPath();
+          bCtx.arc(ph.x, ph.y, ph.r, 0, Math.PI * 2);
+          bCtx.fill();
+          bCtx.strokeStyle = '#78350f';
+          bCtx.lineWidth = 4;
+          bCtx.stroke();
+          // Puddle reflection highlight
+          bCtx.fillStyle = 'rgba(125, 211, 252, 0.4)';
+          bCtx.beginPath();
+          bCtx.arc(ph.x - 4, ph.y - 4, ph.r * 0.45, 0, Math.PI * 2);
+          bCtx.fill();
+        });
+
+        const brTex = new THREE.Tex.glow.constructor(brCanvas);
+        brTex.needsUpdate = true;
+        const brGeo = new THREE.Plane(14.6, 200);
+        brGeo.rotateX(-THREE.PI / 2);
+        const brMat = new THREE.BasicMat({ map: brTex, transparent: true, opacity: 0.94 });
+        const brMesh = new THREE.Mesh(brGeo, brMat);
+        brMesh.position.set(0, 0.016, -100);
+        this.brokenRoadGroup.add(brMesh);
+
+        // 3D Road-Work Safety Drums (8 pairs along lanes)
+        const drumMat = new THREE.StandardMat({ color: 0xdc2626, roughness: 0.6 });
+        const drumWhiteMat = new THREE.BasicMat({ color: 0xffffff });
+        const drumGeo = new THREE.ct();
+        for (let bz = -15; bz >= -185; bz -= 25) {
+          drumGeo.box(-6.4, 0.45, bz, 0.65, 0.9, 0.65, null);
+          drumGeo.box(6.4, 0.45, bz, 0.65, 0.9, 0.65, null);
+        }
+        const drumMesh = new THREE.Mesh(drumGeo.build(), drumMat);
+        this.brokenRoadGroup.add(drumMesh);
+
+        // Reflective white safety stripes on drums
+        const stripeGeo = new THREE.ct();
+        for (let bz = -15; bz >= -185; bz -= 25) {
+          stripeGeo.box(-6.4, 0.45, bz, 0.68, 0.25, 0.68, null);
+          stripeGeo.box(6.4, 0.45, bz, 0.68, 0.25, 0.68, null);
+        }
+        const stripeMesh = new THREE.Mesh(stripeGeo.build(), drumWhiteMat);
+        this.brokenRoadGroup.add(stripeMesh);
+
+        // Road Work Entrance Warning Signboard
+        const rwc = document.createElement('canvas');
+        rwc.width = 256; rwc.height = 128;
+        const rwCtx = rwc.getContext('2d');
+        rwCtx.fillStyle = '#dc2626';
+        rwCtx.fillRect(0, 0, 256, 128);
+        rwCtx.strokeStyle = '#fef08a';
+        rwCtx.lineWidth = 6;
+        rwCtx.strokeRect(4, 4, 248, 120);
+
+        rwCtx.fillStyle = '#ffffff';
+        rwCtx.font = 'bold 16px "Tiro Bangla", sans-serif';
+        rwCtx.textAlign = 'center';
+        rwCtx.fillText("⚠️ সাবধান! সড়ক সংস্কার কাজ", 128, 44);
+
+        rwCtx.fillStyle = '#fef08a';
+        rwCtx.font = '12px "Tiro Bangla", sans-serif';
+        rwCtx.fillText("সামনে ২০০ মি. ভাঙা রাস্তা · গতি কমান!", 128, 80);
+
+        const rwTex = new THREE.Tex.glow.constructor(rwc);
+        rwTex.needsUpdate = true;
+        const rwGeo = new THREE.ct();
+        rwGeo.box(0, 4.6, -5, 14.8, 2.0, 0.3, null);
+        rwGeo.box(-7.2, 2.3, -5, 0.4, 4.6, 0.4, null);
+        rwGeo.box(7.2, 2.3, -5, 0.4, 4.6, 0.4, null);
+        const rwMesh = new THREE.Mesh(rwGeo.build(), new THREE.BasicMat({ map: rwTex }));
+        this.brokenRoadGroup.add(rwMesh);
+
+        scene.add(this.brokenRoadGroup);
+
+        // 2. Pedestrian Foot-Overbridge (পদচারী ফুটওভার ব্রিজ at Z = -420m)
+        const fobGeo = new THREE.ct();
+        const fobMat = new THREE.StandardMat({ color: 0x2563eb, roughness: 0.65 });
+
+        // Overpass bridge structure spanning road
+        fobGeo.box(0, 6.2, 0, 16.5, 0.35, 3.2, null);
+        fobGeo.box(0, 7.2, 0, 16.5, 0.08, 3.4, null); // Roof canopy
+        fobGeo.box(0, 6.7, -1.5, 16.5, 0.7, 0.1, null); // Railings
+        fobGeo.box(0, 6.7, 1.5, 16.5, 0.7, 0.1, null);
+        // Vertical support pillars & staircases
+        fobGeo.box(-7.8, 3.1, 0, 0.5, 6.2, 0.5, null);
+        fobGeo.box(7.8, 3.1, 0, 0.5, 6.2, 0.5, null);
+        fobGeo.box(-8.8, 3.1, 2.2, 1.5, 6.2, 2.0, null);
+        fobGeo.box(8.8, 3.1, 2.2, 1.5, 6.2, 2.0, null);
+
+        const fobMesh = new THREE.Mesh(fobGeo.build(), fobMat);
+        this.overbridgeGroup.add(fobMesh);
+
+        // Municipal Overbridge Banner
+        const fbc = document.createElement('canvas');
+        fbc.width = 256; fbc.height = 64;
+        const fbCtx = fbc.getContext('2d');
+        fbCtx.fillStyle = '#1e3a8a';
+        fbCtx.fillRect(0, 0, 256, 64);
+        fbCtx.fillStyle = '#ffffff';
+        fbCtx.font = 'bold 14px "Tiro Bangla", sans-serif';
+        fbCtx.textAlign = 'center';
+        fbCtx.fillText("🚶 পদচারী ফুটওভার ব্রিজ ব্যবহার করুন", 128, 28);
+        fbCtx.fillStyle = '#67e8f9';
+        fbCtx.font = '11px sans-serif';
+        fbCtx.fillText("Dhaka North City Corporation · DNCC", 128, 50);
+
+        const fbTex = new THREE.Tex.glow.constructor(fbc);
+        fbTex.needsUpdate = true;
+        const fbSignGeo = new THREE.ct();
+        fbSignGeo.box(0, 6.2, -1.6, 12.0, 1.2, 0.1, null);
+        const fbSignMesh = new THREE.Mesh(fbSignGeo.build(), new THREE.BasicMat({ map: fbTex }));
+        this.overbridgeGroup.add(fbSignMesh);
+
+        scene.add(this.overbridgeGroup);
+
+        // 3. Roadside Dhaka Tea Stalls (টং দোকান on sidewalks)
+        const tsGeo = new THREE.ct();
+        const tsWoodMat = new THREE.StandardMat({ color: 0x78350f, roughness: 0.9 });
+
+        // Left sidewalk Tong stall
+        tsGeo.box(-7.6, 1.1, 0, 2.6, 2.2, 2.2, null);
+        tsGeo.box(-7.6, 2.25, 0, 2.9, 0.1, 2.5, null); // Blue tarp roof
+        tsGeo.box(-6.4, 0.85, 0, 0.4, 0.8, 2.0, null); // Wooden counter
+        tsGeo.box(-6.4, 1.35, 0, 0.35, 0.35, 0.35, null); // Aluminium kettle
+
+        // Right sidewalk Tong stall
+        tsGeo.box(7.6, 1.1, -40, 2.6, 2.2, 2.2, null);
+        tsGeo.box(7.6, 2.25, -40, 2.9, 0.1, 2.5, null);
+        tsGeo.box(6.4, 0.85, -40, 0.4, 0.8, 2.0, null);
+        tsGeo.box(6.4, 1.35, -40, 0.35, 0.35, 0.35, null);
+
+        const tsMesh = new THREE.Mesh(tsGeo.build(), tsWoodMat);
+        this.teaStallGroup.add(tsMesh);
+
+        scene.add(this.teaStallGroup);
+      } catch (err) {
+        console.warn('DhakaRoadEnvironmentSystem init error:', err);
+      }
+    },
+
+    update(p, dt, inPlay) {
+      const THREE = window.__THREE_EXPORTS;
+      const at = window.__at;
+      if (!this.initialized && THREE && at && at.SCENE) {
+        this.init(THREE, at.SCENE);
+      }
+      if (!this.initialized || !inPlay || !p) {
+        if (DhakaAudioSFX.stopGravelRumble) DhakaAudioSFX.stopGravelRumble();
+        return;
+      }
+
+      const pDist = Math.abs(p.z);
+      const cycle = Math.floor(pDist / this.cycleDist);
+      const localZ = pDist % this.cycleDist;
+
+      // Position broken road structure for active cycle
+      if (this.brokenRoadGroup) {
+        this.brokenRoadGroup.position.z = - (cycle * this.cycleDist + this.brokenStart);
+      }
+
+      // Position overbridge and tea stalls along road
+      if (this.overbridgeGroup) {
+        this.overbridgeGroup.position.z = - (cycle * this.cycleDist + 420);
+      }
+      if (this.teaStallGroup) {
+        this.teaStallGroup.position.z = - (cycle * this.cycleDist + 220);
+      }
+
+      // 25% Broken Road check (600m to 800m of every 800m cycle)
+      const now = performance.now();
+      const isBroken = (localZ >= this.brokenStart && localZ < this.brokenStart + this.brokenLen);
+      this.isBrokenRoad = isBroken;
+      window.__isBrokenRoad = isBroken;
+
+      const speed = Math.abs(p.v || 0);
+
+      if (isBroken) {
+        // Warning chime on initial entry
+        if (this.lastWarningCycle !== cycle) {
+          this.lastWarningCycle = cycle;
+          DhakaAudioSFX.playRoadWarning();
+          if (typeof RoadMicroDetailsSystem !== 'undefined' && RoadMicroDetailsSystem.spawnMicroToast) {
+            RoadMicroDetailsSystem.spawnMicroToast("⚠️ সাবধান: সামনে ২০০ মি. ভাঙা সড়ক!");
+          }
+        }
+
+        // 1. Suspension Micro-Bumping (Haptics)
+        const rumbleFreq = Math.max(14, speed * 2.2);
+        const rumbleAmp = Math.min(0.20, 0.06 + (speed / 18.0) * 0.12);
+        const microJitter = (Math.random() - 0.5) * 0.05;
+        const curBump = (typeof p.bumpY === 'number' && !isNaN(p.bumpY)) ? p.bumpY : 0;
+        p.bumpY = Math.max(curBump, Math.abs(Math.sin(now * 0.001 * rumbleFreq * Math.PI * 2)) * rumbleAmp + 0.02 + microJitter);
+
+        // 2. Loose Gravel Traction Drag & Steering Wander
+        if (speed > 3.0) {
+          p.yawRate += (Math.random() - 0.5) * 0.026;
+          p.v *= (1 - dt * 0.038);
+        }
+
+        // 3. Tire Dust Cloud Emission
+        if (at && at.FX && speed > 4.5 && now - this.lastPuffT > 90) {
+          this.lastPuffT = now;
+          const halfWid = (p.wid || 1.3) * 0.46;
+          const rearDist = (p.len || 2.6) * 0.44;
+          const t1x = p.x - p.rx * halfWid + p.fx * rearDist;
+          const t1z = p.z - p.rz * halfWid + p.fz * rearDist;
+          const t2x = p.x + p.rx * halfWid + p.fx * rearDist;
+          const t2z = p.z + p.rz * halfWid + p.fz * rearDist;
+          at.FX.puff(t1x, 0.08, t1z, 1.1, 0.32, 0x8d6e63);
+          at.FX.puff(t2x, 0.08, t2z, 1.1, 0.32, 0x8d6e63);
+        }
+
+        // 4. Loose Gravel Rumble Sound
+        DhakaAudioSFX.playGravelRumble(speed, dt);
+      } else {
+        DhakaAudioSFX.stopGravelRumble();
+      }
+
+      // Update Mini-Map Radar & HUD Road Status
+      const gpsHint = document.getElementById('radarGpsHint');
+      if (gpsHint) {
+        if (isBroken) {
+          gpsHint.innerHTML = `<span style="color:#ff3344; font-weight:800;">⚠️ ভাঙা সড়ক (২৫%)</span> · খানাখন্দ ও খোয়া`;
+          gpsHint.classList.add('hazard');
+        } else if (window.__flyoverElevation > 0.5) {
+          gpsHint.innerHTML = `<span style="color:#ffd400; font-weight:800;">🌉 হানিফ ফ্লাইওভার</span> · উচ্চতা +৪.৬ মি.`;
+          gpsHint.classList.remove('hazard');
+        } else {
+          gpsHint.innerHTML = `<span style="color:#38ef7d; font-weight:700;">🛣️ মসৃণ পিচ (৭৫%)</span> · ফুল গ্রিপ`;
+          gpsHint.classList.remove('hazard');
+        }
       }
     }
   };
@@ -4834,14 +5275,16 @@
     MetroRailSystem.update(at.P, dt, inPlay);
     SuspensionDynamics.update(at.P, dt, inPlay);
     BusHelperSystem.update(at.P, dt, inPlay);
+
+    // v3.0 Road Geometry & Elevation (Run before Radar so radar corridor renders correct hazard styling)
+    ZoneProgressionSystem.update(at.P, dt, inPlay);
+    FlyoverElevationSystem.update(at.P, dt, inPlay);
+    DhakaRoadEnvironmentSystem.update(at.P, dt, inPlay);
+    RoadMicroDetailsSystem.update(at.P, dt, inPlay);
+
     MiniMapRadar.update(at.P, dt, inPlay);
     NearMissSystem.update(at.P, dt, inPlay);
     FallingPetalsSystem.update(at.P, dt, inPlay);
-
-    // v3.0 New Systems
-    ZoneProgressionSystem.update(at.P, dt, inPlay);
-    FlyoverElevationSystem.update(at.P, dt, inPlay);
-    RoadMicroDetailsSystem.update(at.P, dt, inPlay);
     LivingCitySystem.update(at.P, dt, inPlay);
     NextGenGraphicsSystem.update(at.P, dt, inPlay, isNight, isRain);
   }
@@ -4862,9 +5305,23 @@
     window.RastarRaja.ZoneProgressionSystem = ZoneProgressionSystem;
     window.RastarRaja.FlyoverElevationSystem = FlyoverElevationSystem;
     window.RastarRaja.RoadMicroDetailsSystem = RoadMicroDetailsSystem;
+    window.RastarRaja.DhakaRoadEnvironmentSystem = DhakaRoadEnvironmentSystem;
     window.RastarRaja.LivingCitySystem = LivingCitySystem;
     window.RastarRaja.NextGenGraphicsSystem = NextGenGraphicsSystem;
     window.RastarRaja.DhakaAudioSFX = DhakaAudioSFX;
+
+    // Global User-Gesture Audio Unlocker for Mobile & Desktop
+    const unlockAudio = () => {
+      if (window.RastarRaja && window.RastarRaja.DhakaAudioSFX) {
+        const ctx = window.RastarRaja.DhakaAudioSFX.getCtx();
+        if (ctx && ctx.state === 'suspended') {
+          ctx.resume().catch(() => {});
+        }
+      }
+    };
+    window.addEventListener('pointerdown', unlockAudio, { once: true, passive: true });
+    window.addEventListener('keydown', unlockAudio, { once: true, passive: true });
+    window.addEventListener('touchstart', unlockAudio, { once: true, passive: true });
 
     // Keyboard H or Horn button for Hydraulic Bus Horn
     window.addEventListener('keydown', (e) => {

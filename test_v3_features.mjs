@@ -64,6 +64,11 @@ try {
     if (msg.method === 'Runtime.consoleAPICalled' && msg.params.type === 'error') {
       errors.push(msg.params.args.map(a => a.value || a.description).join(' '));
     }
+    if (msg.method === 'Runtime.exceptionThrown') {
+      const desc = msg.params.exceptionDetails?.exception?.description || msg.params.exceptionDetails?.text;
+      if (errors.length < 5) console.error('FRAME EXCEPTION:', desc);
+      errors.push(desc);
+    }
   });
 
   // Wait for game to boot
@@ -119,14 +124,97 @@ try {
   fs.writeFileSync(path.join(artifactDir, 'v3_zone1_old_dhaka.png'), Buffer.from(ss1.data, 'base64'));
   console.log('Saved v3_zone1_old_dhaka.png');
 
-  // Test Flyover Elevation
+  // Test 1: Smooth Road (75% Road Condition)
+  console.log('Testing Smooth Road (75% Condition)...');
+  await send('Runtime.evaluate', {
+    expression: `
+      (() => {
+        const at = window.__at;
+        if (at && at.P) {
+          at.P.alive = true;
+          at.G.state = 'play';
+          at.P.z = -250; // within 0 - 600m (smooth section)
+          at.P.v = 14;
+        }
+      })()
+    `
+  });
+  await new Promise(r => setTimeout(r, 400));
+
+  const smoothRoadRes = await send('Runtime.evaluate', {
+    expression: `
+      (() => {
+        const sys = window.RastarRaja && window.RastarRaja.DhakaRoadEnvironmentSystem;
+        const gpsHint = document.getElementById('radarGpsHint');
+        const at = window.__at;
+        return {
+          sysExists: !!sys,
+          sysInit: sys ? sys.initialized : false,
+          hasScene: !!(at && at.SCENE),
+          hasThree: !!window.__THREE_EXPORTS,
+          inPlay: at && at.G ? at.G.state : null,
+          alive: at && at.P ? at.P.alive : null,
+          z: at && at.P ? at.P.z : null,
+          isBrokenRoad: sys ? sys.isBrokenRoad : null,
+          gpsHintText: gpsHint ? gpsHint.textContent : '',
+          isHazard: gpsHint ? gpsHint.classList.contains('hazard') : false
+        };
+      })()
+    `,
+    returnByValue: true
+  });
+  console.log('Smooth Road (75%) Test:', smoothRoadRes.result.value);
+
+  // Test 2: Broken Road (25% Road Condition with Potholes, Rubble & Construction)
+  console.log('Testing Broken Road (25% Condition with Potholes & Construction)...');
+  await send('Runtime.evaluate', {
+    expression: `
+      (() => {
+        const at = window.__at;
+        if (at && at.P) {
+          at.P.alive = true;
+          at.G.state = 'play';
+          at.P.z = -700; // within 600 - 800m (broken section)
+          at.P.v = 12;
+        }
+      })()
+    `
+  });
+  await new Promise(r => setTimeout(r, 400));
+
+  const brokenRoadRes = await send('Runtime.evaluate', {
+    expression: `
+      (() => {
+        const sys = window.RastarRaja && window.RastarRaja.DhakaRoadEnvironmentSystem;
+        const gpsHint = document.getElementById('radarGpsHint');
+        return {
+          z: window.__at.P.z,
+          isBrokenRoad: sys ? sys.isBrokenRoad : null,
+          bumpY: window.__at.P.bumpY,
+          gpsHintText: gpsHint ? gpsHint.textContent : '',
+          isHazard: gpsHint ? gpsHint.classList.contains('hazard') : false
+        };
+      })()
+    `,
+    returnByValue: true
+  });
+  console.log('Broken Road (25%) Test:', brokenRoadRes.result.value);
+
+  // Capture Broken Road Screenshot
+  const ssBroken = await send('Page.captureScreenshot');
+  fs.writeFileSync(path.join(artifactDir, 'v3_broken_road_25.png'), Buffer.from(ssBroken.data, 'base64'));
+  console.log('Saved v3_broken_road_25.png');
+
+  // Test 3: Mayor Hanif Flyover Elevation
   console.log('Testing Mayor Hanif Flyover Elevation...');
   await send('Runtime.evaluate', {
     expression: `
       (() => {
         const at = window.__at;
         if (at && at.P) {
-          at.P.z = -800;
+          at.P.alive = true;
+          at.G.state = 'play';
+          at.P.z = -800; // elevated deck
           at.P.v = 22; // ~80 km/h
         }
       })()
