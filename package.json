@@ -1,0 +1,19 @@
+{
+  "name": "baper-rasta",
+  "version": "1.0.0",
+  "description": "বাপের রাস্তা · Baper Rasta - ঢাকার রাজপথের ব্যাটারি অটোরিকশা সিমুলেশন গেম",
+  "main": "server.js",
+  "type": "module",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "keywords": [
+    "baper-rasta",
+    "bangla-game",
+    "threejs",
+    "webgl",
+    "rickshaw"
+  ],
+  "author": "Omar Faruqe Riyad",
+  "license": "ISC"
+}
