@@ -1,0 +1,26 @@
+{
+  "name": "রাস্তার রাজা · Rastar Raja",
+  "short_name": "রাস্তার রাজা",
+  "description": "ঢাকার রাজপথের আসল রাজা: নো লাইসেন্স, নো ব্রেক! ধাক্কা মারেন, জাতীয় ক্ষতি বাড়ান, আর পাবলিক ধরার আগে পালান। নির্মাতা: আব্দুল আল যুবায়ের।",
+  "lang": "bn",
+  "start_url": ".",
+  "scope": ".",
+  "display": "fullscreen",
+  "orientation": "any",
+  "background_color": "#15110e",
+  "theme_color": "#15110e",
+  "icons": [
+    {
+      "src": "icons/icon-192.8f96155b92.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icons/icon-512.39805cca4e.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

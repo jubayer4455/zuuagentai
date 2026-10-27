@@ -1,0 +1,505 @@
+{
+  "currentWeek": "2026-10-24",
+  "users": {
+    "1eaefa1d27fb": {
+      "pass": "devpass",
+      "name": "Abdul Al Jubayer",
+      "weekScores": {
+        "2026-10-24": 25000000
+      },
+      "allTimeBest": 25000000
+    },
+    "ccc52872-a409-43c3-af2e-133a9bd96ea1": {
+      "pass": "3a0d9d6cbed1163fcc34aad32394c5b8",
+      "name": "",
+      "weekScores": {
+        "2026-10-24": 15000
+      },
+      "allTimeBest": 15000
+    },
+    "2ef5b834-cadf-4773-8966-ce06954c31b4": {
+      "pass": "7152ede0e9b859f6a1e1ba8183248fe0",
+      "name": "",
+      "weekScores": {},
+      "allTimeBest": 0
+    },
+    "cc2056eb-0ef9-4c32-a7b0-07a3f2125d01": {
+      "pass": "bb4a708e70308e4cf64f1a18c4ec8abb",
+      "name": "",
+      "weekScores": {},
+      "allTimeBest": 0
+    },
+    "ce332817-a392-4923-9501-729b8f642ab0": {
+      "pass": "6d0234a67bca1501c7edd537fa247135",
+      "name": "",
+      "weekScores": {},
+      "allTimeBest": 0
+    },
+    "5a06a662-620f-4496-b7f7-3122a3f579d4": {
+      "pass": "0ddebbcb3cd377f3a22d162479d4e866",
+      "name": "",
+      "weekScores": {},
+      "allTimeBest": 0
+    },
+    "77305c0d-06b6-448c-8f3f-c848631c1f78": {
+      "pass": "63092d49a6b62bab5f55aaaec0fdba36",
+      "name": "",
+      "weekScores": {},
+      "allTimeBest": 0
+    },
+    "0559acd6-3182-493a-80a6-4ae51791a339": {
+      "pass": "2061be97cf9c796aafef92fe3aa8fa08",
+      "name": "",
+      "weekScores": {},
+      "allTimeBest": 0
+    },
+    "f9d5d2c2-990e-4869-8d07-6c7bab886447": {
+      "pass": "211736a00e6f992c3ac9805070b58535",
+      "name": "",
+      "weekScores": {
+        "2026-10-24": 84500
+      },
+      "allTimeBest": 84500
+    },
+    "8d437a92-695c-47bf-9c15-78400671f11a": {
+      "pass": "c439d31593f2c0f5f74c9780d8fcb129",
+      "name": "",
+      "weekScores": {
+        "2026-10-24": 125400
+      },
+      "allTimeBest": 125400
+    },
+    "0202bcc2-4a8c-4c1e-8c4f-b113e725ba84": {
+      "pass": "b4021fadbbeaa9ba8de3317cac1dc695",
+      "name": "",
+      "weekScores": {
+        "2026-10-24": 185000
+      },
+      "allTimeBest": 185000
+    },
+    "9d3951ae-d6bd-4767-bbe6-aff730b170d9": {
+      "pass": "8a91926dc782ca97659249484f438889",
+      "name": "",
+      "weekScores": {
+        "2026-10-24": 185000
+      },
+      "allTimeBest": 185000
+    },
+    "91b5a792-adeb-4777-921d-e8652b677f0b": {
+      "pass": "660778022ad5bf60d8e725f7d971995d",
+      "name": "",
+      "weekScores": {
+        "2026-10-24": 185000
+      },
+      "allTimeBest": 185000
+    },
+    "fed58829-c560-47e0-ad8a-1f9a9420a1c7": {
+      "pass": "fc273cd30d997adfdb3f3aa3a85b28ae",
+      "name": "",
+      "weekScores": {
+        "2026-10-24": 2250
+      },
+      "allTimeBest": 2250
+    },
+    "a76699c1-6381-40b6-8b39-b7e12093b1db": {
+      "pass": "59869bc336c379abbe70c798d9c68b08",
+      "name": "",
+      "weekScores": {},
+      "allTimeBest": 0
+    },
+    "99efaff1-bb7f-4708-9f4f-1ab179a5a91e": {
+      "pass": "72600fc6d0ffc47ea5b161665eb51533",
+      "name": "",
+      "weekScores": {},
+      "allTimeBest": 0
+    },
+    "4067cb69-699e-4e4b-a525-bc65114d642a": {
+      "pass": "f978a338b4dad5d6f1788427533308da",
+      "name": "",
+      "weekScores": {},
+      "allTimeBest": 0
+    },
+    "9a80144e-32b3-48bd-a26c-251e51dc9c54": {
+      "pass": "49b9d71487e684bc35ac51aa69a85c86",
+      "name": "",
+      "weekScores": {},
+      "allTimeBest": 0
+    },
+    "8367634e-4a6b-48ba-885c-ff2e1752fb7b": {
+      "pass": "d3a41e7eb3f07d504d146d77392d04cf",
+      "name": "",
+      "weekScores": {},
+      "allTimeBest": 0
+    },
+    "5c931a9b-c807-4a9b-994b-da188a75c66f": {
+      "pass": "5a743e0710ab7105558da181cce4abdb",
+      "name": "",
+      "weekScores": {},
+      "allTimeBest": 0
+    },
+    "2a81c531-8dfe-47c2-b00d-3c6b599011a7": {
+      "pass": "83f92e0968933f6a5b1840dd400cd97a",
+      "name": "",
+      "weekScores": {},
+      "allTimeBest": 0
+    },
+    "b46a7f4f-f7de-4bdc-83dc-4ac20ca6309a": {
+      "pass": "b1abd09e9ba6a0e2a8cdad72ce21d09d",
+      "name": "",
+      "weekScores": {},
+      "allTimeBest": 0
+    },
+    "a56a98be-fb16-45ff-a1a5-4c90d572ee7c": {
+      "pass": "2c0bc787b6a17772054c68ba0a109c24",
+      "name": "",
+      "weekScores": {},
+      "allTimeBest": 0
+    },
+    "be4d612a-6e52-456a-9512-80a5c214e920": {
+      "pass": "1495234fcc41313594763c2af7709dbe",
+      "name": "",
+      "weekScores": {},
+      "allTimeBest": 0
+    },
+    "b8c1fdeb-22c6-4c4d-8413-bab6c2beef5f": {
+      "pass": "c7bd52a2069a41c35487f9e608069039",
+      "name": "",
+      "weekScores": {},
+      "allTimeBest": 0
+    },
+    "013ee2b9-acf2-44c9-8804-38eef6a5967f": {
+      "pass": "efc6946c4a116112dd9b3ce000354b71",
+      "name": "",
+      "weekScores": {},
+      "allTimeBest": 0
+    },
+    "df63b0c3-d916-413a-b12a-da419e54944e": {
+      "pass": "e9723aaf597914e956348ae70bca4d91",
+      "name": "",
+      "weekScores": {},
+      "allTimeBest": 0
+    },
+    "ea1a33da-520e-40b8-afe7-655eb7e7d16d": {
+      "pass": "026f969cdd8340d356ea9e0a75750137",
+      "name": "",
+      "weekScores": {},
+      "allTimeBest": 0
+    },
+    "ad06966f-d391-4aac-a991-5d435ba8671d": {
+      "pass": "7c28ca4519d7c2382f68f00c4736f2cd",
+      "name": "",
+      "weekScores": {},
+      "allTimeBest": 0
+    },
+    "bd774605-5663-440e-a6bf-3d032627c7ef": {
+      "pass": "0590e8bbfbb06206fcdff79904953a6d",
+      "name": "",
+      "weekScores": {},
+      "allTimeBest": 0
+    },
+    "3a5fc575-b466-420c-9071-99dac1139640": {
+      "pass": "3a2b88822d7a0275e3fe0b141928eddb",
+      "name": "",
+      "weekScores": {},
+      "allTimeBest": 0
+    },
+    "35b7a0d5-057e-45c7-a621-d494cc2fa43e": {
+      "pass": "bbb74932201ea946cce8b88dc07d1e2a",
+      "name": "",
+      "weekScores": {},
+      "allTimeBest": 0
+    },
+    "ff7e58aa-f221-4c2b-9598-3cd2d5f8d815": {
+      "pass": "85c27360443e660c9ce36f9a83a1c22b",
+      "name": "",
+      "weekScores": {},
+      "allTimeBest": 0
+    },
+    "fa1d846b-8798-4e38-9155-0ab382f87291": {
+      "pass": "a062e386eb44bd03569acddd99c02cde",
+      "name": "",
+      "weekScores": {},
+      "allTimeBest": 0
+    },
+    "718f4929-421a-4d36-bb86-003dcea4955d": {
+      "pass": "b8cdec6e36c9f19ed799583b74c65ae8",
+      "name": "",
+      "weekScores": {
+        "2026-10-24": 2250
+      },
+      "allTimeBest": 2250
+    }
+  },
+  "activeRuns": {
+    "436609a0b8648101c118db59aae1157f": {
+      "device": "ccc52872-a409-43c3-af2e-133a9bd96ea1",
+      "pass": "3a0d9d6cbed1163fcc34aad32394c5b8",
+      "start": 1793077338008
+    },
+    "585c2771522f0d50ae3ffa1ee079631b": {
+      "device": "ccc52872-a409-43c3-af2e-133a9bd96ea1",
+      "pass": "3a0d9d6cbed1163fcc34aad32394c5b8",
+      "start": 1793077383317
+    },
+    "9b897877b1e79f4102ef5b241dcc18be": {
+      "device": "ccc52872-a409-43c3-af2e-133a9bd96ea1",
+      "pass": "3a0d9d6cbed1163fcc34aad32394c5b8",
+      "start": 1793077926608
+    },
+    "2bfe987db596a892199153df29fc2dbc": {
+      "device": "2ef5b834-cadf-4773-8966-ce06954c31b4",
+      "pass": "7152ede0e9b859f6a1e1ba8183248fe0",
+      "start": 1793079340866
+    },
+    "d6c1589beb8351f0996a3fbfd8adf2bd": {
+      "device": "ccc52872-a409-43c3-af2e-133a9bd96ea1",
+      "pass": "3a0d9d6cbed1163fcc34aad32394c5b8",
+      "start": 1793079710538
+    },
+    "6452ef6ad7ad5f055e7b157e1cf9487f": {
+      "device": "ccc52872-a409-43c3-af2e-133a9bd96ea1",
+      "pass": "3a0d9d6cbed1163fcc34aad32394c5b8",
+      "start": 1793080006273
+    },
+    "860484e5724f552a31a74df946cb1583": {
+      "device": "ccc52872-a409-43c3-af2e-133a9bd96ea1",
+      "pass": "3a0d9d6cbed1163fcc34aad32394c5b8",
+      "start": 1793080731382
+    },
+    "272eac2fd2749a5a490aabfb2a430662": {
+      "device": "cc2056eb-0ef9-4c32-a7b0-07a3f2125d01",
+      "pass": "bb4a708e70308e4cf64f1a18c4ec8abb",
+      "start": 1793080793120
+    },
+    "35680160a3366210d0f1d32ead564253": {
+      "device": "ce332817-a392-4923-9501-729b8f642ab0",
+      "pass": "6d0234a67bca1501c7edd537fa247135",
+      "start": 1793081180152
+    },
+    "9d8175b0c6390130c263b7ee87faaa8c": {
+      "device": "ccc52872-a409-43c3-af2e-133a9bd96ea1",
+      "pass": "3a0d9d6cbed1163fcc34aad32394c5b8",
+      "start": 1793081329778
+    },
+    "c17eaaeae4e9dda61df8aebf1db6210c": {
+      "device": "ccc52872-a409-43c3-af2e-133a9bd96ea1",
+      "pass": "3a0d9d6cbed1163fcc34aad32394c5b8",
+      "start": 1793082009939
+    },
+    "3b7484359bb00dfdf3f5278092f81d7a": {
+      "device": "ccc52872-a409-43c3-af2e-133a9bd96ea1",
+      "pass": "3a0d9d6cbed1163fcc34aad32394c5b8",
+      "start": 1793082167524
+    },
+    "7aac1c1cc3ad225dac4f89039722123e": {
+      "device": "ccc52872-a409-43c3-af2e-133a9bd96ea1",
+      "pass": "3a0d9d6cbed1163fcc34aad32394c5b8",
+      "start": 1793084511784
+    },
+    "4e55de858e69435c6372220e985ff5ae": {
+      "device": "ccc52872-a409-43c3-af2e-133a9bd96ea1",
+      "pass": "3a0d9d6cbed1163fcc34aad32394c5b8",
+      "start": 1793084541730
+    },
+    "5936695d1bbab7da62ff0c658ddae81b": {
+      "device": "ccc52872-a409-43c3-af2e-133a9bd96ea1",
+      "pass": "3a0d9d6cbed1163fcc34aad32394c5b8",
+      "start": 1793084666770
+    },
+    "591f7a88c26e25f928ea7d1a7a2f67e0": {
+      "device": "ccc52872-a409-43c3-af2e-133a9bd96ea1",
+      "pass": "3a0d9d6cbed1163fcc34aad32394c5b8",
+      "start": 1793084681709
+    },
+    "69a6a8023f7c0129e14f8996ca664f93": {
+      "device": "ccc52872-a409-43c3-af2e-133a9bd96ea1",
+      "pass": "3a0d9d6cbed1163fcc34aad32394c5b8",
+      "start": 1793084953056
+    },
+    "dd58e75529df0e8e958d103d289a2c16": {
+      "device": "ccc52872-a409-43c3-af2e-133a9bd96ea1",
+      "pass": "3a0d9d6cbed1163fcc34aad32394c5b8",
+      "start": 1793084990816
+    },
+    "d6b2d42a37f58c2fb8ca1511b2855067": {
+      "device": "ccc52872-a409-43c3-af2e-133a9bd96ea1",
+      "pass": "3a0d9d6cbed1163fcc34aad32394c5b8",
+      "start": 1793085150506
+    },
+    "86c9fb2f36f4498ab5bdea24e3ebf326": {
+      "device": "ccc52872-a409-43c3-af2e-133a9bd96ea1",
+      "pass": "3a0d9d6cbed1163fcc34aad32394c5b8",
+      "start": 1793085213991
+    },
+    "7ef8b4d90421f3516add30df4785b9ee": {
+      "device": "ccc52872-a409-43c3-af2e-133a9bd96ea1",
+      "pass": "3a0d9d6cbed1163fcc34aad32394c5b8",
+      "start": 1793085268947
+    },
+    "8611ed5c4f943760b7a3355d386dbb19": {
+      "device": "ccc52872-a409-43c3-af2e-133a9bd96ea1",
+      "pass": "3a0d9d6cbed1163fcc34aad32394c5b8",
+      "start": 1793085359798
+    },
+    "359eccdca410e9f395d2fd0164f0c4cb": {
+      "device": "ccc52872-a409-43c3-af2e-133a9bd96ea1",
+      "pass": "3a0d9d6cbed1163fcc34aad32394c5b8",
+      "start": 1793085540864
+    },
+    "be3a56452b2ab2edf916409ee46ac326": {
+      "device": "77305c0d-06b6-448c-8f3f-c848631c1f78",
+      "pass": "63092d49a6b62bab5f55aaaec0fdba36",
+      "start": 1793085661668
+    },
+    "c90d37b0672ce2df9f6e9263fb4df244": {
+      "device": "ccc52872-a409-43c3-af2e-133a9bd96ea1",
+      "pass": "3a0d9d6cbed1163fcc34aad32394c5b8",
+      "start": 1793085931164
+    },
+    "cc3a9ff07ed39735fac101f4bbe583bf": {
+      "device": "0559acd6-3182-493a-80a6-4ae51791a339",
+      "pass": "2061be97cf9c796aafef92fe3aa8fa08",
+      "start": 1793086200752
+    },
+    "c04c7cf1e7ec1826ef3ec91a90083bdb": {
+      "device": "ccc52872-a409-43c3-af2e-133a9bd96ea1",
+      "pass": "3a0d9d6cbed1163fcc34aad32394c5b8",
+      "start": 1793086317678
+    },
+    "7b4ea341631980e5fb3ccb943e64a0c1": {
+      "device": "ccc52872-a409-43c3-af2e-133a9bd96ea1",
+      "pass": "3a0d9d6cbed1163fcc34aad32394c5b8",
+      "start": 1793086473593
+    },
+    "edd10dff199753d45fafcb304469a60c": {
+      "device": "a76699c1-6381-40b6-8b39-b7e12093b1db",
+      "pass": "59869bc336c379abbe70c798d9c68b08",
+      "start": 1793089427578
+    },
+    "060d58d4dc3bb6e059d04528a09838d5": {
+      "device": "99efaff1-bb7f-4708-9f4f-1ab179a5a91e",
+      "pass": "72600fc6d0ffc47ea5b161665eb51533",
+      "start": 1793089497355
+    },
+    "8da7508cddf97bb42bf6bfa55148f0cf": {
+      "device": "fed58829-c560-47e0-ad8a-1f9a9420a1c7",
+      "pass": "fc273cd30d997adfdb3f3aa3a85b28ae",
+      "start": 1793089658419
+    },
+    "8a901b3e431e5443b2a3eff751aab0a9": {
+      "device": "fed58829-c560-47e0-ad8a-1f9a9420a1c7",
+      "pass": "fc273cd30d997adfdb3f3aa3a85b28ae",
+      "start": 1793089789352
+    },
+    "40c8e4641f054f0541c86d62814a5dd9": {
+      "device": "fed58829-c560-47e0-ad8a-1f9a9420a1c7",
+      "pass": "fc273cd30d997adfdb3f3aa3a85b28ae",
+      "start": 1793090018946
+    },
+    "4199ec6cb16604e46d9ffb20d47a36a7": {
+      "device": "4067cb69-699e-4e4b-a525-bc65114d642a",
+      "pass": "f978a338b4dad5d6f1788427533308da",
+      "start": 1793095184159
+    },
+    "eaacabcf03641f028d6b67b2cdd7c0d5": {
+      "device": "9a80144e-32b3-48bd-a26c-251e51dc9c54",
+      "pass": "49b9d71487e684bc35ac51aa69a85c86",
+      "start": 1793095665582
+    },
+    "f8b1f98129f5a0f26547fed5ac533415": {
+      "device": "8367634e-4a6b-48ba-885c-ff2e1752fb7b",
+      "pass": "d3a41e7eb3f07d504d146d77392d04cf",
+      "start": 1793095888762
+    },
+    "a77b54556500c1c9e0bc3da2573c2be5": {
+      "device": "5c931a9b-c807-4a9b-994b-da188a75c66f",
+      "pass": "5a743e0710ab7105558da181cce4abdb",
+      "start": 1793096100547
+    },
+    "97576e7a4abe80ba359cda9740dcabcf": {
+      "device": "2a81c531-8dfe-47c2-b00d-3c6b599011a7",
+      "pass": "83f92e0968933f6a5b1840dd400cd97a",
+      "start": 1793096317047
+    },
+    "2a89eb94a9fe7002dca5928159e785fa": {
+      "device": "fed58829-c560-47e0-ad8a-1f9a9420a1c7",
+      "pass": "fc273cd30d997adfdb3f3aa3a85b28ae",
+      "start": 1793096945570
+    },
+    "09d28b261bad9232e5cb6b1096484a61": {
+      "device": "fed58829-c560-47e0-ad8a-1f9a9420a1c7",
+      "pass": "fc273cd30d997adfdb3f3aa3a85b28ae",
+      "start": 1793097482080
+    },
+    "c50b19729bfdb3261a0ea350f6a690ee": {
+      "device": "fed58829-c560-47e0-ad8a-1f9a9420a1c7",
+      "pass": "fc273cd30d997adfdb3f3aa3a85b28ae",
+      "start": 1793097514027
+    },
+    "2e2491819c30ecaeb53d89baaa2601fc": {
+      "device": "fed58829-c560-47e0-ad8a-1f9a9420a1c7",
+      "pass": "fc273cd30d997adfdb3f3aa3a85b28ae",
+      "start": 1793098402354
+    },
+    "c71e8cf37de1702c2a1d8eba227dfee7": {
+      "device": "b46a7f4f-f7de-4bdc-83dc-4ac20ca6309a",
+      "pass": "b1abd09e9ba6a0e2a8cdad72ce21d09d",
+      "start": 1793098442369
+    },
+    "73212b667aa90a8f1ceacb840b5019a2": {
+      "device": "a56a98be-fb16-45ff-a1a5-4c90d572ee7c",
+      "pass": "2c0bc787b6a17772054c68ba0a109c24",
+      "start": 1793098664335
+    },
+    "28319fe7307e28e01028e3d4520974b1": {
+      "device": "be4d612a-6e52-456a-9512-80a5c214e920",
+      "pass": "1495234fcc41313594763c2af7709dbe",
+      "start": 1793098811386
+    },
+    "5a601a81775c6648421cf26dbc3a9e4f": {
+      "device": "b8c1fdeb-22c6-4c4d-8413-bab6c2beef5f",
+      "pass": "c7bd52a2069a41c35487f9e608069039",
+      "start": 1793099032305
+    },
+    "9f494d4dd168dfb61486dcc5f00e8088": {
+      "device": "013ee2b9-acf2-44c9-8804-38eef6a5967f",
+      "pass": "efc6946c4a116112dd9b3ce000354b71",
+      "start": 1793099346120
+    },
+    "9bf5354138ffe50223255e789f8418ae": {
+      "device": "fed58829-c560-47e0-ad8a-1f9a9420a1c7",
+      "pass": "fc273cd30d997adfdb3f3aa3a85b28ae",
+      "start": 1793099595651
+    },
+    "6fcae4c113819bc2a8275846f20874a5": {
+      "device": "fed58829-c560-47e0-ad8a-1f9a9420a1c7",
+      "pass": "fc273cd30d997adfdb3f3aa3a85b28ae",
+      "start": 1793099622875
+    },
+    "3b74985eb330986c181d6c49548fe115": {
+      "device": "df63b0c3-d916-413a-b12a-da419e54944e",
+      "pass": "e9723aaf597914e956348ae70bca4d91",
+      "start": 1793100308254
+    },
+    "3b9953de00486d55c4b18ee020f3c2b6": {
+      "device": "ea1a33da-520e-40b8-afe7-655eb7e7d16d",
+      "pass": "026f969cdd8340d356ea9e0a75750137",
+      "start": 1793100516973
+    },
+    "3470ee6a45b8587e698ca260782e493a": {
+      "device": "bd774605-5663-440e-a6bf-3d032627c7ef",
+      "pass": "0590e8bbfbb06206fcdff79904953a6d",
+      "start": 1793101589408
+    },
+    "b665a1981719fdd5bda611db07da2467": {
+      "device": "3a5fc575-b466-420c-9071-99dac1139640",
+      "pass": "3a2b88822d7a0275e3fe0b141928eddb",
+      "start": 1793101755575
+    },
+    "07fa45f4ac4e137507180c091e9aa453": {
+      "device": "fa1d846b-8798-4e38-9155-0ab382f87291",
+      "pass": "a062e386eb44bd03569acddd99c02cde",
+      "start": 1793104827522
+    }
+  }
+}

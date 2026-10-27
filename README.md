@@ -99,8 +99,9 @@ npm start
 
 1. GitHub Repository লিংক: `https://github.com/jubayer4455/zuuagentai.git`
 2. Vercel ড্যাশবোর্ডে গিয়ে **Add New Project** ➔ **Import Git Repository** সিলেক্ট করুন।
-3. প্রজেক্টের রুট ডিরেক্টরি সিলেক্ট করে সরাসরি **Deploy** বাটনে ক্লিক করুন।
-4. `vercel.json` এবং `/api/` সার্ভারলেস ফাংশন স্বয়ংক্রিয়ভাবে ক্লাউডে ডিপ্লয় হয়ে যাবে। কোনো build/runtime error ছাড়াই সাইট লাইভ হয়ে যাবে।
+3. **গুরুত্বপূর্ণ সেটিং:** Vercel ইমপোর্ট স্ক্রিনে **Framework Preset** অপশনে যদি `Vite` সিলেক্ট করা থাকে, সেটি পরিবর্তন করে **`Other`** সিলেক্ট করুন।
+   - (অথবা প্রোজেক্টটি তৈরি থাকলে Vercel ড্যাশবোর্ডের **Settings** ➔ **General** ➔ **Framework Preset** এ গিয়ে **`Other`** সিলেক্ট করে Save চাপুন)।
+4. `vercel.json`, `setup-build.js` এবং `/api/` সার্ভারলেস ফাংশন স্বয়ংক্রিয়ভাবে ক্লাউডে ডিপ্লয় হয়ে যাবে। কোনো `vite: command not found` বা build error ছাড়াই সাইট সরাসরি লাইভ হয়ে যাবে।
 
 ### 🗄️ Supabase ক্লাউড ডাটাবেস সেটআপ
 

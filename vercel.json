@@ -1,5 +1,8 @@
 {
   "version": 2,
+  "framework": null,
+  "buildCommand": "node setup-build.js",
+  "outputDirectory": ".",
   "cleanUrls": true,
   "trailingSlash": false,
   "headers": [
