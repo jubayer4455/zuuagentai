@@ -1372,6 +1372,112 @@
           font-size: 10px;
         }
       }
+
+      /* 15. Dhaka Humorous Comic Speech Bubble System */
+      .dhaka-humor-box {
+        position: fixed;
+        top: 76px;
+        left: 50%;
+        transform: translateX(-50%) translateY(-22px) scale(0.85);
+        background: linear-gradient(135deg, rgba(15, 23, 42, 0.95), rgba(30, 41, 59, 0.98));
+        border: 2px solid #00f0ff;
+        border-radius: 20px;
+        padding: 9px 20px;
+        color: #ffffff;
+        font-family: 'Tiro Bangla', sans-serif;
+        font-size: 15px;
+        font-weight: 700;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6), 0 0 20px rgba(0, 240, 255, 0.4);
+        pointer-events: none;
+        opacity: 0;
+        visibility: hidden;
+        transition: all 0.28s cubic-bezier(0.34, 1.56, 0.64, 1);
+        z-index: 9999;
+        text-align: center;
+        max-width: 90vw;
+        white-space: nowrap;
+      }
+      .dhaka-humor-box.active {
+        opacity: 1;
+        visibility: visible;
+        transform: translateX(-50%) translateY(0) scale(1);
+      }
+      .dhaka-humor-box.horn {
+        border-color: #ffd400;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6), 0 0 25px rgba(255, 212, 0, 0.5);
+      }
+      .dhaka-humor-box.warning {
+        border-color: #ff3344;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6), 0 0 25px rgba(255, 51, 68, 0.5);
+      }
+      .dhaka-humor-box.speed {
+        border-color: #a855f7;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6), 0 0 25px rgba(168, 85, 247, 0.5);
+      }
+      .dhaka-humor-tail {
+        position: absolute;
+        bottom: -9px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 0;
+        height: 0;
+        border-left: 9px solid transparent;
+        border-right: 9px solid transparent;
+        border-top: 9px solid #00f0ff;
+      }
+      .dhaka-humor-box.horn .dhaka-humor-tail { border-top-color: #ffd400; }
+      .dhaka-humor-box.warning .dhaka-humor-tail { border-top-color: #ff3344; }
+      .dhaka-humor-box.speed .dhaka-humor-tail { border-top-color: #a855f7; }
+
+      /* 16. Mobile Fullscreen Mode & Native App Polish */
+      .raja-fs-btn {
+        position: fixed;
+        top: 14px;
+        right: 120px;
+        z-index: 1000;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        background: rgba(15, 23, 42, 0.88);
+        border: 1px solid rgba(0, 240, 255, 0.45);
+        border-radius: 999px;
+        padding: 6px 12px;
+        color: #00f0ff;
+        font-family: 'Tiro Bangla', sans-serif;
+        font-size: 13px;
+        font-weight: 700;
+        cursor: pointer;
+        backdrop-filter: blur(8px);
+        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
+        transition: all 0.2s ease;
+        user-select: none;
+        touch-action: manipulation;
+      }
+      .raja-fs-btn:active {
+        transform: scale(0.92);
+        background: #00f0ff;
+        color: #000;
+      }
+      @media (max-width: 640px) {
+        .raja-fs-btn {
+          top: 8px;
+          right: 106px;
+          padding: 5px 9px;
+          font-size: 11px;
+        }
+        .dhaka-humor-box {
+          top: 68px;
+          font-size: 13px;
+          padding: 8px 16px;
+        }
+      }
+      html, body, #touch, .tbtn, .pedal {
+        touch-action: manipulation !important;
+        overscroll-behavior: none !important;
+        -webkit-user-select: none !important;
+        user-select: none !important;
+        -webkit-touch-callout: none !important;
+      }
     `;
     document.head.appendChild(style);
   }
@@ -2047,20 +2153,16 @@
       lastSpeedBumpZ = p.z;
 
       if (Math.abs(p.v) > 4.5) {
-        p.air = Math.max(p.air || 0, 0.45);
-        p.bumpY = 0.35;
-        p.v *= 0.78;
+        p.bumpY = 0.28;
+        p.v *= 0.82;
 
         if (window.__at) {
           if (window.__at.sfx && window.__at.sfx.bump) window.__at.sfx.bump();
           if (window.__at.FX && window.__at.FX.shake) window.__at.FX.shake(0.35);
         }
 
-        const dialogueBox = document.getElementById('dialogue');
-        if (dialogueBox) {
-          dialogueBox.textContent = "💥 মামা স্পিড ব্রেকার দেখেন না? গাড়ি উড়ায় দিলেন!";
-          dialogueBox.hidden = false;
-          setTimeout(() => { dialogueBox.hidden = true; }, 2600);
+        if (typeof DhakaStreetHumorSystem !== 'undefined' && DhakaStreetHumorSystem.say) {
+          DhakaStreetHumorSystem.say("💥 ওরে বাবারে! স্পিড ব্রেকার দেখেন না?! রিকশা উড়ায় দিলেন!");
         }
       }
     }
@@ -2538,6 +2640,10 @@
 
         if (typeof LivingCitySystem !== 'undefined' && LivingCitySystem.onHornBlast) {
           LivingCitySystem.onHornBlast(p);
+        }
+
+        if (typeof DhakaStreetHumorSystem !== 'undefined' && DhakaStreetHumorSystem.sayRandom) {
+          DhakaStreetHumorSystem.sayRandom(DhakaStreetHumorSystem.hornDialogues, 'horn');
         }
 
         const quotes = [
@@ -3530,6 +3636,10 @@
           if (this.toastEl) this.toastEl.classList.remove('active');
         }, 1600);
       }
+
+      if (typeof DhakaStreetHumorSystem !== 'undefined' && DhakaStreetHumorSystem.sayRandom) {
+        DhakaStreetHumorSystem.sayRandom(DhakaStreetHumorSystem.nearMissDialogues, 'normal');
+      }
     }
   };
 
@@ -3864,6 +3974,27 @@
           if (ctx) this.gravelGain.gain.setValueAtTime(0.0001, ctx.currentTime);
         } catch (e) {}
       }
+    },
+
+    // Comic Dialogue Bubble Pop Synthesizer
+    playDialoguePop() {
+      const ctx = this.getCtx();
+      if (!ctx) return;
+      try {
+        const now = ctx.currentTime;
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(420, now);
+        osc.frequency.exponentialRampToValueAtTime(860, now + 0.08);
+        gain.gain.setValueAtTime(0.001, now);
+        gain.gain.linearRampToValueAtTime(0.15, now + 0.015);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.12);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start(now);
+        osc.stop(now + 0.13);
+      } catch (e) {}
     }
   };
 
@@ -4402,24 +4533,34 @@
       this.currentPitch = pitch;
       window.__flyoverElevation = yElev;
 
-      // Apply Elevation to Player
-      if (at && at.PLAYER) {
-        if (at.PLAYER.beat) {
-          at.PLAYER.beat.y = (at.PLAYER.beat.y || 0) + yElev;
-          at.PLAYER.beat.pitch = (at.PLAYER.beat.pitch || 0) + pitch;
-        }
-        if (at.PLAYER.o && at.PLAYER.o.position) {
-          at.PLAYER.o.position.y = yElev + (p.bumpY || 0);
-        }
+      // 1. Apply clean flyover elevation to player's airborne height (NEVER compound beat.y)
+      if (yElev > 0.02) {
+        p.air = (p.jump ? Math.max(p.jump.y, yElev) : yElev);
+      } else if (!p.jump) {
+        if (p.air > 0.02) p.air = Math.max(0, p.air - dt * 9.0);
+        else p.air = 0;
       }
 
-      // Smooth Panoramic Camera Elevation
-      if (at && at.CAM && yElev > 0.05) {
-        if (at.CAM.position) at.CAM.position.y += yElev * 0.82;
-        if (at.CAM.target) {
-          if (typeof at.CAM.target.y === 'number') at.CAM.target.y += yElev * 0.82;
-          else if (at.CAM.target.position) at.CAM.target.position.y += yElev * 0.82;
+      // Safety clamp: vehicle cannot shoot into outer space
+      if (p.air > 5.2 && !p.jump) p.air = 5.2;
+
+      // Apply Pitch Tilt without accumulating
+      if (at && at.PLAYER && at.PLAYER.beat) {
+        at.PLAYER.beat.y = 0; // zero compound accumulation!
+        at.PLAYER.beat.pitch = pitch;
+      }
+      if (at && at.PLAYER && at.PLAYER.o && at.PLAYER.o.position) {
+        at.PLAYER.o.position.y = (p.air || 0) + (p.bumpY || 0);
+      }
+
+      // Trigger dialogue when ascending flyover
+      if (yElev > 1.2 && !this.flyoverSaid) {
+        this.flyoverSaid = true;
+        if (typeof DhakaStreetHumorSystem !== 'undefined' && DhakaStreetHumorSystem.sayRandom) {
+          DhakaStreetHumorSystem.sayRandom(DhakaStreetHumorSystem.flyoverDialogues, 'important');
         }
+      } else if (yElev < 0.2) {
+        this.flyoverSaid = false;
       }
     }
   };
@@ -4847,6 +4988,9 @@
           if (typeof RoadMicroDetailsSystem !== 'undefined' && RoadMicroDetailsSystem.spawnMicroToast) {
             RoadMicroDetailsSystem.spawnMicroToast("⚠️ সাবধান: সামনে ২০০ মি. ভাঙা সড়ক!");
           }
+          if (typeof DhakaStreetHumorSystem !== 'undefined' && DhakaStreetHumorSystem.sayRandom) {
+            DhakaStreetHumorSystem.sayRandom(DhakaStreetHumorSystem.brokenRoadDialogues, 'warning');
+          }
         }
 
         // 1. Suspension Micro-Bumping (Haptics)
@@ -5243,6 +5387,226 @@
   };
 
   // ----------------------------------------------------
+  // 27. Dhaka Roadside Posters, Banners & Wall Graffiti
+  // ----------------------------------------------------
+  const DhakaRoadsideBannersSystem = {
+    initialized: false,
+    bannersGroup: null,
+    banners: [],
+    cycleDist: 720,
+
+    init(THREE, scene) {
+      if (this.initialized || !THREE || !scene) return;
+      this.initialized = true;
+
+      try {
+        this.bannersGroup = new THREE.Group();
+
+        // 12 Authentic Dhaka Posters & Banners
+        const postersData = [
+          { text: "⚠️ সাবধান! ময়লা ফেলা নিষেধ!\nজরিমানা ৫০ টাকা ও ছবি তোলা হইবে", bg: "#fef08a", fg: "#dc2626", border: "#b91c1c" },
+          { text: "🛑 ওস্তাদ ডাইনে চাপেন,\nবামে গভীর খাল!", bg: "#b91c1c", fg: "#ffffff", border: "#fef08a" },
+          { text: "👑 ব্রেক ছাড়া গাড়ি, লাইসেন্স ছাড়া বাড়ি\n— রাস্তার আসল রাজা!", bg: "#0f172a", fg: "#38bdf8", border: "#f59e0b" },
+          { text: "🚌 আইতে কষ্ট, যাইতে কষ্ট,\nলোকাল বাসে জীবন নষ্ট!", bg: "#ea580c", fg: "#ffffff", border: "#fef08a" },
+          { text: "🎬 তুফান ৩: শাকিব খানের অ্যাকশন ধামাকা!\nসারা বাংলায় হাউজফুল", bg: "#450a0a", fg: "#fbbf24", border: "#dc2626" },
+          { text: "💥 অনন্ত জলিল:\n'অসম্ভবকে সম্ভব করাই অনন্তর কাজ!'", bg: "#1e1b4b", fg: "#38bdf8", border: "#818cf8" },
+          { text: "☕ মামা টং স্টল: ১০ টাকায় স্পেশাল\nমালাই চা ও বাকরখানি", bg: "#78350f", fg: "#fef08a", border: "#451a03" },
+          { text: "📶 পাসওয়ার্ড ছাড়াই ফ্রি ওয়াইফাই!\nতবে আগে ২ কাপ চা খাইতে হইব", bg: "#065f46", fg: "#a7f3d0", border: "#34d399" },
+          { text: "📱 বিকাশ ও নগদ ক্যাশআউট\nএবং সকল সিমের ফ্লেক্সিলোড", bg: "#831843", fg: "#fbcfe8", border: "#db2777" },
+          { text: "🎙️ হিরো আলম লাইভ কনসার্ট!\nপুরান ঢাকা কাঁপাতে আসছে", bg: "#581c87", fg: "#fde047", border: "#c084fc" },
+          { text: "🚓 নো হর্ন! হাসপাতাল এলাকা!\nশব্দদূষণ আইনত দণ্ডনীয়", bg: "#1e3a8a", fg: "#ffffff", border: "#60a5fa" },
+          { text: "🛺 সিএনজি ও অটো ডেকোরেশন\n'মা-বাবার দোয়া — দূরত্ব রাখুন'", bg: "#14532d", fg: "#fef08a", border: "#22c55e" }
+        ];
+
+        const frameMat = new THREE.StandardMat({ color: 0x1e293b, roughness: 0.7 });
+
+        postersData.forEach((item, idx) => {
+          const cvs = document.createElement('canvas');
+          cvs.width = 256; cvs.height = 128;
+          const ctx = cvs.getContext('2d');
+
+          ctx.fillStyle = item.bg;
+          ctx.fillRect(0, 0, 256, 128);
+
+          ctx.lineWidth = 6;
+          ctx.strokeStyle = item.border;
+          ctx.strokeRect(4, 4, 248, 120);
+
+          ctx.fillStyle = item.fg;
+          ctx.textAlign = 'center';
+
+          const lines = item.text.split('\n');
+          if (lines.length > 1) {
+            ctx.font = 'bold 15px "Tiro Bangla", sans-serif';
+            ctx.fillText(lines[0], 128, 48);
+            ctx.font = 'bold 13px "Tiro Bangla", sans-serif';
+            ctx.fillText(lines[1], 128, 86);
+          } else {
+            ctx.font = 'bold 15px "Tiro Bangla", sans-serif';
+            ctx.fillText(item.text, 128, 68);
+          }
+
+          const tex = new THREE.Tex.glow.constructor(cvs);
+          tex.needsUpdate = true;
+          const bMat = new THREE.BasicMat({ map: tex });
+
+          const bGroup = new THREE.Group();
+
+          // Billboard frame & posts
+          const boardGeo = new THREE.ct();
+          boardGeo.box(0, 3.2, 0, 3.8, 1.9, 0.14, null);
+          boardGeo.box(0, 3.2, -0.08, 4.0, 2.1, 0.08, null);
+          boardGeo.box(-1.4, 1.6, 0, 0.16, 3.2, 0.16, null);
+          boardGeo.box(1.4, 1.6, 0, 0.16, 3.2, 0.16, null);
+
+          const boardMesh = new THREE.Mesh(boardGeo.build(), frameMat);
+          bGroup.add(boardMesh);
+
+          const signGeo = new THREE.Plane(3.7, 1.8);
+          const signMesh = new THREE.Mesh(signGeo, bMat);
+          signMesh.position.set(0, 3.2, 0.08);
+          bGroup.add(signMesh);
+
+          // Position alternating left and right sidewalks
+          const side = (idx % 2 === 0) ? -7.8 : 7.8;
+          const rotY = (idx % 2 === 0) ? 0.35 : -0.35;
+          const zPos = - (40 + idx * 58);
+
+          bGroup.position.set(side, 0, zPos);
+          bGroup.rotation.y = rotY;
+
+          this.bannersGroup.add(bGroup);
+          this.banners.push({ grp: bGroup, baseZ: zPos, side });
+        });
+
+        scene.add(this.bannersGroup);
+      } catch (err) {
+        console.warn('DhakaRoadsideBannersSystem init error:', err);
+      }
+    },
+
+    update(p, dt, inPlay) {
+      const THREE = window.__THREE_EXPORTS;
+      const at = window.__at;
+      if (!this.initialized && THREE && at && at.SCENE) {
+        this.init(THREE, at.SCENE);
+      }
+      if (!this.initialized || !inPlay || !p) return;
+
+      // Recycle banners smoothly along road
+      for (const b of this.banners) {
+        if (b.grp.position.z > p.z + 40) {
+          b.grp.position.z -= 700;
+        } else if (b.grp.position.z < p.z - 660) {
+          b.grp.position.z += 700;
+        }
+      }
+    }
+  };
+
+  // ----------------------------------------------------
+  // 28. Dhaka Street Humor & Funny Dialogues System
+  // ----------------------------------------------------
+  const DhakaStreetHumorSystem = {
+    initialized: false,
+    boxEl: null,
+    textEl: null,
+    hideTimer: null,
+    lastSayT: 0,
+    lastSpeedToastT: 0,
+
+    init() {
+      if (this.initialized) return;
+      this.initialized = true;
+
+      const el = document.createElement('div');
+      el.id = 'dhakaHumorBox';
+      el.className = 'dhaka-humor-box';
+      el.innerHTML = `
+        <div class="dhaka-humor-tail"></div>
+        <div class="dhaka-humor-content" id="dhakaHumorText"></div>
+      `;
+      document.body.appendChild(el);
+      this.boxEl = el;
+      this.textEl = document.getElementById('dhakaHumorText');
+    },
+
+    say(msg, category = 'normal') {
+      if (!this.initialized) this.init();
+      const now = performance.now();
+      if (now - this.lastSayT < 1800 && category !== 'important') return;
+      this.lastSayT = now;
+
+      if (this.textEl && this.boxEl) {
+        this.textEl.textContent = msg;
+        this.boxEl.classList.remove('active', 'horn', 'warning', 'speed');
+        void this.boxEl.offsetWidth; // trigger CSS animation reflow
+        this.boxEl.classList.add('active');
+        if (category && category !== 'normal') this.boxEl.classList.add(category);
+
+        if (DhakaAudioSFX.playDialoguePop) DhakaAudioSFX.playDialoguePop();
+
+        if (this.hideTimer) clearTimeout(this.hideTimer);
+        this.hideTimer = setTimeout(() => {
+          if (this.boxEl) this.boxEl.classList.remove('active');
+        }, 2600);
+      }
+    },
+
+    sayRandom(list, category) {
+      if (!list || list.length === 0) return;
+      const idx = Math.floor(Math.random() * list.length);
+      this.say(list[idx], category);
+    },
+
+    hornDialogues: [
+      "📢 এই মামা দেইখা চালান! বাপের রাস্তা পাইসেন নাকি?!",
+      "📢 আরে ওস্তাদ, ডাইনে ইন্ডিকেটর দিয়া বামে কাটেন ক্যান?!",
+      "📢 হর্ন কম বাজান মামা, কানের পর্দা ফাইটা যাইতাছে!",
+      "📢 রাস্তার রাজা হইসো তো কি হইসে, সামনে ট্রাফিক সার্জেন্ট খাড়ায়া!",
+      "📢 বিকাশ পরিবহনের লগে হর্নের পাল্লা দিতে আইসো না!"
+    ],
+
+    nearMissDialogues: [
+      "🏎️ উফফ! একটুর লাইগা বাঁচলি রে ভাই, নাইলে সোজা ঢাকা মেডিকেল!",
+      "🏎️ চাচা, দুইশো টাকা জরিমানা দেন, নাইলে গাড়ি সোজা ডাম্পিং!",
+      "🏎️ বিকাশ পরিবহনের লগে ওভারটেক?! কলিজা তো লোহার তৈরি!",
+      "🏎️ ধুর মিয়া, লেগুনার পেছনে কি হানিমুনে যাইতেছেন?!",
+      "🏎️ আরে ভাই, রিকশা কি আকাশে উড়ায়া দিবেন নাকি?!"
+    ],
+
+    brokenRoadDialogues: [
+      "⚠️ ওরে বাবারে! হাড্ডি-গুড্ডি সব ভাইঙ্গা গেলো এই ভাঙা রাস্তায়!",
+      "⚠️ খানাখন্দ দেইখা চালান ওস্তাদ, চাকা কিন্তু ড্রেনে ঢুকব!",
+      "⚠️ রাস্তার যে অবস্থা, গাড়ির নাট-বোল্ট সব খুইলা পইড়া যাইব!",
+      "⚠️ খোয়া আর লাল ইট! গাড়ি তো মনে হয় না আস্ত বাসায় যাইব!"
+    ],
+
+    nitroDialogues: [
+      "🚀 স্পিড ১২০ কিমি! পাইলট সাব, বিমান কি টেক-অফ করব?!",
+      "🚀 ধোঁয়া উড়ায়া দিলা মামা! ঢাকার রাস্তায় নতুন ডন!",
+      "🚀 বাপরে বাপ! রকেট গতিতে ছুটতাছে!"
+    ],
+
+    flyoverDialogues: [
+      "🌉 মেয়র হানিফ ফ্লাইওভারে উঠছি! ঢাকার জ্যাম সব নিচে পইড়া রইল!",
+      "🌉 ফ্লাইওভার দিয়া টানেন ওস্তাদ! সোজা সাই সাই কইরা যান!"
+    ],
+
+    update(p, dt, inPlay) {
+      if (!inPlay || !p || !p.alive) return;
+      const now = performance.now();
+      const speedKmh = Math.abs(p.v || 0) * 7.5;
+
+      // High-speed nitro dialogue
+      if (speedKmh > 115 && p.boost && now - this.lastSpeedToastT > 12000) {
+        this.lastSpeedToastT = now;
+        this.sayRandom(this.nitroDialogues, 'speed');
+      }
+    }
+  };
+
+  // ----------------------------------------------------
   // 11. Real-time Engine Loop (Synchronous 60 FPS)
   // ----------------------------------------------------
   let lastTime = performance.now();
@@ -5267,6 +5631,13 @@
 
     if (inPlay && isAlive && at.P) {
       checkSpeedBumps(at.P, dt);
+
+      // Smooth bumpY & air decay: eliminates flying rickshaw glitch!
+      at.P.bumpY = Math.max(0, (at.P.bumpY || 0) * 0.84);
+      if (!at.P.jump && (window.__flyoverElevation || 0) <= 0.02) {
+        if (at.P.air > 0.02) at.P.air = Math.max(0, at.P.air - dt * 9.0);
+        else at.P.air = 0;
+      }
     }
 
     VisualsFX.update(at.P, dt, inPlay, isNight, isRain);
@@ -5287,6 +5658,10 @@
     FallingPetalsSystem.update(at.P, dt, inPlay);
     LivingCitySystem.update(at.P, dt, inPlay);
     NextGenGraphicsSystem.update(at.P, dt, inPlay, isNight, isRain);
+
+    // v3.2 Roadside Posters & Dhaka Street Dialogues
+    DhakaRoadsideBannersSystem.update(at.P, dt, inPlay);
+    DhakaStreetHumorSystem.update(at.P, dt, inPlay);
   }
   requestAnimationFrame(engineLoop);
 
@@ -5300,6 +5675,45 @@
     NearMissSystem.init();
     ZoneProgressionSystem.init();
     NextGenGraphicsSystem.init();
+    DhakaStreetHumorSystem.init();
+
+    // Mobile & Desktop Fullscreen Button Toggle
+    const fsBtn = document.createElement('button');
+    fsBtn.id = 'rajaFullscreenBtn';
+    fsBtn.className = 'raja-fs-btn';
+    fsBtn.innerHTML = `⛶ <span>ফুলস্ক্রিন</span>`;
+    fsBtn.title = "ফুলস্ক্রিন অ্যাপ মোড (Fullscreen App Mode)";
+    fsBtn.addEventListener('click', () => {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().catch(() => {});
+        fsBtn.innerHTML = `✖ <span>ছোট স্ক্রিন</span>`;
+      } else {
+        document.exitFullscreen().catch(() => {});
+        fsBtn.innerHTML = `⛶ <span>ফুলস্ক্রিন</span>`;
+      }
+      if (typeof navigator !== 'undefined' && navigator.vibrate) {
+        try { navigator.vibrate(20); } catch (_) {}
+      }
+    });
+    document.body.appendChild(fsBtn);
+
+    // Mobile Touch Haptic Feedback
+    const triggerHaptic = (ms = 18) => {
+      if (typeof navigator !== 'undefined' && navigator.vibrate) {
+        try { navigator.vibrate(ms); } catch (_) {}
+      }
+    };
+    ['tGas', 'tBrake', 'tBoost', 'tHorn'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) {
+        el.addEventListener('pointerdown', () => triggerHaptic(18), { passive: true });
+        el.addEventListener('touchstart', () => triggerHaptic(18), { passive: true });
+      }
+    });
+    document.querySelectorAll('#touch .round').forEach(btn => {
+      btn.addEventListener('pointerdown', () => triggerHaptic(15), { passive: true });
+      btn.addEventListener('touchstart', () => triggerHaptic(15), { passive: true });
+    });
 
     // Export systems to RastarRaja namespace
     window.RastarRaja.ZoneProgressionSystem = ZoneProgressionSystem;
@@ -5308,6 +5722,8 @@
     window.RastarRaja.DhakaRoadEnvironmentSystem = DhakaRoadEnvironmentSystem;
     window.RastarRaja.LivingCitySystem = LivingCitySystem;
     window.RastarRaja.NextGenGraphicsSystem = NextGenGraphicsSystem;
+    window.RastarRaja.DhakaRoadsideBannersSystem = DhakaRoadsideBannersSystem;
+    window.RastarRaja.DhakaStreetHumorSystem = DhakaStreetHumorSystem;
     window.RastarRaja.DhakaAudioSFX = DhakaAudioSFX;
 
     // Global User-Gesture Audio Unlocker for Mobile & Desktop

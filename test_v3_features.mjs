@@ -205,8 +205,8 @@ try {
   fs.writeFileSync(path.join(artifactDir, 'v3_broken_road_25.png'), Buffer.from(ssBroken.data, 'base64'));
   console.log('Saved v3_broken_road_25.png');
 
-  // Test 3: Mayor Hanif Flyover Elevation
-  console.log('Testing Mayor Hanif Flyover Elevation...');
+  // Test 3: Mayor Hanif Flyover Elevation & Anti-Fly Glitch Fix
+  console.log('Testing Mayor Hanif Flyover Elevation & Anti-Fly Glitch Fix...');
   await send('Runtime.evaluate', {
     expression: `
       (() => {
@@ -229,8 +229,9 @@ try {
         return {
           z: at.P.z,
           flyoverElev: window.__flyoverElevation,
-          playerElev: at.PLAYER && at.PLAYER.beat ? at.PLAYER.beat.y : null,
-          camElev: at.CAM ? at.CAM.position.y : null
+          playerAir: at.P ? at.P.air : null,
+          beatY: at.PLAYER && at.PLAYER.beat ? at.PLAYER.beat.y : null,
+          isFlyingGlitch: (at.P && at.P.air > 6.0) || (at.PLAYER && at.PLAYER.beat && at.PLAYER.beat.y > 1.0)
         };
       })()
     `,
@@ -381,6 +382,50 @@ try {
     returnByValue: true
   });
   console.log('Motion Blur Test:', blurRes.result.value);
+
+  // Test Dhaka Roadside Posters & Banners
+  console.log('Testing Dhaka Roadside Posters & Banners...');
+  const bannerRes = await send('Runtime.evaluate', {
+    expression: `
+      (() => {
+        const sys = window.RastarRaja && window.RastarRaja.DhakaRoadsideBannersSystem;
+        return {
+          sysExists: !!sys,
+          initialized: sys ? sys.initialized : false,
+          totalBanners: sys ? sys.banners.length : 0
+        };
+      })()
+    `,
+    returnByValue: true
+  });
+  console.log('Roadside Banners Test:', bannerRes.result.value);
+
+  // Test Dhaka Street Humor & Dialogue Bubble
+  console.log('Testing Dhaka Street Humor & Dialogue Bubble...');
+  const humorRes = await send('Runtime.evaluate', {
+    expression: `
+      (() => {
+        const sys = window.RastarRaja && window.RastarRaja.DhakaStreetHumorSystem;
+        if (sys) sys.say("📢 এই মামা দেইখা চালান! বাপের রাস্তা পাইসেন নাকি?!", "horn");
+        const box = document.getElementById('dhakaHumorBox');
+        const text = document.getElementById('dhakaHumorText');
+        const fsBtn = document.getElementById('rajaFullscreenBtn');
+        return {
+          sysExists: !!sys,
+          boxVisible: box ? box.classList.contains('active') : false,
+          dialogueText: text ? text.textContent : '',
+          hasFullscreenBtn: !!fsBtn
+        };
+      })()
+    `,
+    returnByValue: true
+  });
+  console.log('Street Humor & Mobile UI Test:', humorRes.result.value);
+
+  // Capture Screenshot of Roadside Posters & Comic Dialogue Bubble
+  const ssHumor = await send('Page.captureScreenshot');
+  fs.writeFileSync(path.join(artifactDir, 'v3_banners_and_humor.png'), Buffer.from(ssHumor.data, 'base64'));
+  console.log('Saved v3_banners_and_humor.png');
 
   console.log('Errors logged during session:', errors);
 
