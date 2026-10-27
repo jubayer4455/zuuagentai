@@ -1,11 +1,13 @@
 {
   "currentWeek": "2026-10-24",
   "users": {
-    "daf3bbe4-8003-4a0a-bb5c-c072398be6e7": {
-      "pass": "ed49db10ddd5e65df4a4d6deb211e4f5",
-      "name": "",
-      "weekScores": {},
-      "allTimeBest": 0
+    "1eaefa1d27fb": {
+      "pass": "devpass",
+      "name": "Abdul Al Jubayer",
+      "weekScores": {
+        "2026-10-24": 25000000
+      },
+      "allTimeBest": 25000000
     }
   },
   "activeRuns": {}

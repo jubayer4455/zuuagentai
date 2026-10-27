@@ -12,12 +12,10 @@ const DATA_DIR = path.join(__dirname, 'data');
 const LEADERBOARD_FILE = path.join(DATA_DIR, 'leaderboard.json');
 const SUBSCRIBERS_FILE = path.join(DATA_DIR, 'subscribers.json');
 
-// Ensure data directory exists
 if (!fs.existsSync(DATA_DIR)) {
   fs.mkdirSync(DATA_DIR, { recursive: true });
 }
 
-// Bangladesh week calculator: Sat 00:00 UTC+6
 function getWeekString(timestamp = Date.now()) {
   const t = Math.floor((timestamp + 216e5) / 864e5);
   return new Date((t - ((t + 5) % 7)) * 864e5).toISOString().slice(0, 10);
@@ -27,34 +25,33 @@ function sha256Hex12(str) {
   return crypto.createHash('sha256').update(str).digest('hex').slice(0, 12);
 }
 
-// Initial leaderboard seeds matching baperrasta.com
 const DEFAULT_TOP = [
-  { id: "1eaefa1d27fb", name: "MUHEDUL ISLAM R.", loss: 20455500 },
-  { id: "80f43c1df30d", name: "ShakirMesbah", loss: 14437200 },
-  { id: "3026728d4a27", name: "negroponte", loss: 12842400 },
-  { id: "2f06c9618c89", name: "Racist", loss: 12550350 },
-  { id: "e9202009a2e0", name: "ShakirMesbah", loss: 11116750 },
-  { id: "be9a502f4ce7", name: "ShakirMesbah", loss: 11099000 },
-  { id: "eae75c8303eb", name: "ShakirMesbah", loss: 10740300 },
-  { id: "5a4f4248366e", name: "kim jong un", loss: 10424900 },
-  { id: "03dc97e616d6", name: "ifte the pilot", loss: 10314700 },
-  { id: "a99afa069ac8", name: "ShakirMesbah", loss: 10303300 },
-  { id: "0c447eace196", name: "mist er tazbir", loss: 7067050 },
-  { id: "4f8729c795dd", name: "MINHAZUL AREFIN", loss: 6339000 },
-  { id: "920adbffb51f", name: "sinister sm", loss: 5731000 },
-  { id: "14ba1f545855", name: "lutuputu", loss: 5690600 },
-  { id: "b85b0e5286ba", name: "Ramisha i love.", loss: 5648700 },
-  { id: "3ec3bc9dcfbc", name: "Deshi Driver", loss: 5162050 },
-  { id: "8b593f8f92ac", name: "Kalo Rickshaw C.", loss: 5093300 },
-  { id: "988ae63759e4", name: "Speedy Vooter", loss: 4955550 },
-  { id: "4da5c15ac4d3", name: "Artho rickshaw", loss: 4894850 },
-  { id: "39de0f616692", name: "Meheher", loss: 4863450 }
+  { id: "1eaefa1d27fb", name: "Abdul Al Jubayer", loss: 25000000 },
+  { id: "80f43c1df30d", name: "রাস্তার রাজা (King)", loss: 18500000 },
+  { id: "3026728d4a27", name: "বিকাশ ওস্তাদ", loss: 16200000 },
+  { id: "2f06c9618c89", name: "লেগুনা রকেট", loss: 14500000 },
+  { id: "e9202009a2e0", name: "সিএনজি সেলিম", loss: 13200000 },
+  { id: "be9a502f4ce7", name: "টেসলা ড্রাইভার", loss: 12400000 },
+  { id: "eae75c8303eb", name: "মিরপুর এক্সপ্রেস", loss: 11800000 },
+  { id: "5a4f4248366e", name: "ফার্মগেট ফ্লাইয়ার", loss: 10900000 },
+  { id: "03dc97e616d6", name: "গুলিস্তান বুলেট", loss: 10500000 },
+  { id: "a99afa069ac8", name: "শাহবাগ ড্রিপ্টার", loss: 10100000 },
+  { id: "0c447eace196", name: "উড়ন্ত রিকশা", loss: 8700000 },
+  { id: "4f8729c795dd", name: "পাবলিক কফিন", loss: 7900000 },
+  { id: "920adbffb51f", name: "নো লাইসেন্স নো ব্রেক", loss: 6800000 },
+  { id: "14ba1f545855", name: "ট্র্যাফিক দানব", loss: 6200000 },
+  { id: "b85b0e5286ba", name: "ওস্তাদ সাব", loss: 5900000 },
+  { id: "3ec3bc9dcfbc", name: "ব্রেকের তার ছেঁড়া", loss: 5400000 },
+  { id: "8b593f8f92ac", name: "কালো রকেট", loss: 5100000 },
+  { id: "988ae63759e4", name: "স্পিডি ভূত", loss: 4900000 },
+  { id: "4da5c15ac4d3", name: "অটো সুলতান", loss: 4700000 },
+  { id: "39de0f616692", name: "হাতিরঝিল রাইডার", loss: 4500000 }
 ];
 
 let db = {
   currentWeek: getWeekString(),
-  users: {}, // device -> { pass, name, weekScores: { [week]: bestLoss }, allTimeBest: bestLoss }
-  activeRuns: {} // token -> { device, pass, startTime }
+  users: {},
+  activeRuns: {}
 };
 
 if (fs.existsSync(LEADERBOARD_FILE)) {
@@ -136,7 +133,6 @@ function getLeaderboard() {
     }
   }
 
-  // Merge default seeds if empty or sparse
   if (weekList.length < 20) {
     for (const item of DEFAULT_TOP) {
       if (!weekList.some(x => x.id === item.id)) {
@@ -173,7 +169,6 @@ const server = http.createServer(async (req, res) => {
   const parsedUrl = new URL(req.url, `http://${req.headers.host || 'localhost'}`);
   let pathname = decodeURIComponent(parsedUrl.pathname);
 
-  // Handle API routes
   if (pathname === '/api/board') {
     return sendJson(res, 200, getLeaderboard());
   }
@@ -287,7 +282,6 @@ const server = http.createServer(async (req, res) => {
     return sendJson(res, 200, { ok: true });
   }
 
-  // Static file serving
   if (pathname === '/' || pathname === '') {
     pathname = '/index.html';
   }
@@ -300,7 +294,6 @@ const server = http.createServer(async (req, res) => {
 
   fs.stat(safePath, (err, stats) => {
     if (err || !stats.isFile()) {
-      // Fallback to index.html for navigation or 404
       if (!path.extname(safePath)) {
         return serveFile(path.join(__dirname, 'index.html'), req, res);
       }
@@ -325,7 +318,6 @@ function serveFile(filePath, req, res, stats) {
   const contentType = MIME_TYPES[ext] || 'application/octet-stream';
   const range = req.headers.range;
 
-  // Partial Content for MP3 audio and video
   if (range && (ext === '.mp3' || ext === '.mp4')) {
     const parts = range.replace(/bytes=/, "").split("-");
     const start = parseInt(parts[0], 10);
@@ -352,8 +344,9 @@ function serveFile(filePath, req, res, stats) {
 }
 
 server.listen(PORT, () => {
-  console.log(`\n========================================`);
-  console.log(`  🚗 বাপের রাস্তা (Baper Rasta) Server`);
-  console.log(`  Running on: http://localhost:${PORT}`);
-  console.log(`========================================\n`);
+  console.log(`\n=================================================`);
+  console.log(`  👑 রাস্তার রাজা (Rastar Raja) Server v2.0`);
+  console.log(`  নির্মাতা: Abdul Al Jubayer`);
+  console.log(`  Live on: http://localhost:${PORT}`);
+  console.log(`=================================================\n`);
 });
