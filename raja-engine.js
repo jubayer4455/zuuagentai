@@ -605,6 +605,43 @@
     window.__PLAYER_VEHICLE = kind;
     const cfg = VEHICLE_CONFIGS[kind] || VEHICLE_CONFIGS.auto;
     window.dispatchEvent(new CustomEvent('raja_vehicle_change', { detail: { kind, cfg } }));
+
+    // Dynamically rebuild player 3D mesh in Three.js scene
+    try {
+      const pl = window.__PLAYER_INSTANCE || (window.__at && window.__at.PLAYER);
+      if (pl && typeof pl.buildMesh === 'function') {
+        const sc = pl.scene || (window.__at && window.__at.SCENE);
+        pl.buildMesh(kind, sc);
+      }
+    } catch (err) {
+      console.warn('Vehicle 3D model switch error:', err);
+    }
+
+    // Show visual confirmation toast
+    const dialogueBox = document.getElementById('dialogue');
+    if (dialogueBox) {
+      dialogueBox.textContent = `🚗 সিলেক্টেড: ${cfg.name} — ${cfg.subtitle}`;
+      dialogueBox.hidden = false;
+      setTimeout(() => { dialogueBox.hidden = true; }, 2400);
+    }
+
+    // Play subtle engine rev cue
+    if (window.RastarRaja.audioCtx) {
+      try {
+        const ctx = window.RastarRaja.audioCtx;
+        if (ctx.state === 'suspended') ctx.resume();
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.frequency.setValueAtTime(110, ctx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(320, ctx.currentTime + 0.18);
+        gain.gain.setValueAtTime(0.25, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.2);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start();
+        osc.stop(ctx.currentTime + 0.22);
+      } catch(e){}
+    }
   }
 
   // ----------------------------------------------------

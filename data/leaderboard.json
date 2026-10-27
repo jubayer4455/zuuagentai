@@ -8,7 +8,35 @@
         "2026-10-24": 25000000
       },
       "allTimeBest": 25000000
+    },
+    "ccc52872-a409-43c3-af2e-133a9bd96ea1": {
+      "pass": "3a0d9d6cbed1163fcc34aad32394c5b8",
+      "name": "",
+      "weekScores": {},
+      "allTimeBest": 0
+    },
+    "2ef5b834-cadf-4773-8966-ce06954c31b4": {
+      "pass": "7152ede0e9b859f6a1e1ba8183248fe0",
+      "name": "",
+      "weekScores": {},
+      "allTimeBest": 0
     }
   },
-  "activeRuns": {}
+  "activeRuns": {
+    "436609a0b8648101c118db59aae1157f": {
+      "device": "ccc52872-a409-43c3-af2e-133a9bd96ea1",
+      "pass": "3a0d9d6cbed1163fcc34aad32394c5b8",
+      "start": 1793077338008
+    },
+    "585c2771522f0d50ae3ffa1ee079631b": {
+      "device": "ccc52872-a409-43c3-af2e-133a9bd96ea1",
+      "pass": "3a0d9d6cbed1163fcc34aad32394c5b8",
+      "start": 1793077383317
+    },
+    "9b897877b1e79f4102ef5b241dcc18be": {
+      "device": "ccc52872-a409-43c3-af2e-133a9bd96ea1",
+      "pass": "3a0d9d6cbed1163fcc34aad32394c5b8",
+      "start": 1793077926608
+    }
+  }
 }
