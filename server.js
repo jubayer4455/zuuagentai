@@ -337,7 +337,9 @@ function serveFile(filePath, req, res, stats) {
       'Content-Length': stats.size,
       'Content-Type': contentType,
       'Accept-Ranges': 'bytes',
-      'Cache-Control': ext === '.html' ? 'no-cache' : 'public, max-age=31536000, immutable'
+      'Cache-Control': 'no-cache, no-store, must-revalidate, max-age=0',
+      'Pragma': 'no-cache',
+      'Expires': '0'
     });
     fs.createReadStream(filePath).pipe(res);
   }

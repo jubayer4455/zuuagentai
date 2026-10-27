@@ -3,6 +3,22 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
+<script>
+  // Auto-clear old service worker & caches for instant local updates
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.getRegistrations().then(function(regs) {
+      for (var r of regs) { r.unregister(); }
+    });
+  }
+  if ('caches' in window) {
+    caches.keys().then(function(keys) {
+      for (var k of keys) { caches.delete(k); }
+    });
+  }
+</script>
 <!--/HEAD-->
 <title>রাস্তার রাজা · Rastar Raja</title>
 <meta name="description" content="রাস্তার রাজা (Rastar Raja) - ঢাকার রাজপথের আসল রাজা: নো লাইসেন্স, নো ব্রেক! নির্মাতা: আব্দুল আল যুবায়ের।">
@@ -1056,7 +1072,7 @@ h1.title { text-shadow: 3px 3px 0 #ae2941, 6px 6px 0 #14372f; }
   </script>
   <script nomodule>window.__bootFail && window.__bootFail('old');</script>
 </div>
-<script src="raja-engine.js"></script>
-<script type="module" src="game.8070c56a37.js"></script>
+<script src="raja-engine.js?v=2.5.0"></script>
+<script type="module" src="game.8070c56a37.js?v=2.5.0"></script>
 </body>
 </html>
