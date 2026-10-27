@@ -64,3 +64,19 @@ npm start
 | **নাইট্রো টান (Boost)** | `Shift` অথবা `Space` | নাইট্রো বুস্ট বাটন |
 | **হাইড্রো-হর্ন** | `H` | হর্ন বাটন |
 | **শব্দ অন/অফ** | `M` | সাউন্ড আইকন |
+
+---
+
+## ⚡ Vercel ও Cloud Deployment গাইড
+
+এই প্রজেক্টটি Vercel-এ **Zero Configuration** এ সরাসরি ডিপ্লয় করার জন্য সম্পূর্ণ প্রস্তুত করা হয়েছে:
+
+1. GitHub Repository লিংক: `https://github.com/jubayer4455/zuuagentai.git`
+2. Vercel ড্যাশবোর্ডে গিয়ে **Add New Project** ➔ **Import Git Repository** সিলেক্ট করুন।
+3. প্রজেক্টের রুট ডিরেক্টরি সিলেক্ট করে সরাসরি **Deploy** বাটনে ক্লিক করুন।
+4. `vercel.json` এবং `/api/` সার্ভারলেস ফাংশন স্বয়ংক্রিয়ভাবে ক্লাউডে ডিপ্লয় হয়ে যাবে। কোনো build/runtime error ছাড়াই সাইট লাইভ হয়ে যাবে।
+
+### 🗄️ Supabase ক্লাউড ডাটাবেস সেটআপ
+
+- **Project URL:** `https://ufnvwytkdvqcbzedkqmc.supabase.co`
+- Supabase ড্যাশবোর্ডের **SQL Editor**-এ গিয়ে `supabase-schema.sql` ফাইলের কোডটুকু পেস্ট করে **Run** চাপলেই `leaderboard` এবং `subscribers` টেবিল স্বয়ংক্রিয়ভাবে সক্রিয় হয়ে যাবে।

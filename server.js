@@ -13,8 +13,8 @@ const LEADERBOARD_FILE = path.join(DATA_DIR, 'leaderboard.json');
 const SUBSCRIBERS_FILE = path.join(DATA_DIR, 'subscribers.json');
 
 // Supabase Cloud Sync Integration
-const SUPABASE_URL = process.env.SUPABASE_URL || 'https://zlotgghqdfrbxeuinjjy.supabase.co';
-const SUPABASE_KEY = process.env.SUPABASE_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inpsb3RnZ2hxZGZyYnhldWluamp5Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc5MTgwNDMxNSwiZXhwIjoyMTA3MzgwMzE1fQ.5EUD06qA3H-uOaLY1zNf89vC5ppkjvn00IjxURK-OTc';
+const SUPABASE_URL = process.env.SUPABASE_URL || 'https://ufnvwytkdvqcbzedkqmc.supabase.co';
+const SUPABASE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVmbnZ3eXRrZHZxY2J6ZWRrcW1jIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc5MzA5ODkxMywiZXhwIjoyMTA4Njc0OTEzfQ.2nNuqs1eDYKrHfSZxCnr_NOK4NcB2GzUrNGarGmVnnI';
 
 async function syncToSupabase(entry) {
   if (!SUPABASE_URL || !SUPABASE_KEY) return;
@@ -27,10 +27,34 @@ async function syncToSupabase(entry) {
         'Content-Type': 'application/json',
         'Prefer': 'resolution=merge-duplicates'
       },
-      body: JSON.stringify(entry)
+      body: JSON.stringify({
+        id: entry.id,
+        name: entry.name || '',
+        loss: entry.loss,
+        all_time_best: entry.loss,
+        updated_at: new Date().toISOString()
+      })
     });
   } catch (_) {
     // Non-blocking graceful fallback when Supabase is paused or offline
+  }
+}
+
+async function syncSubscriberToSupabase(email) {
+  if (!SUPABASE_URL || !SUPABASE_KEY) return;
+  try {
+    await fetch(`${SUPABASE_URL}/rest/v1/subscribers`, {
+      method: 'POST',
+      headers: {
+        'apikey': SUPABASE_KEY,
+        'Authorization': `Bearer ${SUPABASE_KEY}`,
+        'Content-Type': 'application/json',
+        'Prefer': 'resolution=ignore-duplicates'
+      },
+      body: JSON.stringify({ email })
+    });
+  } catch (_) {
+    // Non-blocking graceful fallback
   }
 }
 
@@ -255,8 +279,14 @@ const server = http.createServer(async (req, res) => {
     }
     saveDb();
 
-    const board = getLeaderboard();
     const myId = sha256Hex12(device);
+    syncToSupabase({
+      id: myId,
+      name: user.name || '',
+      loss: userLoss
+    });
+
+    const board = getLeaderboard();
     const rankIndex = board.top.findIndex(x => x.id === myId);
     const rank = rankIndex !== -1 ? rankIndex + 1 : null;
     const need = rank ? 0 : Math.max(0, board.cut + 50 - userLoss);
@@ -286,6 +316,13 @@ const server = http.createServer(async (req, res) => {
     db.users[device].name = cleanName;
     saveDb();
 
+    const myId = sha256Hex12(device);
+    syncToSupabase({
+      id: myId,
+      name: cleanName,
+      loss: db.users[device].allTimeBest || 0
+    });
+
     return sendJson(res, 200, {
       ok: true,
       name: cleanName,
@@ -301,6 +338,7 @@ const server = http.createServer(async (req, res) => {
       : [];
     subscribers.push({ email: body.email, date: new Date().toISOString() });
     fs.writeFileSync(SUBSCRIBERS_FILE, JSON.stringify(subscribers, null, 2));
+    syncSubscriberToSupabase(body.email);
     return sendJson(res, 200, { ok: true });
   }
 
