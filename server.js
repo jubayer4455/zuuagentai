@@ -12,6 +12,28 @@ const DATA_DIR = path.join(__dirname, 'data');
 const LEADERBOARD_FILE = path.join(DATA_DIR, 'leaderboard.json');
 const SUBSCRIBERS_FILE = path.join(DATA_DIR, 'subscribers.json');
 
+// Supabase Cloud Sync Integration
+const SUPABASE_URL = process.env.SUPABASE_URL || 'https://zlotgghqdfrbxeuinjjy.supabase.co';
+const SUPABASE_KEY = process.env.SUPABASE_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inpsb3RnZ2hxZGZyYnhldWluamp5Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc5MTgwNDMxNSwiZXhwIjoyMTA3MzgwMzE1fQ.5EUD06qA3H-uOaLY1zNf89vC5ppkjvn00IjxURK-OTc';
+
+async function syncToSupabase(entry) {
+  if (!SUPABASE_URL || !SUPABASE_KEY) return;
+  try {
+    await fetch(`${SUPABASE_URL}/rest/v1/leaderboard`, {
+      method: 'POST',
+      headers: {
+        'apikey': SUPABASE_KEY,
+        'Authorization': `Bearer ${SUPABASE_KEY}`,
+        'Content-Type': 'application/json',
+        'Prefer': 'resolution=merge-duplicates'
+      },
+      body: JSON.stringify(entry)
+    });
+  } catch (_) {
+    // Non-blocking graceful fallback when Supabase is paused or offline
+  }
+}
+
 if (!fs.existsSync(DATA_DIR)) {
   fs.mkdirSync(DATA_DIR, { recursive: true });
 }
