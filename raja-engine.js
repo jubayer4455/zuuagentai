@@ -1251,6 +1251,118 @@
           box-shadow: 0 0 15px rgba(255, 212, 0, 0.4) !important;
         }
       }
+
+      /* ============================================================ */
+      /* RASTAR RAJA v3.0: ZONE TOAST, SPEED BLUR & ROAD MICRO TOASTS */
+      /* ============================================================ */
+      #zoneToast {
+        position: fixed;
+        top: calc(env(safe-area-inset-top, 0px) + 68px);
+        left: 50%;
+        transform: translateX(-50%) translateY(-30px);
+        opacity: 0;
+        pointer-events: none;
+        z-index: 920;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 9px 24px;
+        border-radius: 9999px;
+        background: rgba(15, 23, 42, 0.94);
+        backdrop-filter: blur(14px);
+        -webkit-backdrop-filter: blur(14px);
+        border: 2px solid #00f0ff;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.65), 0 0 24px rgba(0, 240, 255, 0.4);
+        transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.45s ease;
+        text-align: center;
+        max-width: 90vw;
+      }
+      #zoneToast.active {
+        transform: translateX(-50%) translateY(0);
+        opacity: 1;
+      }
+      .zone-header {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 15px;
+        font-weight: 800;
+        color: #ffffff;
+        letter-spacing: 0.3px;
+        white-space: nowrap;
+      }
+      .zone-icon {
+        font-size: 20px;
+        filter: drop-shadow(0 0 6px rgba(255, 255, 255, 0.6));
+      }
+      .zone-title {
+        font-family: 'Tiro Bangla', sans-serif;
+      }
+      .zone-sub {
+        font-size: 11px;
+        font-weight: 600;
+        color: #94a3b8;
+        letter-spacing: 0.2px;
+        margin-top: 2px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 82vw;
+      }
+
+      /* High-Speed Radial Motion Blur Overlay */
+      #speedBlurOverlay {
+        position: fixed;
+        inset: 0;
+        pointer-events: none;
+        z-index: 38;
+        opacity: 0;
+        transition: opacity 0.15s ease;
+        background: radial-gradient(ellipse at center, transparent 48%, rgba(0, 240, 255, 0.08) 82%, rgba(15, 23, 42, 0.5) 100%);
+      }
+      #speedBlurOverlay.nitro-streak {
+        background: radial-gradient(ellipse at center, transparent 36%, rgba(0, 240, 255, 0.18) 72%, rgba(255, 0, 128, 0.32) 100%);
+      }
+
+      /* Micro Toasts (Manhole Thump, Dog Bark, Pigeon Scatter) */
+      .micro-toast {
+        position: fixed;
+        pointer-events: none;
+        z-index: 960;
+        font-size: 13px;
+        font-weight: 800;
+        color: #ffd400;
+        text-shadow: 0 1px 4px rgba(0, 0, 0, 0.9), 0 0 10px rgba(255, 212, 0, 0.6);
+        background: rgba(15, 23, 42, 0.88);
+        padding: 4px 12px;
+        border-radius: 9999px;
+        border: 1px solid rgba(255, 212, 0, 0.5);
+        backdrop-filter: blur(6px);
+        -webkit-backdrop-filter: blur(6px);
+        animation: microFloat 1.25s ease-out forwards;
+      }
+      @keyframes microFloat {
+        0% { opacity: 0; transform: translateY(0) scale(0.85); }
+        15% { opacity: 1; transform: translateY(-8px) scale(1.05); }
+        75% { opacity: 1; transform: translateY(-24px) scale(1.0); }
+        100% { opacity: 0; transform: translateY(-40px) scale(0.9); }
+      }
+
+      @media (max-width: 768px) {
+        #zoneToast {
+          top: calc(env(safe-area-inset-top, 0px) + 54px);
+          padding: 7px 16px;
+        }
+        .zone-header {
+          font-size: 13px;
+        }
+        .zone-icon {
+          font-size: 17px;
+        }
+        .zone-sub {
+          font-size: 10px;
+        }
+      }
     `;
     document.head.appendChild(style);
   }
@@ -2215,11 +2327,13 @@
 
       const now = performance.now();
 
+      const flyY = window.__flyoverElevation || 0;
+
       // 1. Update Neon Underglow
       if (this.underglowMesh) {
         this.underglowMesh.visible = inPlay && p.alive;
         if (this.underglowMesh.visible) {
-          this.underglowMesh.position.set(p.x, 0.04, p.z);
+          this.underglowMesh.position.set(p.x, flyY + 0.04, p.z);
           this.underglowMesh.rotation.y = p.yaw;
           const sx = (p.wid || 1.3) * 1.6;
           const sz = (p.len || 2.6) * 1.35;
@@ -2235,7 +2349,7 @@
       if (this.headlightGroup) {
         this.headlightGroup.visible = inPlay && p.alive && (isNight || isRain);
         if (this.headlightGroup.visible) {
-          this.headlightGroup.position.set(p.x, 0.05, p.z);
+          this.headlightGroup.position.set(p.x, flyY + 0.05, p.z);
           this.headlightGroup.rotation.y = p.yaw;
         }
       }
@@ -2248,7 +2362,7 @@
           const tailDist = (p.len || 2.6) * 0.52;
           const tx = p.x + p.fx * tailDist;
           const tz = p.z + p.fz * tailDist;
-          this.exhaustMesh.position.set(tx, 0.32, tz);
+          this.exhaustMesh.position.set(tx, flyY + 0.32, tz);
           this.exhaustMesh.rotation.y = p.yaw;
 
           const fScale = 0.9 + Math.random() * 0.45 + (p.boost ? 0.4 : 0);
@@ -2411,6 +2525,10 @@
               person.speed = 4.5;
             }
           }
+        }
+
+        if (typeof LivingCitySystem !== 'undefined' && LivingCitySystem.onHornBlast) {
+          LivingCitySystem.onHornBlast(p);
         }
 
         const quotes = [
@@ -3455,6 +3573,1235 @@
   };
 
   // ----------------------------------------------------
+  // 21. Dhaka Unified Environmental Audio Synthesizer
+  // ----------------------------------------------------
+  const DhakaAudioSFX = {
+    getCtx() {
+      try {
+        const AudioCtx = window.AudioContext || window.webkitAudioContext;
+        if (!window.RastarRaja.audioCtx) window.RastarRaja.audioCtx = new AudioCtx();
+        const ctx = window.RastarRaja.audioCtx;
+        if (ctx.state === 'suspended') ctx.resume();
+        return ctx;
+      } catch (e) {
+        return null;
+      }
+    },
+
+    // Zone Fanfare Chime
+    playZoneChime(zoneId) {
+      const ctx = this.getCtx();
+      if (!ctx) return;
+      try {
+        const now = ctx.currentTime;
+        const chords = {
+          old_dhaka: [392.00, 493.88, 587.33], // G4, B4, D5 (Warm Vintage)
+          hatirjheel: [440.00, 554.37, 659.25], // A4, C#5, E5 (Airy Modern)
+          gulshan: [523.25, 659.25, 783.99]    // C5, E5, G5 (Cyber Arpeggio)
+        };
+        const freqs = chords[zoneId] || chords.old_dhaka;
+        const waveType = zoneId === 'gulshan' ? 'sawtooth' : zoneId === 'hatirjheel' ? 'sine' : 'triangle';
+
+        freqs.forEach((freq, idx) => {
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          const t = now + idx * 0.09;
+          osc.type = waveType;
+          osc.frequency.setValueAtTime(freq, t);
+          osc.frequency.exponentialRampToValueAtTime(freq * 1.01, t + 0.45);
+
+          gain.gain.setValueAtTime(0.001, t);
+          gain.gain.linearRampToValueAtTime(0.18, t + 0.04);
+          gain.gain.exponentialRampToValueAtTime(0.001, t + 0.55);
+
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+          osc.start(t);
+          osc.stop(t + 0.6);
+        });
+      } catch (e) {}
+    },
+
+    // WASA Manhole Metallic Clack (Dual Wheel Thump)
+    playManholeClack() {
+      const ctx = this.getCtx();
+      if (!ctx) return;
+      try {
+        const now = ctx.currentTime;
+        [0, 0.065].forEach(delay => {
+          const t = now + delay;
+          // Low suspension thump
+          const osc = ctx.createOscillator();
+          const oscGain = ctx.createGain();
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(85, t);
+          osc.frequency.exponentialRampToValueAtTime(32, t + 0.08);
+          oscGain.gain.setValueAtTime(0.24, t);
+          oscGain.gain.exponentialRampToValueAtTime(0.001, t + 0.09);
+          osc.connect(oscGain);
+          oscGain.connect(ctx.destination);
+          osc.start(t);
+          osc.stop(t + 0.1);
+
+          // Metallic cast-iron clack
+          const noiseBuffer = ctx.createBuffer(1, Math.floor(ctx.sampleRate * 0.05), ctx.sampleRate);
+          const output = noiseBuffer.getChannelData(0);
+          for (let i = 0; i < noiseBuffer.length; i++) {
+            output[i] = Math.random() * 2 - 1;
+          }
+          const whiteNoise = ctx.createBufferSource();
+          whiteNoise.buffer = noiseBuffer;
+
+          const filter = ctx.createBiquadFilter();
+          filter.type = 'bandpass';
+          filter.frequency.value = 820;
+          filter.Q.value = 5.0;
+
+          const metalGain = ctx.createGain();
+          metalGain.gain.setValueAtTime(0.18, t);
+          metalGain.gain.exponentialRampToValueAtTime(0.001, t + 0.05);
+
+          whiteNoise.connect(filter);
+          filter.connect(metalGain);
+          metalGain.connect(ctx.destination);
+          whiteNoise.start(t);
+          whiteNoise.stop(t + 0.06);
+        });
+      } catch (e) {}
+    },
+
+    // Pigeon Flutter Flapping Sound
+    playPigeonFlutter() {
+      const ctx = this.getCtx();
+      if (!ctx) return;
+      try {
+        const now = ctx.currentTime;
+        for (let i = 0; i < 7; i++) {
+          const t = now + i * 0.052;
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(140 + Math.random() * 40, t);
+          osc.frequency.exponentialRampToValueAtTime(60, t + 0.038);
+
+          gain.gain.setValueAtTime(0.001, t);
+          gain.gain.linearRampToValueAtTime(0.14, t + 0.008);
+          gain.gain.exponentialRampToValueAtTime(0.001, t + 0.04);
+
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+          osc.start(t);
+          osc.stop(t + 0.045);
+        }
+      } catch (e) {}
+    },
+
+    // Sidewalk Street Dog Bark
+    playDogBark() {
+      const ctx = this.getCtx();
+      if (!ctx) return;
+      try {
+        const now = ctx.currentTime;
+        [0, 0.16].forEach(delay => {
+          const t = now + delay;
+          const osc = ctx.createOscillator();
+          const filter = ctx.createBiquadFilter();
+          const gain = ctx.createGain();
+
+          osc.type = 'sawtooth';
+          osc.frequency.setValueAtTime(410, t);
+          osc.frequency.exponentialRampToValueAtTime(170, t + 0.11);
+
+          filter.type = 'bandpass';
+          filter.frequency.setValueAtTime(680, t);
+          filter.Q.value = 3.5;
+
+          gain.gain.setValueAtTime(0.001, t);
+          gain.gain.linearRampToValueAtTime(0.22, t + 0.015);
+          gain.gain.exponentialRampToValueAtTime(0.001, t + 0.12);
+
+          osc.connect(filter);
+          filter.connect(gain);
+          gain.connect(ctx.destination);
+          osc.start(t);
+          osc.stop(t + 0.13);
+        });
+      } catch (e) {}
+    }
+  };
+
+  // ----------------------------------------------------
+  // 22. Dynamic Zone Progression System
+  // ----------------------------------------------------
+  const ZoneProgressionSystem = {
+    initialized: false,
+    toastEl: null,
+    toastTimer: null,
+    currentZoneIdx: -1,
+    oldDhakaGroup: null,
+    hatirjheelGroup: null,
+    gulshanGroup: null,
+    bridgeRibs: [],
+    ledBillboards: [],
+    activeLedFrame: 0,
+    lastLedCycleT: 0,
+
+    zones: [
+      {
+        id: 'old_dhaka',
+        name: 'পুরান ঢাকা হেরিটেজ রোড',
+        en: 'Old Dhaka Heritage Corridor',
+        subtitle: 'চকবাজার মোড় ও সাকরাইন গলি · ওভারহেড তারের জাল ও রিকশা আর্ট',
+        icon: '🏛️',
+        color: '#f59e0b',
+        border: 'rgba(245, 158, 11, 0.65)',
+        glow: 'rgba(245, 158, 11, 0.35)'
+      },
+      {
+        id: 'hatirjheel',
+        name: 'হাতিরঝিল লেকফ্রন্ট এক্সপ্রেসওয়ে',
+        en: 'Hatirjheel Waterfront Expressway',
+        subtitle: 'ওয়াটারফ্রন্ট ওভারপাস · রেইনবো আর্চ ব্রিজ ও ওয়াটার ট্যাক্সি',
+        icon: '🌊',
+        color: '#06b6d4',
+        border: 'rgba(6, 182, 212, 0.7)',
+        glow: 'rgba(6, 182, 212, 0.4)'
+      },
+      {
+        id: 'gulshan',
+        name: 'গুলশান-বনানী ডিজিটাল ডাউনটাউন',
+        en: 'Gulshan Cyber Commercial Hub',
+        subtitle: 'গ্লাস স্কাইস্ক্র্যাপার · অ্যানিমেটেড ডিজিটাল ভিডিও বিলবোর্ড',
+        icon: '🏙️',
+        color: '#8b5cf6',
+        border: 'rgba(139, 92, 246, 0.7)',
+        glow: 'rgba(139, 92, 246, 0.4)'
+      }
+    ],
+
+    init(THREE, scene) {
+      // Create Zone Toast DOM element
+      if (!this.toastEl) {
+        this.toastEl = document.createElement('div');
+        this.toastEl.id = 'zoneToast';
+        this.toastEl.innerHTML = `
+          <div class="zone-header">
+            <span class="zone-icon" id="zIcon">🏛️</span>
+            <span class="zone-title" id="zTitle">পুরান ঢাকা হেরিটেজ রোড</span>
+          </div>
+          <div class="zone-sub" id="zSub">চকবাজার মোড় · ঐতিহ্যবাহী সাকরাইন</div>
+        `;
+        document.body.appendChild(this.toastEl);
+      }
+
+      if (this.initialized || !THREE || !scene) return;
+      this.initialized = true;
+
+      try {
+        // --- 1. Old Dhaka Heritage 3D Props (Overhead Tangled Cables & Food Boards) ---
+        this.oldDhakaGroup = new THREE.Group();
+        const wireMat = new THREE.BasicMat({ color: 0x18181b });
+        const poleMat = new THREE.StandardMat({ color: 0x52525b, roughness: 0.9 });
+
+        // Utility poles and crisscrossing wires
+        for (let z = -20; z >= -1180; z -= 55) {
+          const poleGeo = new THREE.ct();
+          poleGeo.box(-7.8, 3.2, z, 0.28, 6.4, 0.28, null);
+          poleGeo.box(7.8, 3.2, z, 0.28, 6.4, 0.28, null);
+          poleGeo.box(-7.8, 5.9, z, 1.4, 0.12, 0.12, null);
+          poleGeo.box(7.8, 5.9, z, 1.4, 0.12, 0.12, null);
+          const pMesh = new THREE.Mesh(poleGeo.build(), poleMat);
+          this.oldDhakaGroup.add(pMesh);
+
+          // Sagging wire spans across the street
+          const wireGeo = new THREE.ct();
+          wireGeo.box(0, 5.75, z, 15.6, 0.035, 0.035, null);
+          wireGeo.box(0, 5.95, z, 15.6, 0.035, 0.035, null);
+          wireGeo.box(0, 5.45, z + 6, 15.6, 0.03, 0.03, null);
+          const wMesh = new THREE.Mesh(wireGeo.build(), wireMat);
+          this.oldDhakaGroup.add(wMesh);
+        }
+
+        // Old Dhaka Parody Billboards
+        const odBoards = [
+          { title: "হাজী কাচ্চি ঘরাণা", sub: "খাঁটি ঘি ও বাসমতি চাল · রায়সাহেব বাজার", bg: "#78350f" },
+          { title: "বাকরখানি পয়েন্ট", sub: "লালবাগ কেল্লা মোড় · গরম মুচমুচে বাকরখানি", bg: "#831843" },
+          { title: "রূপচাঁদা সরিষার তেল", sub: "স্বাদে ও ঝাঁজে আসল খাঁটি তেল", bg: "#ca8a04" },
+          { title: "নবাবী লাবাং ও মাঠা", sub: "পুরান ঢাকার ঐতিহ্যবাহী ঠান্ডা লাবাং", bg: "#047857" }
+        ];
+
+        odBoards.forEach((b, idx) => {
+          const cv = document.createElement('canvas');
+          cv.width = 256; cv.height = 128;
+          const ctx = cv.getContext('2d');
+          ctx.fillStyle = b.bg;
+          ctx.fillRect(0, 0, 256, 128);
+          ctx.strokeStyle = '#fef08a';
+          ctx.lineWidth = 6;
+          ctx.strokeRect(4, 4, 248, 120);
+
+          ctx.fillStyle = '#ffffff';
+          ctx.font = 'bold 22px "Tiro Bangla", sans-serif';
+          ctx.textAlign = 'center';
+          ctx.fillText(b.title, 128, 48);
+
+          ctx.fillStyle = '#fef08a';
+          ctx.font = '13px "Tiro Bangla", sans-serif';
+          ctx.fillText(b.sub, 128, 86);
+
+          const tex = new THREE.Tex.glow.constructor(cv);
+          tex.needsUpdate = true;
+          const bGeo = new THREE.ct();
+          const side = idx % 2 === 0 ? -9.2 : 9.2;
+          const bZ = -120 - idx * 260;
+          bGeo.box(side, 6.2, bZ, 0.2, 2.8, 5.4, null);
+          bGeo.box(side, 2.4, bZ, 0.25, 4.8, 0.25, null);
+          const bMat = new THREE.BasicMat({ map: tex });
+          const bMesh = new THREE.Mesh(bGeo.build(), bMat);
+          this.oldDhakaGroup.add(bMesh);
+        });
+
+        scene.add(this.oldDhakaGroup);
+
+        // --- 2. Hatirjheel Lakefront 3D Props (Water Geometry & Rainbow Arch Bridges) ---
+        this.hatirjheelGroup = new THREE.Group();
+
+        // Waterfront Lake Geometry (Left & Right)
+        const waterGeoL = new THREE.Plane(50, 1400);
+        waterGeoL.rotateX(-THREE.PI / 2);
+        const waterGeoR = new THREE.Plane(50, 1400);
+        waterGeoR.rotateX(-THREE.PI / 2);
+
+        // Procedural rippling water texture
+        const wCanvas = document.createElement('canvas');
+        wCanvas.width = 128; wCanvas.height = 128;
+        const wCtx = wCanvas.getContext('2d');
+        const wGrad = wCtx.createLinearGradient(0, 0, 128, 128);
+        wGrad.addColorStop(0, '#0284c7');
+        wGrad.addColorStop(0.5, '#0369a1');
+        wGrad.addColorStop(1, '#0c4a6e');
+        wCtx.fillStyle = wGrad;
+        wCtx.fillRect(0, 0, 128, 128);
+        wCtx.strokeStyle = 'rgba(255, 255, 255, 0.25)';
+        wCtx.lineWidth = 2;
+        for (let i = 0; i < 6; i++) {
+          wCtx.beginPath();
+          wCtx.arc(64, i * 24, 40, 0, Math.PI);
+          wCtx.stroke();
+        }
+
+        const waterTex = new THREE.Tex.glow.constructor(wCanvas);
+        waterTex.needsUpdate = true;
+        const waterMat = new THREE.BasicMat({
+          map: waterTex,
+          transparent: true,
+          opacity: 0.82
+        });
+
+        const waterMeshL = new THREE.Mesh(waterGeoL, waterMat);
+        waterMeshL.position.set(-34, -0.05, -1800);
+        const waterMeshR = new THREE.Mesh(waterGeoR, waterMat);
+        waterMeshR.position.set(34, -0.05, -1800);
+        this.hatirjheelGroup.add(waterMeshL, waterMeshR);
+
+        // Stylized Water Taxis cruising in Hatirjheel
+        const taxiMat = new THREE.StandardMat({ color: 0x0284c7, roughness: 0.5 });
+        const taxiCabMat = new THREE.BasicMat({ color: 0xfef08a });
+        [-1500, -1850, -2200].forEach((tz, i) => {
+          const tSide = i % 2 === 0 ? -24 : 24;
+          const tGeo = new THREE.ct();
+          tGeo.box(tSide, 0.35, tz, 2.2, 0.6, 5.0, null);
+          tGeo.box(tSide, 0.85, tz - 0.3, 1.8, 0.55, 3.2, null);
+          const tMesh = new THREE.Mesh(tGeo.build(), taxiMat);
+          this.hatirjheelGroup.add(tMesh);
+        });
+
+        // 2 Rainbow Arched Expressway Bridges spanning over road (Z = -1450, -2150)
+        [-1450, -2150].forEach(bz => {
+          const archGeo = new THREE.ct();
+          // Tubular segmented arch spanning X = -8 to +8 at height Y = 9.2
+          const segs = 14;
+          for (let s = 0; s < segs; s++) {
+            const t1 = s / segs;
+            const t2 = (s + 1) / segs;
+            const x1 = -8 + t1 * 16;
+            const x2 = -8 + t2 * 16;
+            const y1 = Math.sin(t1 * Math.PI) * 9.2;
+            const y2 = Math.sin(t2 * Math.PI) * 9.2;
+            const cx = (x1 + x2) / 2;
+            const cy = (y1 + y2) / 2;
+            archGeo.box(cx, cy, bz, (16 / segs) * 1.05, 0.5, 0.5, null);
+            archGeo.box(cx, cy, bz + 4.5, (16 / segs) * 1.05, 0.5, 0.5, null);
+            // Vertical hanger cables
+            if (s > 1 && s < segs - 1) {
+              archGeo.box(cx, cy / 2, bz, 0.08, cy, 0.08, null);
+              archGeo.box(cx, cy / 2, bz + 4.5, 0.08, cy, 0.08, null);
+            }
+          }
+
+          // Illuminated LED neon rib on arch
+          const ribMat = new THREE.BasicMat({ color: 0x00f0ff });
+          const archMesh = new THREE.Mesh(archGeo.build(), ribMat);
+          this.hatirjheelGroup.add(archMesh);
+          this.bridgeRibs.push(ribMat);
+        });
+
+        scene.add(this.hatirjheelGroup);
+
+        // --- 3. Gulshan-Banani Cyber Downtown (Skyscrapers & Animated LED Billboards) ---
+        this.gulshanGroup = new THREE.Group();
+        const glassMat = new THREE.StandardMat({ color: 0x1e1b4b, roughness: 0.2, metalness: 0.85 });
+
+        // Glass Skyscraper Facades towering along Gulshan
+        for (let z = -2500; z >= -3500; z -= 140) {
+          const skyGeoL = new THREE.ct();
+          skyGeoL.box(-18, 18, z, 12, 36, 42, null);
+          const skyMeshL = new THREE.Mesh(skyGeoL.build(), glassMat);
+
+          const skyGeoR = new THREE.ct();
+          skyGeoR.box(18, 22, z - 30, 14, 44, 48, null);
+          const skyMeshR = new THREE.Mesh(skyGeoR.build(), glassMat);
+
+          this.gulshanGroup.add(skyMeshL, skyMeshR);
+        }
+
+        // Animated LED Digital Video Billboards (Gantry overhead at Z = -2650, -3150)
+        const ads = [
+          { tag: "bKash · এক ট্যাপেই সব লেনদেন", sub: "QR কোড স্ক্যান করুন ও ক্যাশব্যাক পান", color: "#ec4899" },
+          { tag: "GP 5G Ultra · গতিতে দেশ জয়", sub: "সবার জন্য আল্ট্রা-ফাস্ট ইন্টারনেট", color: "#06b6d4" },
+          { tag: "Tesla Dhaka · বিদ্যুৎ গতি", sub: "স্মার্ট ঢাকার ১০০% ক্লিন এনার্জি বাহন", color: "#ef4444" },
+          { tag: "Smart Bangladesh 2041", sub: "ডিজিটাল ঢাকা থেকে স্মার্ট বাংলাদেশ", color: "#10b981" }
+        ];
+
+        [-2680, -3180].forEach((bz, idx) => {
+          const cv = document.createElement('canvas');
+          cv.width = 256; cv.height = 128;
+          const tex = new THREE.Tex.glow.constructor(cv);
+          tex.needsUpdate = true;
+
+          const gantryGeo = new THREE.ct();
+          // Overhead bridge spanning road
+          gantryGeo.box(0, 6.8, bz, 15.2, 3.2, 0.4, null);
+          gantryGeo.box(-7.4, 3.4, bz, 0.5, 6.8, 0.5, null);
+          gantryGeo.box(7.4, 3.4, bz, 0.5, 6.8, 0.5, null);
+
+          const gMat = new THREE.BasicMat({ map: tex });
+          const gMesh = new THREE.Mesh(gantryGeo.build(), gMat);
+          this.gulshanGroup.add(gMesh);
+
+          this.ledBillboards.push({
+            canvas: cv,
+            ctx: cv.getContext('2d'),
+            tex: tex,
+            ads: ads,
+            adIdx: idx % ads.length
+          });
+        });
+
+        scene.add(this.gulshanGroup);
+      } catch (err) {
+        console.warn('ZoneProgressionSystem 3D error:', err);
+      }
+    },
+
+    showToast(zone) {
+      if (!this.toastEl) return;
+      const zIcon = document.getElementById('zIcon');
+      const zTitle = document.getElementById('zTitle');
+      const zSub = document.getElementById('zSub');
+
+      if (zIcon) zIcon.textContent = zone.icon;
+      if (zTitle) zTitle.textContent = zone.name;
+      if (zSub) zSub.textContent = zone.subtitle;
+
+      this.toastEl.style.borderColor = zone.color;
+      this.toastEl.style.boxShadow = `0 8px 32px rgba(0,0,0,0.65), 0 0 24px ${zone.glow}`;
+
+      this.toastEl.classList.remove('active');
+      void this.toastEl.offsetWidth;
+      this.toastEl.classList.add('active');
+
+      if (this.toastTimer) clearTimeout(this.toastTimer);
+      this.toastTimer = setTimeout(() => {
+        if (this.toastEl) this.toastEl.classList.remove('active');
+      }, 4200);
+    },
+
+    update(p, dt, inPlay) {
+      const THREE = window.__THREE_EXPORTS;
+      const at = window.__at;
+      if (!this.initialized && THREE && at && at.SCENE) {
+        this.init(THREE, at.SCENE);
+      }
+      if (!this.initialized || !inPlay || !p) return;
+
+      const pDist = Math.abs(p.z);
+      const zoneMod = pDist % 3600;
+      let targetZoneIdx = 0;
+      if (zoneMod >= 2400) targetZoneIdx = 2; // Gulshan
+      else if (zoneMod >= 1200) targetZoneIdx = 1; // Hatirjheel
+      else targetZoneIdx = 0; // Old Dhaka
+
+      if (targetZoneIdx !== this.currentZoneIdx) {
+        this.currentZoneIdx = targetZoneIdx;
+        const currentZone = this.zones[targetZoneIdx];
+        this.showToast(currentZone);
+        DhakaAudioSFX.playZoneChime(currentZone.id);
+      }
+
+      // Reposition 3D groups along cyclical infinite road
+      const cycleOffset = Math.floor(pDist / 3600) * 3600;
+      if (this.oldDhakaGroup) this.oldDhakaGroup.position.z = -cycleOffset;
+      if (this.hatirjheelGroup) this.hatirjheelGroup.position.z = -cycleOffset;
+      if (this.gulshanGroup) this.gulshanGroup.position.z = -cycleOffset;
+
+      // Animate Rainbow Arch Bridges (cycling colors)
+      const now = performance.now();
+      const hue = (now * 0.05) % 360;
+      for (const rib of this.bridgeRibs) {
+        if (rib && rib.color) {
+          rib.color.setHSL(hue / 360, 0.95, 0.55);
+        }
+      }
+
+      // Animate LED Video Billboards in Gulshan
+      if (now - this.lastLedCycleT > 3200) {
+        this.lastLedCycleT = now;
+        this.activeLedFrame++;
+        for (const bb of this.ledBillboards) {
+          const ad = bb.ads[(this.activeLedFrame + bb.adIdx) % bb.ads.length];
+          const ctx = bb.ctx;
+          ctx.fillStyle = '#0f172a';
+          ctx.fillRect(0, 0, 256, 128);
+
+          // Glowing border
+          ctx.strokeStyle = ad.color;
+          ctx.lineWidth = 6;
+          ctx.strokeRect(3, 3, 250, 122);
+
+          // Scanlines
+          ctx.fillStyle = 'rgba(255, 255, 255, 0.04)';
+          for (let y = 0; y < 128; y += 4) {
+            ctx.fillRect(0, y, 256, 2);
+          }
+
+          // Text
+          ctx.fillStyle = '#ffffff';
+          ctx.font = 'bold 16px "Tiro Bangla", sans-serif';
+          ctx.textAlign = 'center';
+          ctx.fillText(ad.tag, 128, 48);
+
+          ctx.fillStyle = ad.color;
+          ctx.font = '12px "Tiro Bangla", sans-serif';
+          ctx.fillText(ad.sub, 128, 86);
+
+          bb.tex.needsUpdate = true;
+        }
+      }
+    }
+  };
+
+  // ----------------------------------------------------
+  // 23. Mayor Mohammad Hanif Flyover System
+  // ----------------------------------------------------
+  const FlyoverElevationSystem = {
+    initialized: false,
+    flyoverGroup: null,
+    gantryGroup: null,
+    currentElevation: 0,
+    currentPitch: 0,
+    cycleDist: 2000,
+    rampUpStart: 550,
+    rampUpLen: 80,
+    deckLen: 540,
+    rampDownLen: 80,
+
+    init(THREE, scene) {
+      if (this.initialized || !THREE || !scene) return;
+      this.initialized = true;
+
+      try {
+        this.flyoverGroup = new THREE.Group();
+
+        const deckMat = new THREE.StandardMat({ color: 0x334155, roughness: 0.85 });
+        const pierMat = new THREE.StandardMat({ color: 0x64748b, roughness: 0.9 });
+        const barrierMat = new THREE.BasicMat({ color: 0x1e3a8a });
+        const reflectorMat = new THREE.BasicMat({ color: 0xfacc15 });
+
+        // 1. Ramp Up Slab (Stepped smooth rise over 80m from Y=0 to Y=4.6)
+        const rampUpGeo = new THREE.ct();
+        const steps = 10;
+        for (let i = 0; i < steps; i++) {
+          const t = i / steps;
+          const zRel = - (t * this.rampUpLen);
+          const yElev = 4.6 * (1 - Math.cos(Math.PI * t)) / 2;
+          const segLen = this.rampUpLen / steps;
+          rampUpGeo.box(0, yElev - 0.2, zRel - segLen / 2, 14.5, 0.45, segLen * 1.02, null);
+          // Side barriers
+          rampUpGeo.box(-7.2, yElev + 0.4, zRel - segLen / 2, 0.35, 0.8, segLen * 1.02, null);
+          rampUpGeo.box(7.2, yElev + 0.4, zRel - segLen / 2, 0.35, 0.8, segLen * 1.02, null);
+        }
+        const rampUpMesh = new THREE.Mesh(rampUpGeo.build(), deckMat);
+        this.flyoverGroup.add(rampUpMesh);
+
+        // 2. Elevated Main Deck (Length 540m at Y=4.6m)
+        const deckGeo = new THREE.ct();
+        deckGeo.box(0, 4.4, - (this.rampUpLen + this.deckLen / 2), 14.5, 0.5, this.deckLen, null);
+        // Side Jersey Crash Barriers
+        deckGeo.box(-7.2, 5.0, - (this.rampUpLen + this.deckLen / 2), 0.35, 0.8, this.deckLen, null);
+        deckGeo.box(7.2, 5.0, - (this.rampUpLen + this.deckLen / 2), 0.35, 0.8, this.deckLen, null);
+        const deckMesh = new THREE.Mesh(deckGeo.build(), deckMat);
+        this.flyoverGroup.add(deckMesh);
+
+        // Reflectors on barriers every 15m
+        const refGeo = new THREE.ct();
+        for (let rz = 0; rz < this.deckLen; rz += 15) {
+          const curZ = - (this.rampUpLen + rz);
+          refGeo.box(-7.0, 5.15, curZ, 0.08, 0.12, 0.25, null);
+          refGeo.box(7.0, 5.15, curZ, 0.08, 0.12, 0.25, null);
+        }
+        const refMesh = new THREE.Mesh(refGeo.build(), reflectorMat);
+        this.flyoverGroup.add(refMesh);
+
+        // Solid Concrete T-Piers Supporting Deck every 45m
+        const pierGeo = new THREE.ct();
+        for (let pz = 15; pz < this.deckLen; pz += 45) {
+          const curZ = - (this.rampUpLen + pz);
+          pierGeo.box(0, 2.1, curZ, 1.4, 4.2, 1.4, null);
+          pierGeo.box(0, 4.0, curZ, 5.4, 0.6, 1.8, null);
+        }
+        const pierMesh = new THREE.Mesh(pierGeo.build(), pierMat);
+        this.flyoverGroup.add(pierMesh);
+
+        // 3. Ramp Down Slab (Stepped smooth descent over 80m from Y=4.6 to Y=0)
+        const rampDownGeo = new THREE.ct();
+        const startZ = - (this.rampUpLen + this.deckLen);
+        for (let i = 0; i < steps; i++) {
+          const t = i / steps;
+          const zRel = startZ - (t * this.rampDownLen);
+          const yElev = 4.6 * (1 + Math.cos(Math.PI * t)) / 2;
+          const segLen = this.rampDownLen / steps;
+          rampDownGeo.box(0, yElev - 0.2, zRel - segLen / 2, 14.5, 0.45, segLen * 1.02, null);
+          rampDownGeo.box(-7.2, yElev + 0.4, zRel - segLen / 2, 0.35, 0.8, segLen * 1.02, null);
+          rampDownGeo.box(7.2, yElev + 0.4, zRel - segLen / 2, 0.35, 0.8, segLen * 1.02, null);
+        }
+        const rampDownMesh = new THREE.Mesh(rampDownGeo.build(), deckMat);
+        this.flyoverGroup.add(rampDownMesh);
+
+        // 4. Overhead Highway Entrance Gantry
+        const cv = document.createElement('canvas');
+        cv.width = 256; cv.height = 128;
+        const ctx = cv.getContext('2d');
+        ctx.fillStyle = '#065f46';
+        ctx.fillRect(0, 0, 256, 128);
+        ctx.strokeStyle = '#ffffff';
+        ctx.lineWidth = 4;
+        ctx.strokeRect(4, 4, 248, 120);
+
+        ctx.fillStyle = '#ffffff';
+        ctx.font = 'bold 16px "Tiro Bangla", sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText("⬆️ মেয়র মোহাম্মদ হানিফ ফ্লাইওভার", 128, 44);
+
+        ctx.font = '12px "Tiro Bangla", sans-serif';
+        ctx.fillStyle = '#fef08a';
+        ctx.fillText("যাত্রাবাড়ী - সায়েদাবাদ লিঙ্ক · গতিসীমা ৬০ কিমি/ঘ", 128, 80);
+
+        const gTex = new THREE.Tex.glow.constructor(cv);
+        gTex.needsUpdate = true;
+        const gMat = new THREE.BasicMat({ map: gTex });
+
+        const gGeo = new THREE.ct();
+        gGeo.box(0, 4.8, 10, 14.8, 2.2, 0.3, null);
+        gGeo.box(-7.2, 2.4, 10, 0.4, 4.8, 0.4, null);
+        gGeo.box(7.2, 2.4, 10, 0.4, 4.8, 0.4, null);
+        const gMesh = new THREE.Mesh(gGeo.build(), gMat);
+        this.flyoverGroup.add(gMesh);
+
+        scene.add(this.flyoverGroup);
+      } catch (e) {
+        console.warn('FlyoverElevationSystem init error:', e);
+      }
+    },
+
+    update(p, dt, inPlay) {
+      const THREE = window.__THREE_EXPORTS;
+      const at = window.__at;
+      if (!this.initialized && THREE && at && at.SCENE) {
+        this.init(THREE, at.SCENE);
+      }
+      if (!this.initialized || !inPlay || !p) return;
+
+      const pDist = Math.abs(p.z);
+      const cycle = Math.floor(pDist / this.cycleDist);
+      const localZ = pDist % this.cycleDist;
+
+      // Position 3D flyover structure for current cycle
+      if (this.flyoverGroup) {
+        this.flyoverGroup.position.z = - (cycle * this.cycleDist + this.rampUpStart);
+      }
+
+      // Calculate Elevation and Pitch
+      let yElev = 0;
+      let pitch = 0;
+
+      if (localZ >= this.rampUpStart && localZ < this.rampUpStart + this.rampUpLen) {
+        // Climbing Ramp Up
+        const t = (localZ - this.rampUpStart) / this.rampUpLen;
+        yElev = 4.6 * (1 - Math.cos(Math.PI * t)) / 2;
+        pitch = 0.16 * Math.sin(Math.PI * t); // Tilt nose up
+      } else if (localZ >= this.rampUpStart + this.rampUpLen && localZ < this.rampUpStart + this.rampUpLen + this.deckLen) {
+        // Cruising Elevated Deck
+        yElev = 4.6;
+        pitch = 0;
+      } else if (localZ >= this.rampUpStart + this.rampUpLen + this.deckLen && localZ < this.rampUpStart + this.rampUpLen + this.deckLen + this.rampDownLen) {
+        // Descending Ramp Down
+        const t = (localZ - (this.rampUpStart + this.rampUpLen + this.deckLen)) / this.rampDownLen;
+        yElev = 4.6 * (1 + Math.cos(Math.PI * t)) / 2;
+        pitch = -0.16 * Math.sin(Math.PI * t); // Tilt nose down
+      }
+
+      this.currentElevation = yElev;
+      this.currentPitch = pitch;
+      window.__flyoverElevation = yElev;
+
+      // Apply Elevation to Player
+      if (at && at.PLAYER) {
+        if (at.PLAYER.beat) {
+          at.PLAYER.beat.y = (at.PLAYER.beat.y || 0) + yElev;
+          at.PLAYER.beat.pitch = (at.PLAYER.beat.pitch || 0) + pitch;
+        }
+        if (at.PLAYER.o) {
+          at.PLAYER.o.position.y = yElev + (p.bumpY || 0);
+        }
+      }
+
+      // Smooth Panoramic Camera Elevation
+      if (at && at.CAM && yElev > 0.05) {
+        at.CAM.position.y += yElev * 0.82;
+        if (at.CAM.target) at.CAM.target.y += yElev * 0.82;
+      }
+    }
+  };
+
+  // ----------------------------------------------------
+  // 24. Road Micro-Details System (WASA Manholes & Wear)
+  // ----------------------------------------------------
+  const RoadMicroDetailsSystem = {
+    initialized: false,
+    detailsGroup: null,
+    manholes: [],
+    patches: [],
+    zebras: [],
+    lastThumpT: 0,
+
+    init(THREE, scene) {
+      if (this.initialized || !THREE || !scene) return;
+      this.initialized = true;
+
+      try {
+        this.detailsGroup = new THREE.Group();
+
+        // 1. Procedural 3D WASA Cast-Iron Manhole Cover
+        const mhCanvas = document.createElement('canvas');
+        mhCanvas.width = 128; mhCanvas.height = 128;
+        const mCtx = mhCanvas.getContext('2d');
+
+        // Cast iron rim & concentric ribs
+        mCtx.fillStyle = '#1c1917';
+        mCtx.beginPath(); mCtx.arc(64, 64, 60, 0, Math.PI * 2); mCtx.fill();
+        mCtx.strokeStyle = '#44403c';
+        mCtx.lineWidth = 5; mCtx.stroke();
+
+        mCtx.strokeStyle = '#292524';
+        mCtx.lineWidth = 3;
+        mCtx.beginPath();
+        mCtx.arc(64, 64, 44, 0, Math.PI * 2);
+        mCtx.arc(64, 64, 28, 0, Math.PI * 2);
+        mCtx.arc(64, 64, 12, 0, Math.PI * 2);
+        mCtx.stroke();
+
+        // Stamped Dhaka WASA lettering
+        mCtx.fillStyle = '#78716c';
+        mCtx.font = 'bold 11px "Tiro Bangla", sans-serif';
+        mCtx.textAlign = 'center';
+        mCtx.fillText("ওয়াসা ঢাকা", 64, 48);
+        mCtx.font = '9px sans-serif';
+        mCtx.fillText("WASA · 2026", 64, 84);
+
+        const mhTex = new THREE.Tex.glow.constructor(mhCanvas);
+        mhTex.needsUpdate = true;
+        const mhGeo = new THREE.Plane(1.35, 1.35);
+        mhGeo.rotateX(-THREE.PI / 2);
+        const mhMat = new THREE.BasicMat({ map: mhTex, transparent: true });
+
+        // Spawn 16 manholes distributed along the lanes
+        const laneOffsets = [-4.2, -1.8, 1.8, 4.2];
+        for (let i = 0; i < 16; i++) {
+          const mh = new THREE.Mesh(mhGeo, mhMat);
+          const laneX = laneOffsets[i % laneOffsets.length];
+          const zPos = - (i * 45 + 30);
+          mh.position.set(laneX, 0.024, zPos);
+          this.detailsGroup.add(mh);
+          this.manholes.push(mh);
+        }
+
+        // 2. Dark Bituminous Asphalt Patchworks
+        const pGeo = new THREE.Plane(2.6, 4.2);
+        pGeo.rotateX(-THREE.PI / 2);
+        const pMat = new THREE.BasicMat({
+          color: 0x09090b,
+          transparent: true,
+          opacity: 0.55
+        });
+        for (let i = 0; i < 12; i++) {
+          const pm = new THREE.Mesh(pGeo, pMat);
+          const px = (i % 2 === 0 ? -1 : 1) * (2.0 + (i % 3) * 1.5);
+          pm.position.set(px, 0.015, - (i * 65 + 40));
+          this.detailsGroup.add(pm);
+          this.patches.push(pm);
+        }
+
+        // 3. High-Contrast White Zebra Crossings
+        const zCanvas = document.createElement('canvas');
+        zCanvas.width = 128; zCanvas.height = 128;
+        const zCtx = zCanvas.getContext('2d');
+        zCtx.fillStyle = '#ffffff';
+        for (let y = 8; y < 128; y += 24) {
+          zCtx.fillRect(4, y, 120, 14);
+        }
+        const zTex = new THREE.Tex.glow.constructor(zCanvas);
+        zTex.needsUpdate = true;
+        const zGeo = new THREE.Plane(14.0, 5.0);
+        zGeo.rotateX(-THREE.PI / 2);
+        const zMat = new THREE.BasicMat({
+          map: zTex,
+          transparent: true,
+          opacity: 0.75
+        });
+
+        for (let i = 0; i < 4; i++) {
+          const zm = new THREE.Mesh(zGeo, zMat);
+          zm.position.set(0, 0.018, - (i * 240 + 120));
+          this.detailsGroup.add(zm);
+          this.zebras.push(zm);
+        }
+
+        scene.add(this.detailsGroup);
+      } catch (e) {
+        console.warn('RoadMicroDetailsSystem init error:', e);
+      }
+    },
+
+    spawnMicroToast(text) {
+      try {
+        const toast = document.createElement('div');
+        toast.className = 'micro-toast';
+        toast.textContent = text;
+        const rx = window.innerWidth / 2 + (Math.random() - 0.5) * 120;
+        const ry = window.innerHeight * 0.65;
+        toast.style.left = `${rx}px`;
+        toast.style.top = `${ry}px`;
+        document.body.appendChild(toast);
+        setTimeout(() => toast.remove(), 1250);
+      } catch (e) {}
+    },
+
+    update(p, dt, inPlay) {
+      const THREE = window.__THREE_EXPORTS;
+      const at = window.__at;
+      if (!this.initialized && THREE && at && at.SCENE) {
+        this.init(THREE, at.SCENE);
+      }
+      if (!this.initialized || !inPlay || !p || !p.alive) return;
+
+      const now = performance.now();
+      const halfWid = (p.wid || 1.3) * 0.48;
+      const leftWheelX = p.x - halfWid;
+      const rightWheelX = p.x + halfWid;
+
+      // Recycle and detect wheel collisions with WASA Manholes
+      for (const mh of this.manholes) {
+        // Recycle around player
+        if (mh.position.z > p.z + 40) {
+          mh.position.z -= 720;
+        } else if (mh.position.z < p.z - 680) {
+          mh.position.z += 720;
+        }
+
+        // Wheel collision detection
+        const dz = Math.abs(p.z - mh.position.z);
+        if (dz < 0.85 && now - this.lastThumpT > 280) {
+          const dLeft = Math.abs(leftWheelX - mh.position.x);
+          const dRight = Math.abs(rightWheelX - mh.position.x);
+          if (dLeft < 0.68 || dRight < 0.68) {
+            this.lastThumpT = now;
+            DhakaAudioSFX.playManholeClack();
+            p.bumpY = Math.min(0.24, 0.08 + (Math.abs(p.v) / 18.0) * 0.16);
+            this.spawnMicroToast("⚡ থপ-থপ! (ওয়াসা ম্যানহোল)");
+          }
+        }
+      }
+
+      // Recycle Asphalt Patches
+      for (const pt of this.patches) {
+        if (pt.position.z > p.z + 40) pt.position.z -= 780;
+        else if (pt.position.z < p.z - 740) pt.position.z += 780;
+      }
+
+      // Recycle Zebra Crossings
+      for (const zm of this.zebras) {
+        if (zm.position.z > p.z + 50) zm.position.z -= 960;
+        else if (zm.position.z < p.z - 910) zm.position.z += 960;
+      }
+    }
+  };
+
+  // ----------------------------------------------------
+  // 25. Living City Life & Dynamic Props System
+  // ----------------------------------------------------
+  const LivingCitySystem = {
+    initialized: false,
+    pigeons: [],
+    dogs: [],
+    lastFlutterT: 0,
+
+    init(THREE, scene) {
+      if (this.initialized || !THREE || !scene) return;
+      this.initialized = true;
+
+      try {
+        // 1. Flocks of Dhaka Pigeons (3 Flocks of 8 Birds)
+        const pBodyMat = new THREE.BasicMat({ color: 0x475569 });
+        const pWingMat = new THREE.BasicMat({ color: 0x64748b });
+
+        for (let f = 0; f < 3; f++) {
+          const fCenterZ = - (140 + f * 240);
+          const fCenterX = (f % 2 === 0 ? -1 : 1) * (1.8 + (f % 3) * 1.2);
+
+          for (let i = 0; i < 8; i++) {
+            const pGrp = new THREE.Group();
+            const birdGeo = new THREE.ct();
+            // Tiny low-poly pigeon body & tail
+            birdGeo.box(0, 0.12, 0, 0.22, 0.18, 0.36, null);
+            birdGeo.box(0, 0.22, -0.16, 0.14, 0.14, 0.14, null); // Head
+            birdGeo.box(0, 0.10, 0.24, 0.18, 0.04, 0.22, null); // Tail
+            const bMesh = new THREE.Mesh(birdGeo.build(), pBodyMat);
+            pGrp.add(bMesh);
+
+            // Flapping Wing Planes (Left & Right)
+            const wGeo = new THREE.Plane(0.35, 0.24);
+            const wMeshL = new THREE.Mesh(wGeo, pWingMat);
+            wMeshL.position.set(-0.20, 0.18, 0);
+            wMeshL.rotation.y = Math.PI / 2;
+            const wMeshR = new THREE.Mesh(wGeo, pWingMat);
+            wMeshR.position.set(0.20, 0.18, 0);
+            wMeshR.rotation.y = -Math.PI / 2;
+            pGrp.add(wMeshL, wMeshR);
+
+            const ox = (Math.random() - 0.5) * 2.8;
+            const oz = (Math.random() - 0.5) * 2.8;
+            pGrp.position.set(fCenterX + ox, 0.04, fCenterZ + oz);
+            scene.add(pGrp);
+
+            this.pigeons.push({
+              grp: pGrp,
+              wingL: wMeshL,
+              wingR: wMeshR,
+              baseX: fCenterX + ox,
+              baseZ: fCenterZ + oz,
+              flockId: f,
+              state: 'pecking', // 'pecking', 'scattering', 'soaring'
+              vy: 0,
+              vx: 0,
+              vz: 0,
+              peckT: Math.random() * 5,
+              scatterT: 0
+            });
+          }
+        }
+
+        // 2. Sidewalk Street Dogs (6 Dogs stationing along Dhaka sidewalks)
+        const dogMat = new THREE.StandardMat({ color: 0x92400e, roughness: 0.85 });
+        const dogEarMat = new THREE.BasicMat({ color: 0x78350f });
+
+        for (let i = 0; i < 6; i++) {
+          const dGrp = new THREE.Group();
+          const dGeo = new THREE.ct();
+          const sideX = (i % 2 === 0 ? -1 : 1) * 6.8;
+          const dZ = - (80 + i * 160);
+
+          // Stylized low-poly dog torso, head, and tail
+          dGeo.box(0, 0.38, 0, 0.42, 0.44, 0.95, null);
+          dGeo.box(0, 0.65, -0.42, 0.34, 0.36, 0.42, null); // Head & snout
+          dGeo.box(0, 0.52, 0.48, 0.10, 0.35, 0.10, null);  // Upright tail
+          // 4 Legs
+          dGeo.box(-0.16, 0.16, -0.28, 0.10, 0.32, 0.10, null);
+          dGeo.box(0.16, 0.16, -0.28, 0.10, 0.32, 0.10, null);
+          dGeo.box(-0.16, 0.16, 0.28, 0.10, 0.32, 0.10, null);
+          dGeo.box(0.16, 0.16, 0.28, 0.10, 0.32, 0.10, null);
+
+          const dMesh = new THREE.Mesh(dGeo.build(), dogMat);
+          dGrp.add(dMesh);
+          dGrp.position.set(sideX, 0.02, dZ);
+          scene.add(dGrp);
+
+          this.dogs.push({
+            grp: dGrp,
+            baseX: sideX,
+            baseZ: dZ,
+            barkT: 0
+          });
+        }
+      } catch (e) {
+        console.warn('LivingCitySystem init error:', e);
+      }
+    },
+
+    onHornBlast(p) {
+      if (!p) return;
+      const now = performance.now();
+
+      // Trigger Pigeon Flock Panic
+      let flutterTriggered = false;
+      for (const pg of this.pigeons) {
+        const dist = Math.hypot(p.x - pg.grp.position.x, p.z - pg.grp.position.z);
+        if (dist < 42 && pg.state === 'pecking') {
+          pg.state = 'scattering';
+          pg.vy = 5.5 + Math.random() * 3.5;
+          pg.vx = (pg.grp.position.x - p.x) * 1.8 + (Math.random() - 0.5) * 4.0;
+          pg.vz = p.v * 0.5 - (3.5 + Math.random() * 4.0);
+          flutterTriggered = true;
+        }
+      }
+      if (flutterTriggered && now - this.lastFlutterT > 800) {
+        this.lastFlutterT = now;
+        DhakaAudioSFX.playPigeonFlutter();
+      }
+
+      // Trigger Sidewalk Street Dog Bark
+      for (const dog of this.dogs) {
+        const dist = Math.hypot(p.x - dog.grp.position.x, p.z - dog.grp.position.z);
+        if (dist < 40 && now - dog.barkT > 3200) {
+          dog.barkT = now;
+          DhakaAudioSFX.playDogBark();
+          dog.grp.rotation.y = (dog.grp.position.x > p.x) ? -Math.PI / 2 : Math.PI / 2;
+          RoadMicroDetailsSystem.spawnMicroToast("🐕 ঘেউ ঘেউ!");
+        }
+      }
+    },
+
+    update(p, dt, inPlay) {
+      const THREE = window.__THREE_EXPORTS;
+      const at = window.__at;
+      if (!this.initialized && THREE && at && at.SCENE) {
+        this.init(THREE, at.SCENE);
+      }
+      if (!this.initialized || !inPlay || !p || !p.alive) return;
+
+      const now = performance.now();
+
+      // 1. Update Pigeons (Pecking, Scattering, Flying)
+      for (const pg of this.pigeons) {
+        const grp = pg.grp;
+
+        // Auto-recycle pigeons if player drove past or moved far
+        const relZ = grp.position.z - p.z;
+        if (relZ > 40 || relZ < -550) {
+          pg.state = 'pecking';
+          pg.scatterT = 0;
+          grp.position.y = 0.04;
+          grp.position.z = p.z - 45 - Math.random() * 220;
+          grp.position.x = (Math.random() - 0.5) * 8.5;
+          pg.wingL.rotation.z = 0;
+          pg.wingR.rotation.z = 0;
+        }
+
+        // Auto Panic trigger when player car approaches within 26m
+        const dist = Math.hypot(p.x - grp.position.x, p.z - grp.position.z);
+        if (dist < 26 && pg.state === 'pecking') {
+          pg.state = 'scattering';
+          pg.vy = 6.2 + Math.random() * 3.2;
+          pg.vx = (grp.position.x - p.x) * 1.6 + (Math.random() - 0.5) * 3.5;
+          pg.vz = p.v * 0.5 - (3.0 + Math.random() * 4.0);
+          if (now - this.lastFlutterT > 600) {
+            this.lastFlutterT = now;
+            DhakaAudioSFX.playPigeonFlutter();
+          }
+        }
+
+        if (pg.state === 'pecking') {
+          // Subtle head bob & hops
+          pg.peckT += dt * 5.0;
+          grp.rotation.y = Math.sin(pg.peckT * 0.8) * 0.35;
+          grp.position.y = 0.04 + Math.max(0, Math.sin(pg.peckT * 3.0) * 0.04);
+        } else if (pg.state === 'scattering') {
+          // Rapid wing flapping at 18 Hz
+          pg.scatterT += dt;
+          const flap = Math.sin(pg.scatterT * 38) * 0.82;
+          pg.wingL.rotation.z = flap;
+          pg.wingR.rotation.z = -flap;
+
+          // Ascend and disperse radially
+          grp.position.y += pg.vy * dt;
+          grp.position.x += pg.vx * dt;
+          grp.position.z += pg.vz * dt;
+          pg.vy = Math.max(0.5, pg.vy - dt * 2.2);
+
+          // Recycle ahead when passed
+          if (grp.position.z > p.z + 30 || grp.position.y > 14.0) {
+            pg.state = 'pecking';
+            pg.scatterT = 0;
+            grp.position.y = 0.04;
+            grp.position.z = p.z - 80 - Math.random() * 160;
+            grp.position.x = (Math.random() - 0.5) * 9;
+            pg.wingL.rotation.z = 0;
+            pg.wingR.rotation.z = 0;
+          }
+        }
+      }
+
+      // 2. Recycle Sidewalk Dogs along road
+      for (const dog of this.dogs) {
+        const relZ = dog.grp.position.z - p.z;
+        if (relZ > 40 || relZ < -650) {
+          dog.grp.position.z = p.z - 30 - Math.random() * 300;
+        }
+      }
+    }
+  };
+
+  // ----------------------------------------------------
+  // 26. Next-Gen Graphics & Visual Shaders
+  // ----------------------------------------------------
+  const NextGenGraphicsSystem = {
+    initialized: false,
+    speedBlurEl: null,
+    groundDecalMesh: null,
+    dustParticles: [],
+
+    init(THREE, scene) {
+      // Create Fullscreen Radial Speed Blur Overlay
+      if (!this.speedBlurEl) {
+        this.speedBlurEl = document.createElement('div');
+        this.speedBlurEl.id = 'speedBlurOverlay';
+        document.body.appendChild(this.speedBlurEl);
+      }
+
+      if (this.initialized || !THREE || !scene) return;
+      this.initialized = true;
+
+      try {
+        // Forward Volumetric Headlight Ground Illumination Decal
+        const decCanvas = document.createElement('canvas');
+        decCanvas.width = 128; decCanvas.height = 128;
+        const dCtx = decCanvas.getContext('2d');
+        const grad = dCtx.createRadialGradient(64, 64, 8, 64, 64, 60);
+        grad.addColorStop(0, 'rgba(255, 250, 220, 0.55)');
+        grad.addColorStop(0.5, 'rgba(255, 240, 180, 0.25)');
+        grad.addColorStop(1, 'rgba(0, 0, 0, 0)');
+        dCtx.fillStyle = grad;
+        dCtx.fillRect(0, 0, 128, 128);
+
+        const decTex = new THREE.Tex.glow.constructor(decCanvas);
+        decTex.needsUpdate = true;
+        const decGeo = new THREE.Plane(5.5, 14.0);
+        decGeo.rotateX(-THREE.PI / 2);
+        const decMat = new THREE.BasicMat({
+          map: decTex,
+          transparent: true,
+          opacity: 0.65,
+          depthWrite: false,
+          blending: THREE.AdditiveBlending
+        });
+
+        this.groundDecalMesh = new THREE.Mesh(decGeo, decMat);
+        this.groundDecalMesh.position.set(0, 0.028, 0);
+        this.groundDecalMesh.visible = false;
+        scene.add(this.groundDecalMesh);
+
+        // Volumetric Dust / Mist Motes catching the headlights
+        const dGeo = new THREE.Plane(0.08, 0.08);
+        const dMat = new THREE.BasicMat({
+          color: 0xffffff,
+          transparent: true,
+          opacity: 0.75,
+          blending: THREE.AdditiveBlending
+        });
+
+        for (let i = 0; i < 24; i++) {
+          const dm = new THREE.Mesh(dGeo, dMat);
+          dm.position.set((Math.random() - 0.5) * 4.0, 0.4 + Math.random() * 1.2, - (4.0 + Math.random() * 12.0));
+          scene.add(dm);
+          this.dustParticles.push({
+            mesh: dm,
+            vx: (Math.random() - 0.5) * 0.4,
+            vy: (Math.random() - 0.5) * 0.2,
+            relX: (Math.random() - 0.5) * 3.5,
+            relY: 0.35 + Math.random() * 1.1,
+            relZ: - (3.5 + Math.random() * 14.0)
+          });
+        }
+      } catch (e) {
+        console.warn('NextGenGraphicsSystem init error:', e);
+      }
+    },
+
+    update(p, dt, inPlay, isNight, isRain) {
+      const THREE = window.__THREE_EXPORTS;
+      const at = window.__at;
+      if (!this.initialized && THREE && at && at.SCENE) {
+        this.init(THREE, at.SCENE);
+      }
+      if (!this.initialized) return;
+
+      const flyY = window.__flyoverElevation || 0;
+      const speedKmh = p ? Math.abs(p.v) * 7.5 : 0;
+
+      // 1. High-Speed Radial Motion Blur
+      if (this.speedBlurEl) {
+        if (inPlay && p && p.alive && (speedKmh > 70 || p.boost)) {
+          const blurOpacity = p.boost ? 0.95 : Math.min(0.9, (speedKmh - 70) / 45);
+          this.speedBlurEl.style.opacity = blurOpacity.toFixed(2);
+          this.speedBlurEl.classList.toggle('nitro-streak', p.boost || speedKmh > 100);
+        } else {
+          this.speedBlurEl.style.opacity = '0';
+          this.speedBlurEl.classList.remove('nitro-streak');
+        }
+      }
+
+      // 2. Volumetric Headlight Ground Illumination Decal
+      if (this.groundDecalMesh) {
+        this.groundDecalMesh.visible = inPlay && p && p.alive && (isNight || isRain);
+        if (this.groundDecalMesh.visible) {
+          const forwardDist = 8.5;
+          const gx = p.x - p.fx * forwardDist;
+          const gz = p.z - p.fz * forwardDist;
+          this.groundDecalMesh.position.set(gx, flyY + 0.028, gz);
+          this.groundDecalMesh.rotation.y = p.yaw;
+        }
+      }
+
+      // 3. Volumetric Headlight Dust / Mist Motes
+      if (this.dustParticles.length > 0 && p) {
+        const showDust = inPlay && p.alive && (isNight || isRain);
+        for (const dp of this.dustParticles) {
+          dp.mesh.visible = showDust;
+          if (showDust) {
+            const worldX = p.x - p.fx * Math.abs(dp.relZ) + p.rx * dp.relX;
+            const worldZ = p.z - p.fz * Math.abs(dp.relZ) + p.rz * dp.relX;
+            dp.mesh.position.set(worldX, flyY + dp.relY, worldZ);
+            dp.relX += dp.vx * dt;
+            dp.relY += dp.vy * dt;
+            if (Math.abs(dp.relX) > 2.8) dp.vx *= -1;
+            if (dp.relY < 0.2 || dp.relY > 1.8) dp.vy *= -1;
+          }
+        }
+      }
+    }
+  };
+
+  // ----------------------------------------------------
   // 11. Real-time Engine Loop (Synchronous 60 FPS)
   // ----------------------------------------------------
   let lastTime = performance.now();
@@ -3490,6 +4837,13 @@
     MiniMapRadar.update(at.P, dt, inPlay);
     NearMissSystem.update(at.P, dt, inPlay);
     FallingPetalsSystem.update(at.P, dt, inPlay);
+
+    // v3.0 New Systems
+    ZoneProgressionSystem.update(at.P, dt, inPlay);
+    FlyoverElevationSystem.update(at.P, dt, inPlay);
+    RoadMicroDetailsSystem.update(at.P, dt, inPlay);
+    LivingCitySystem.update(at.P, dt, inPlay);
+    NextGenGraphicsSystem.update(at.P, dt, inPlay, isNight, isRain);
   }
   requestAnimationFrame(engineLoop);
 
@@ -3501,6 +4855,16 @@
     GameOverEnhancer.init();
     MiniMapRadar.init();
     NearMissSystem.init();
+    ZoneProgressionSystem.init();
+    NextGenGraphicsSystem.init();
+
+    // Export systems to RastarRaja namespace
+    window.RastarRaja.ZoneProgressionSystem = ZoneProgressionSystem;
+    window.RastarRaja.FlyoverElevationSystem = FlyoverElevationSystem;
+    window.RastarRaja.RoadMicroDetailsSystem = RoadMicroDetailsSystem;
+    window.RastarRaja.LivingCitySystem = LivingCitySystem;
+    window.RastarRaja.NextGenGraphicsSystem = NextGenGraphicsSystem;
+    window.RastarRaja.DhakaAudioSFX = DhakaAudioSFX;
 
     // Keyboard H or Horn button for Hydraulic Bus Horn
     window.addEventListener('keydown', (e) => {
