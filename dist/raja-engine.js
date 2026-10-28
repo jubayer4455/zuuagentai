@@ -1452,7 +1452,8 @@
       }
 
       /* MOBILE RESPONSIVE OVERRIDES (STUDIO-GRADE CLEAN HUD & CONTROLS) */
-      @media (max-width: 768px) {
+      /* Covers portrait phones, landscape phones (wide but short), fullscreen & installed PWA on touch devices */
+      @media (max-width: 768px), (pointer: coarse), (max-height: 520px) {
         .hud-top {
           top: calc(env(safe-area-inset-top, 0px) + 6px) !important;
           left: 6px !important;
@@ -1494,6 +1495,15 @@
         }
         #battBox .battery-label {
           font-size: 9px !important;
+          background: transparent !important;
+          box-shadow: none !important;
+          padding: 0 !important;
+        }
+        #battBox .battery-label strong, #battPercent {
+          font-size: 13px !important;
+          color: #ffffff !important;
+          background: transparent !important;
+          padding: 0 !important;
         }
         #battBox .bar {
           width: 36px !important;
@@ -1549,7 +1559,7 @@
         .mobile-speed-hud {
           display: flex !important;
           position: fixed !important;
-          top: calc(env(safe-area-inset-top, 0px) + 120px) !important;
+          top: calc(env(safe-area-inset-top, 0px) + 136px) !important;
           right: 6px !important;
         }
 
@@ -1868,7 +1878,7 @@
         100% { opacity: 0; transform: translateY(-40px) scale(0.9); }
       }
 
-      @media (max-width: 768px) {
+      @media (max-width: 768px), (pointer: coarse), (max-height: 520px) {
         #zoneToast, .heritage-announcement-card {
           top: calc(env(safe-area-inset-top, 0px) + 210px) !important;
           max-width: min(84vw, 280px) !important;
@@ -1915,16 +1925,6 @@
         opacity: 1 !important;
         visibility: visible !important;
         transform: translateX(-50%) translateY(0) scale(1) !important;
-      }
-        z-index: 9999;
-        text-align: center;
-        max-width: 90vw;
-        white-space: nowrap;
-      }
-      .dhaka-humor-box.active {
-        opacity: 1;
-        visibility: visible;
-        transform: translateX(-50%) translateY(0) scale(1);
       }
       .dhaka-humor-box.horn {
         border-color: #ffd400;
@@ -2046,7 +2046,7 @@
         box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6), 0 0 15px rgba(34, 197, 94, 0.3) !important;
       }
 
-      @media (max-width: 640px) {
+      @media (max-width: 640px), (max-height: 520px) {
         .raja-top-action-capsule {
           top: calc(env(safe-area-inset-top, 0px) + 8px) !important;
           right: 8px !important;
@@ -2195,11 +2195,160 @@
         gap: 8px !important;
         white-space: nowrap !important;
       }
-      @media (max-width: 768px) {
+      @media (max-width: 768px), (pointer: coarse), (max-height: 520px) {
         .raja-passenger-hud-pill {
           top: calc(env(safe-area-inset-top, 0px) + 48px) !important;
           font-size: 11px !important;
           padding: 3px 10px !important;
+        }
+      }
+
+      /* ============================================================ */
+      /* TOUCH DEVICE GUARANTEE (JS-detected, works in fullscreen & PWA) */
+      /* ============================================================ */
+      body.raja-touch .raja-gauge { display: none !important; }
+      body.raja-touch .mobile-speed-hud { display: flex !important; position: fixed !important; }
+      body.raja-touch #controls { display: none !important; }
+
+      /* ============================================================ */
+      /* LANDSCAPE PHONE LAYOUT (browser landscape, fullscreen, PWA)   */
+      /* Sky slots: L = status | C = messages stack | R = radar+speed  */
+      /* Ground: left thumb cluster | clear road | right pedal cluster */
+      /* ============================================================ */
+      @media (orientation: landscape) and (max-height: 520px) {
+        .hud-top {
+          top: calc(env(safe-area-inset-top, 0px) + 6px) !important;
+          left: calc(env(safe-area-inset-left, 0px) + 8px) !important;
+          gap: 3px !important;
+        }
+        #lossBox, #battBox {
+          width: 152px !important;
+          min-width: 152px !important;
+          max-width: 152px !important;
+          padding: 2px 7px !important;
+        }
+        #battBox #chargeHint { display: none !important; }
+        #battBox {
+          flex-wrap: nowrap !important;
+          gap: 4px !important;
+          height: auto !important;
+        }
+        #battBox .battery-label {
+          font-size: 9.5px !important;
+          padding: 0 !important;
+          background: transparent !important;
+          box-shadow: none !important;
+          line-height: 1.1 !important;
+        }
+        #battBox .battery-label strong, #battPercent {
+          font-size: 12px !important;
+          background: transparent !important;
+          color: #ffffff !important;
+          padding: 0 !important;
+        }
+        #battBox .bar { width: 26px !important; height: 5px !important; flex: 0 0 26px !important; }
+        #battBox #muteBtn, #battBox #radioBtn, #radioBtn {
+          width: 22px !important;
+          min-width: 22px !important;
+          height: 22px !important;
+          min-height: 22px !important;
+          padding: 0 !important;
+          font-size: 11px !important;
+          position: static !important;
+          justify-content: center !important;
+        }
+        #radioBtn span { display: none !important; }
+        #battBox #muteBtn svg { width: 11px !important; height: 11px !important; }
+        #battWarn, #chargeNow { font-size: 9px !important; padding: 1px 4px !important; }
+
+        /* Right sky: radar + speed pill + action capsule side by side */
+        .mini-map-radar {
+          top: calc(env(safe-area-inset-top, 0px) + 6px) !important;
+          right: calc(env(safe-area-inset-right, 0px) + 8px) !important;
+          transform: scale(0.72) !important;
+          transform-origin: top right !important;
+        }
+        .mini-map-radar:hover { transform: scale(0.72) !important; }
+        .radar-gps-hint { display: none !important; }
+        .mobile-speed-hud, body.raja-touch .mobile-speed-hud {
+          top: calc(env(safe-area-inset-top, 0px) + 8px) !important;
+          right: calc(env(safe-area-inset-right, 0px) + 82px) !important;
+          left: auto !important;
+          bottom: auto !important;
+          padding: 2px 9px !important;
+        }
+        .raja-top-action-capsule {
+          top: calc(env(safe-area-inset-top, 0px) + 40px) !important;
+          right: calc(env(safe-area-inset-right, 0px) + 82px) !important;
+          padding: 1px 3px !important;
+        }
+        .raja-capsule-btn {
+          font-size: 9.5px !important;
+          padding: 3px 6px !important;
+        }
+
+        /* Center sky: a single clean stacked message column */
+        .raja-passenger-hud-pill {
+          top: calc(env(safe-area-inset-top, 0px) + 8px) !important;
+          font-size: 11px !important;
+          padding: 3px 12px !important;
+          max-width: min(46vw, 380px) !important;
+          overflow: hidden !important;
+          text-overflow: ellipsis !important;
+        }
+        .raja-stars-box {
+          top: calc(env(safe-area-inset-top, 0px) + 38px) !important;
+        }
+        #zoneToast, .heritage-announcement-card, #placeCard {
+          top: calc(env(safe-area-inset-top, 0px) + 66px) !important;
+          max-width: min(46vw, 380px) !important;
+          padding: 3px 14px !important;
+        }
+        .zone-sub { max-width: 44vw !important; }
+        #alerts {
+          top: calc(env(safe-area-inset-top, 0px) + 112px) !important;
+          max-width: min(46vw, 380px) !important;
+        }
+        #dialogue {
+          top: calc(env(safe-area-inset-top, 0px) + 146px) !important;
+          max-width: min(46vw, 380px) !important;
+          font-size: 12px !important;
+          padding: 3px 12px !important;
+        }
+        .dhaka-humor-box {
+          top: calc(env(safe-area-inset-top, 0px) + 180px) !important;
+          max-width: min(46vw, 380px) !important;
+          font-size: 12px !important;
+          padding: 4px 14px !important;
+          white-space: normal !important;
+        }
+        .bribe-btn {
+          top: calc(env(safe-area-inset-top, 0px) + 214px) !important;
+        }
+
+        /* Ground: compact thumb clusters hugging the edges (notch-safe) */
+        #touch {
+          bottom: calc(var(--band, 26px) + 4px + env(safe-area-inset-bottom, 0px)) !important;
+          padding-left: calc(env(safe-area-inset-left, 0px) + 14px) !important;
+          padding-right: calc(env(safe-area-inset-right, 0px) + 14px) !important;
+        }
+        #touch .left, #touch .left .row { gap: 6px !important; }
+        #touch .chip { width: 50px !important; height: 32px !important; }
+        #touch .round { width: 52px !important; height: 52px !important; }
+        #touch .round svg { width: 24px !important; height: 24px !important; }
+        #touch .right {
+          grid-template-columns: 50px 56px !important;
+          grid-template-rows: 34px 72px !important;
+          gap: 6px 7px !important;
+        }
+        #touch #tBoost { width: 56px !important; height: 34px !important; }
+        #touch #tBrake { width: 50px !important; height: 62px !important; }
+        #touch #tGas { width: 56px !important; height: 72px !important; }
+        #touch #tBrake svg, #touch #tGas svg { width: 22px !important; height: 22px !important; }
+
+        .handlebar-container {
+          transform: scale(0.62) !important;
+          transform-origin: bottom center !important;
         }
       }
 
@@ -2772,6 +2921,20 @@
         </div>
       `;
       hud.appendChild(gauge);
+
+      // Touch-device guarantee: hide physical dial on ANY touch device (browser, fullscreen, installed PWA)
+      const syncTouchClass = () => {
+        const coarse = window.matchMedia && window.matchMedia('(pointer: coarse)').matches;
+        const touchEl = document.getElementById('touch');
+        const touchVisible = touchEl && !touchEl.hidden && getComputedStyle(touchEl).display !== 'none';
+        const isTouch = coarse || (navigator.maxTouchPoints > 0 && window.innerHeight < 600) || !!touchVisible;
+        document.body.classList.toggle('raja-touch', !!isTouch);
+      };
+      syncTouchClass();
+      window.addEventListener('resize', syncTouchClass);
+      window.addEventListener('orientationchange', () => setTimeout(syncTouchClass, 250));
+      document.addEventListener('fullscreenchange', syncTouchClass);
+      window.addEventListener('touchstart', () => document.body.classList.add('raja-touch'), { once: true, passive: true });
 
       // Sleek Mobile Digital Speedometer Pill (Top Right under radar)
       if (!document.getElementById('mobileSpeedHud')) {
@@ -8498,6 +8661,57 @@
   };
 
   // ----------------------------------------------------
+  // 34. Render Quality Upgrade (crisp HiDPI + anisotropic road textures)
+  // ----------------------------------------------------
+  const RenderQualityUpgrade = {
+    configured: false,
+    lastScan: 0,
+    maxAniso: 1,
+    seen: new WeakSet(),
+
+    update() {
+      const at = window.__at;
+      if (!at || !at.RENDERER || !at.SCENE) return;
+      const r = at.RENDERER;
+      try {
+        if (!this.configured) {
+          this.configured = true;
+          const coarse = window.matchMedia && window.matchMedia('(pointer: coarse)').matches;
+          // Phones render blurry at DPR 1; cap for battery/perf (1.6 on touch, 2 on desktop)
+          const target = Math.min(window.devicePixelRatio || 1, coarse ? 1.6 : 2);
+          if (typeof r.getPixelRatio === 'function' && r.getPixelRatio() < target) {
+            r.setPixelRatio(target);
+          }
+          if (r.capabilities && typeof r.capabilities.getMaxAnisotropy === 'function') {
+            this.maxAniso = Math.min(coarse ? 4 : 8, r.capabilities.getMaxAnisotropy() || 1);
+          }
+        }
+        // Sharpen asphalt, lane markings & signage at grazing angles (periodic, cheap, idempotent)
+        const now = performance.now();
+        if (this.maxAniso > 1 && now - this.lastScan > 2500) {
+          this.lastScan = now;
+          const aniso = this.maxAniso;
+          const seen = this.seen;
+          at.SCENE.traverse((obj) => {
+            const mats = obj.material ? (Array.isArray(obj.material) ? obj.material : [obj.material]) : null;
+            if (!mats) return;
+            for (const m of mats) {
+              const tex = m && m.map;
+              if (tex && !seen.has(tex)) {
+                seen.add(tex);
+                if ((tex.anisotropy || 1) < aniso) {
+                  tex.anisotropy = aniso;
+                  tex.needsUpdate = true;
+                }
+              }
+            }
+          });
+        }
+      } catch (e) { /* non-fatal visual enhancement */ }
+    }
+  };
+
+  // ----------------------------------------------------
   // 11. Real-time Engine Loop (Synchronous 60 FPS)
   // ----------------------------------------------------
   let lastTime = performance.now();
@@ -8582,6 +8796,7 @@
     DhakaPassengerMissionSystem.update(at.P, dt, inPlay);
     PoliceCheckpostSystem.update(at.P, dt, inPlay);
     FirstPersonCockpitCameraSystem.update(at.P, dt, inPlay);
+    RenderQualityUpgrade.update();
   }
   requestAnimationFrame(engineLoop);
 

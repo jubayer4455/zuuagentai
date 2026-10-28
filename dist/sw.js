@@ -1,7 +1,7 @@
-// Rastar Raja Complete Offline Service Worker v3.5
+﻿// Rastar Raja Complete Offline Service Worker v3.5
 // Creator & Concept: Abdul Al Jubayer
 // 100% Offline-Capable PWA Cache Architecture
-const CACHE_VERSION = 'rastar-raja-offline-v3.5';
+const CACHE_VERSION = 'rastar-raja-offline-v3.8';
 
 const OFFLINE_URLS = [
   './',
@@ -59,7 +59,7 @@ const OFFLINE_URLS = [
 self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(CACHE_VERSION).then((cache) => {
-      console.log('📦 Pre-caching offline game assets for Rastar Raja...');
+      console.log('ðŸ“¦ Pre-caching offline game assets for Rastar Raja...');
       return cache.addAll(OFFLINE_URLS).catch((err) => {
         console.warn('Non-fatal pre-cache warning:', err);
         return Promise.all(
@@ -91,12 +91,12 @@ self.addEventListener('fetch', (event) => {
         return new Response(JSON.stringify({
           status: 'offline',
           offline: true,
-          message: 'অফলাইন মোড সক্রিয়: স্কোর ডিভাইসে সংরক্ষিত হচ্ছে',
+          message: 'à¦…à¦«à¦²à¦¾à¦‡à¦¨ à¦®à§‹à¦¡ à¦¸à¦•à§à¦°à¦¿à¦¯à¦¼: à¦¸à§à¦•à§‹à¦° à¦¡à¦¿à¦­à¦¾à¦‡à¦¸à§‡ à¦¸à¦‚à¦°à¦•à§à¦·à¦¿à¦¤ à¦¹à¦šà§à¦›à§‡',
           scores: [
-            { name: "ওস্তাদ কালাম (মিরপুর)", score: 980000, date: "আজ" },
-            { name: "চকবাজার বুলেট", score: 850000, date: "গতকাল" },
-            { name: "সাভার এক্সপ্রেস", score: 720000, date: "৩ দিন আগে" },
-            { name: "যাত্রাবাড়ী ত্রাস", score: 640000, date: "৫ দিন আগে" }
+            { name: "à¦“à¦¸à§à¦¤à¦¾à¦¦ à¦•à¦¾à¦²à¦¾à¦® (à¦®à¦¿à¦°à¦ªà§à¦°)", score: 980000, date: "à¦†à¦œ" },
+            { name: "à¦šà¦•à¦¬à¦¾à¦œà¦¾à¦° à¦¬à§à¦²à§‡à¦Ÿ", score: 850000, date: "à¦—à¦¤à¦•à¦¾à¦²" },
+            { name: "à¦¸à¦¾à¦­à¦¾à¦° à¦à¦•à§à¦¸à¦ªà§à¦°à§‡à¦¸", score: 720000, date: "à§© à¦¦à¦¿à¦¨ à¦†à¦—à§‡" },
+            { name: "à¦¯à¦¾à¦¤à§à¦°à¦¾à¦¬à¦¾à¦¡à¦¼à§€ à¦¤à§à¦°à¦¾à¦¸", score: 640000, date: "à§« à¦¦à¦¿à¦¨ à¦†à¦—à§‡" }
           ]
         }), {
           headers: { 'Content-Type': 'application/json' }
@@ -106,20 +106,30 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // 2. Navigation requests: Serve index.html from cache first, fetch network in background
+  // 2. Navigation requests: Network-first so installed app always gets the latest UI; cache fallback offline
   if (req.mode === 'navigate') {
     event.respondWith(
-      caches.match('./index.html').then((cached) => {
-        const networkFetch = fetch(req).then((res) => {
-          if (res && res.ok) {
-            const clone = res.clone();
-            caches.open(CACHE_VERSION).then((cache) => cache.put('./index.html', clone));
-          }
-          return res;
-        }).catch(() => cached);
+      fetch(req).then((res) => {
+        if (res && res.ok) {
+          const clone = res.clone();
+          caches.open(CACHE_VERSION).then((cache) => cache.put('./index.html', clone));
+        }
+        return res;
+      }).catch(() => caches.match('./index.html'))
+    );
+    return;
+  }
 
-        return cached || networkFetch;
-      })
+  // 2b. Game engine & manifest: Network-first (fresh UI fixes), fallback to cache when offline
+  if (url.pathname.endsWith('/raja-engine.js') || url.pathname.endsWith('.webmanifest') || url.pathname.endsWith('manifest.json')) {
+    event.respondWith(
+      fetch(req).then((res) => {
+        if (res && res.ok && req.method === 'GET') {
+          const clone = res.clone();
+          caches.open(CACHE_VERSION).then((cache) => cache.put(req, clone));
+        }
+        return res;
+      }).catch(() => caches.match(req, { ignoreSearch: true }))
     );
     return;
   }
