@@ -1154,29 +1154,31 @@
         z-index: 10 !important;
       }
 
-      /* Near-Miss Cinematic Flash Banner */
+      /* Near-Miss Cinematic Flash Banner (Anchored in upper sky, never blocks road) */
       .near-miss-toast {
         position: fixed !important;
-        top: 22% !important;
+        top: calc(env(safe-area-inset-top, 0px) + 48px) !important;
+        bottom: auto !important;
         left: 50% !important;
-        transform: translate(-50%, -50%) scale(0.6) !important;
-        background: linear-gradient(135deg, rgba(255, 51, 68, 0.95), rgba(255, 153, 0, 0.95)) !important;
+        transform: translateX(-50%) scale(0.85) !important;
+        background: linear-gradient(135deg, rgba(239, 68, 68, 0.95), rgba(245, 158, 11, 0.95)) !important;
         color: #ffffff !important;
         font-family: inherit !important;
-        font-size: clamp(16px, 4vw, 24px) !important;
-        font-weight: 900 !important;
-        padding: 8px 24px !important;
-        border-radius: 30px !important;
-        border: 2px solid #ffd400 !important;
-        box-shadow: 0 0 25px rgba(255, 203, 31, 0.9), 0 4px 20px rgba(0, 0, 0, 0.8) !important;
+        font-size: 13px !important;
+        font-weight: 800 !important;
+        padding: 4px 18px !important;
+        border-radius: 9999px !important;
+        border: 1.5px solid #ffd400 !important;
+        box-shadow: 0 0 20px rgba(255, 212, 0, 0.7), 0 4px 16px rgba(0, 0, 0, 0.8) !important;
         pointer-events: none !important;
         z-index: 100 !important;
         opacity: 0 !important;
+        white-space: nowrap !important;
         transition: all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
       }
       .near-miss-toast.active {
         opacity: 1 !important;
-        transform: translate(-50%, -50%) scale(1.15) !important;
+        transform: translateX(-50%) scale(1) !important;
       }
 
       /* Live TV News & Police FIR Challan Game Over Screen */
@@ -1563,26 +1565,35 @@
           right: 6px !important;
         }
 
-        /* 2. TOP ANNOUNCEMENTS & ZONE TOASTS: Position safely in sky below top status boxes */
-        .heritage-announcement-card, #zoneToast {
-          top: calc(env(safe-area-inset-top, 0px) + 210px) !important;
-          max-width: min(84vw, 280px) !important;
-          padding: 4px 12px !important;
+        /* 2. TOP ANNOUNCEMENTS & ZONE TOASTS: Confined strictly to Skyline slots, leaving road 100% clear */
+        .heritage-announcement-card, #zoneToast, #placeCard {
+          top: calc(env(safe-area-inset-top, 0px) + 12px) !important;
+          bottom: auto !important;
+          height: auto !important;
+          max-height: 36px !important;
+          max-width: min(84vw, 320px) !important;
+          padding: 3px 12px !important;
         }
         .heritage-announcement-card .h-title {
-          font-size: 13px !important;
+          font-size: 12px !important;
         }
         .heritage-announcement-card .h-sub {
-          font-size: 9.5px !important;
+          font-size: 9px !important;
         }
         #placeCard {
-          top: calc(env(safe-area-inset-top, 0px) + 210px) !important;
+          top: calc(env(safe-area-inset-top, 0px) + 12px) !important;
           transform: translateX(-50%) scale(0.85) !important;
         }
         #dialogue {
-          top: calc(env(safe-area-inset-top, 0px) + 265px) !important;
+          top: calc(env(safe-area-inset-top, 0px) + 48px) !important;
+          bottom: auto !important;
+          height: auto !important;
+          max-height: 38px !important;
           font-size: 12px !important;
-          padding: 4px 10px !important;
+          padding: 3px 14px !important;
+          white-space: nowrap !important;
+          overflow: hidden !important;
+          text-overflow: ellipsis !important;
         }
 
         .cta {
@@ -1765,7 +1776,8 @@
       /* ============================================================ */
       #zoneToast {
         position: fixed !important;
-        top: calc(env(safe-area-inset-top, 0px) + 54px) !important;
+        top: calc(env(safe-area-inset-top, 0px) + 12px) !important;
+        bottom: auto !important;
         left: 50% !important;
         transform: translateX(-50%) translateY(-24px) scale(0.95) !important;
         opacity: 0 !important;
@@ -1774,8 +1786,10 @@
         display: flex !important;
         flex-direction: column !important;
         align-items: center !important;
-        padding: 6px 20px !important;
+        padding: 3px 16px !important;
         border-radius: 9999px !important;
+        height: auto !important;
+        max-height: 38px !important;
         background: rgba(11, 17, 32, 0.94) !important;
         backdrop-filter: blur(14px) !important;
         -webkit-backdrop-filter: blur(14px) !important;
@@ -1783,7 +1797,7 @@
         box-shadow: 0 8px 28px rgba(0, 0, 0, 0.7), 0 0 16px rgba(0, 240, 255, 0.35) !important;
         transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.35s ease !important;
         text-align: center !important;
-        max-width: min(90vw, 420px) !important;
+        max-width: min(84vw, 380px) !important;
       }
       #zoneToast.active {
         transform: translateX(-50%) translateY(0) scale(1) !important;
@@ -1793,51 +1807,58 @@
         display: flex;
         align-items: center;
         gap: 8px;
-        font-size: 15px;
+        font-size: 13px;
         font-weight: 800;
         color: #ffffff;
         letter-spacing: 0.3px;
         white-space: nowrap;
       }
       .zone-icon {
-        font-size: 20px;
+        font-size: 16px;
         filter: drop-shadow(0 0 6px rgba(255, 255, 255, 0.6));
       }
       .zone-title {
         font-family: 'Tiro Bangla', sans-serif;
       }
       .zone-sub {
-        font-size: 11px;
+        font-size: 10px;
         font-weight: 600;
         color: #94a3b8;
         letter-spacing: 0.2px;
-        margin-top: 2px;
+        margin-top: 1px;
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
         max-width: 82vw;
       }
 
-      /* Studio Dialogue Subtitle Capsule */
+      /* Studio Dialogue Subtitle Capsule (Anchored in upper sky, never blocks road) */
       #dialogue {
         position: fixed !important;
-        top: calc(env(safe-area-inset-top, 0px) + 168px) !important;
+        top: calc(env(safe-area-inset-top, 0px) + 48px) !important;
+        bottom: auto !important;
         left: 50% !important;
         transform: translateX(-50%) !important;
-        max-width: min(88vw, 360px) !important;
-        background: rgba(11, 17, 32, 0.88) !important;
-        border: 1.5px solid rgba(255, 212, 0, 0.6) !important;
-        border-radius: 16px !important;
-        color: #ffd400 !important;
+        max-width: min(84vw, 400px) !important;
+        height: auto !important;
+        max-height: 40px !important;
+        background: rgba(11, 17, 32, 0.94) !important;
+        border: 1.5px solid #00f0ff !important;
+        border-radius: 9999px !important;
+        color: #ffffff !important;
         text-shadow: 0 1px 4px rgba(0, 0, 0, 0.8) !important;
-        padding: 5px 14px !important;
-        font-size: 13.5px !important;
+        padding: 4px 16px !important;
+        font-size: 13px !important;
         font-weight: 700 !important;
         text-align: center !important;
+        white-space: nowrap !important;
+        overflow: hidden !important;
+        text-overflow: ellipsis !important;
         backdrop-filter: blur(10px) !important;
         -webkit-backdrop-filter: blur(10px) !important;
-        box-shadow: 0 4px 18px rgba(0, 0, 0, 0.6) !important;
-        z-index: 93 !important;
+        box-shadow: 0 4px 18px rgba(0, 0, 0, 0.75), 0 0 12px rgba(0, 240, 255, 0.3) !important;
+        z-index: 96 !important;
+        pointer-events: none !important;
       }
 
       /* High-Speed Radial Motion Blur Overlay */
@@ -1880,46 +1901,50 @@
 
       @media (max-width: 768px), (pointer: coarse), (max-height: 520px) {
         #zoneToast, .heritage-announcement-card {
-          top: calc(env(safe-area-inset-top, 0px) + 210px) !important;
-          max-width: min(84vw, 280px) !important;
-          padding: 4px 12px !important;
+          top: calc(env(safe-area-inset-top, 0px) + 12px) !important;
+          bottom: auto !important;
+          max-width: min(84vw, 300px) !important;
+          padding: 3px 12px !important;
         }
         .zone-header {
-          font-size: 13px !important;
+          font-size: 12px !important;
         }
         .zone-icon {
-          font-size: 16px !important;
+          font-size: 15px !important;
         }
         .zone-sub {
-          font-size: 9.5px !important;
+          font-size: 9px !important;
         }
       }
 
-      /* 15. Dhaka Humorous Comic Speech Bubble System */
+      /* 15. Dhaka Humorous Comic Speech Bubble System (Unified Skyline Subtitle Slot) */
       .dhaka-humor-box {
         position: fixed !important;
-        top: calc(env(safe-area-inset-top, 0px) + 98px) !important;
+        top: calc(env(safe-area-inset-top, 0px) + 48px) !important;
+        bottom: auto !important;
         left: 50% !important;
-        transform: translateX(-50%) translateY(-18px) scale(0.9) !important;
+        transform: translateX(-50%) translateY(-12px) scale(0.95) !important;
         background: linear-gradient(135deg, rgba(15, 23, 42, 0.96), rgba(30, 41, 59, 0.98)) !important;
         border: 1.5px solid #00f0ff !important;
-        border-radius: 18px !important;
-        padding: 7px 18px !important;
+        border-radius: 9999px !important;
+        padding: 4px 16px !important;
         color: #ffffff !important;
         font-family: 'Tiro Bangla', sans-serif !important;
-        font-size: 14px !important;
+        font-size: 13px !important;
         font-weight: 700 !important;
-        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.65), 0 0 16px rgba(0, 240, 255, 0.3) !important;
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.65), 0 0 16px rgba(0, 240, 255, 0.3) !important;
         backdrop-filter: blur(12px) !important;
         -webkit-backdrop-filter: blur(12px) !important;
         pointer-events: none !important;
         opacity: 0 !important;
         visibility: hidden !important;
         transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
-        z-index: 94 !important;
+        z-index: 96 !important;
         text-align: center !important;
-        max-width: min(88vw, 420px) !important;
+        max-width: min(84vw, 400px) !important;
         white-space: nowrap !important;
+        overflow: hidden !important;
+        text-overflow: ellipsis !important;
       }
       .dhaka-humor-box.active {
         opacity: 1 !important;
@@ -1927,18 +1952,20 @@
         transform: translateX(-50%) translateY(0) scale(1) !important;
       }
       .dhaka-humor-box.horn {
-        border-color: #ffd400;
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6), 0 0 25px rgba(255, 212, 0, 0.5);
+        border-color: #ffd400 !important;
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.6), 0 0 20px rgba(255, 212, 0, 0.5) !important;
       }
       .dhaka-humor-box.warning {
-        border-color: #ff3344;
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6), 0 0 25px rgba(255, 51, 68, 0.5);
+        border-color: #ff3344 !important;
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.6), 0 0 20px rgba(255, 51, 68, 0.5) !important;
       }
       .dhaka-humor-box.speed {
-        border-color: #a855f7;
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6), 0 0 25px rgba(168, 85, 247, 0.5);
+        border-color: #a855f7 !important;
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.6), 0 0 20px rgba(168, 85, 247, 0.5) !important;
       }
       .dhaka-humor-tail {
+        display: none !important; /* Hide tail to avoid poking into the road view */
+      }
         position: absolute;
         bottom: -9px;
         left: 50%;
@@ -2063,9 +2090,12 @@
           padding: 5px 12px !important;
         }
         .dhaka-humor-box {
-          top: calc(env(safe-area-inset-top, 0px) + 168px) !important;
-          font-size: 12.5px !important;
-          padding: 6px 14px !important;
+          top: calc(env(safe-area-inset-top, 0px) + 48px) !important;
+          bottom: auto !important;
+          height: auto !important;
+          max-height: 38px !important;
+          font-size: 11.5px !important;
+          padding: 3px 12px !important;
         }
       }
 
@@ -2197,9 +2227,14 @@
       }
       @media (max-width: 768px), (pointer: coarse), (max-height: 520px) {
         .raja-passenger-hud-pill {
-          top: calc(env(safe-area-inset-top, 0px) + 48px) !important;
+          top: calc(env(safe-area-inset-top, 0px) + 10px) !important;
           font-size: 11px !important;
           padding: 3px 10px !important;
+          max-width: min(44vw, 320px) !important;
+          overflow: hidden !important;
+          text-overflow: ellipsis !important;
+        }
+      }
         }
       }
 
@@ -2297,33 +2332,53 @@
           text-overflow: ellipsis !important;
         }
         .raja-stars-box {
-          top: calc(env(safe-area-inset-top, 0px) + 38px) !important;
+          top: calc(env(safe-area-inset-top, 0px) + 8px) !important;
+          bottom: auto !important;
         }
         #zoneToast, .heritage-announcement-card, #placeCard {
-          top: calc(env(safe-area-inset-top, 0px) + 66px) !important;
-          max-width: min(46vw, 380px) !important;
-          padding: 3px 14px !important;
+          top: calc(env(safe-area-inset-top, 0px) + 8px) !important;
+          bottom: auto !important;
+          height: auto !important;
+          max-height: 32px !important;
+          max-width: min(44vw, 360px) !important;
+          padding: 2px 12px !important;
         }
-        .zone-sub { max-width: 44vw !important; }
+        .zone-sub { max-width: 42vw !important; display: none !important; }
         #alerts {
-          top: calc(env(safe-area-inset-top, 0px) + 112px) !important;
+          top: calc(env(safe-area-inset-top, 0px) + 40px) !important;
+          bottom: auto !important;
+          max-height: 34px !important;
           max-width: min(46vw, 380px) !important;
         }
         #dialogue {
-          top: calc(env(safe-area-inset-top, 0px) + 146px) !important;
+          top: calc(env(safe-area-inset-top, 0px) + 40px) !important;
+          bottom: auto !important;
+          height: auto !important;
+          max-height: 34px !important;
           max-width: min(46vw, 380px) !important;
-          font-size: 12px !important;
-          padding: 3px 12px !important;
+          font-size: 11.5px !important;
+          padding: 2px 12px !important;
+          white-space: nowrap !important;
+          overflow: hidden !important;
+          text-overflow: ellipsis !important;
         }
         .dhaka-humor-box {
-          top: calc(env(safe-area-inset-top, 0px) + 180px) !important;
+          top: calc(env(safe-area-inset-top, 0px) + 40px) !important;
+          bottom: auto !important;
+          height: auto !important;
+          max-height: 34px !important;
           max-width: min(46vw, 380px) !important;
-          font-size: 12px !important;
-          padding: 4px 14px !important;
-          white-space: normal !important;
+          font-size: 11.5px !important;
+          padding: 2px 12px !important;
+          white-space: nowrap !important;
+          overflow: hidden !important;
+          text-overflow: ellipsis !important;
         }
         .bribe-btn {
-          top: calc(env(safe-area-inset-top, 0px) + 214px) !important;
+          top: calc(env(safe-area-inset-top, 0px) + 72px) !important;
+          bottom: auto !important;
+          font-size: 11px !important;
+          padding: 4px 12px !important;
         }
 
         /* Ground: compact thumb clusters hugging the edges (notch-safe) */
@@ -2560,6 +2615,21 @@
   }
 
   // ----------------------------------------------------
+  // Unified Studio Subtitle & Dialogue System (Zero Road Clutter, Zero Overlap)
+  // ----------------------------------------------------
+  function showStudioDialogue(msg, duration = 2500) {
+    const dialogueBox = document.getElementById('dialogue');
+    if (!dialogueBox) return;
+    const humorBox = document.getElementById('dhakaHumorBox');
+    if (humorBox) humorBox.classList.remove('active');
+    dialogueBox.textContent = msg;
+    dialogueBox.hidden = false;
+    if (dialogueBox._hTimer) clearTimeout(dialogueBox._hTimer);
+    dialogueBox._hTimer = setTimeout(() => { dialogueBox.hidden = true; }, duration);
+  }
+  window.showStudioDialogue = showStudioDialogue;
+
+  // ----------------------------------------------------
   // 5. Vehicle Application & Scene Hook
   // ----------------------------------------------------
   function applyVehicleToPlayer(kind) {
@@ -2578,13 +2648,8 @@
       console.warn('Vehicle 3D model switch error:', err);
     }
 
-    // Show visual confirmation toast
-    const dialogueBox = document.getElementById('dialogue');
-    if (dialogueBox) {
-      dialogueBox.textContent = `🚗 সিলেক্টেড: ${cfg.name} — ${cfg.subtitle}`;
-      dialogueBox.hidden = false;
-      setTimeout(() => { dialogueBox.hidden = true; }, 2400);
-    }
+    // Show visual confirmation toast in clean upper sky slot
+    showStudioDialogue(`🚗 সিলেক্টেড: ${cfg.name} — ${cfg.subtitle}`, 2400);
 
     // Play subtle engine rev cue
     if (window.RastarRaja.audioCtx) {
@@ -2609,14 +2674,8 @@
   // 6. Bengali Voice / Funny Dialogue Manager
   // ----------------------------------------------------
   function triggerFunnyDialogue() {
-    const dialogueBox = document.getElementById('dialogue');
-    if (!dialogueBox) return;
     const q = FUNNY_QUOTES[Math.floor(Math.random() * FUNNY_QUOTES.length)];
-    dialogueBox.textContent = q;
-    dialogueBox.hidden = false;
-    dialogueBox.style.animation = 'none';
-    setTimeout(() => { dialogueBox.style.animation = ''; }, 10);
-    setTimeout(() => { dialogueBox.hidden = true; }, 3200);
+    showStudioDialogue(q, 2600);
   }
 
   window.addEventListener('raja_funny_say', triggerFunnyDialogue);
@@ -2773,17 +2832,12 @@
       const now = Date.now();
       if (num > 0 && now - this.lastStarNotice > 5000) {
         this.lastStarNotice = now;
-        const dialogueBox = document.getElementById('dialogue');
-        if (dialogueBox) {
-          let msg = "⚠️ ট্রাফিক পুলিশ নজর রাখছে!";
-          if (num === 2) msg = "🚨 ২ স্টার: ট্রাফিক পুলিশ পিছু নিচ্ছে!";
-          else if (num === 3) msg = "🚨 ৩ স্টার: পুলিশের পিকআপ সাইরেন বাজাচ্ছে!";
-          else if (num === 4) msg = "🚨 ৪ স্টার: পুলিশ চারপাশ ঘিরে ফেলছে!";
-          else if (num === 5) msg = "🔥 ৫ স্টার: সামনে রোড ব্যারিকেড অ্যালার্ট!";
-          dialogueBox.textContent = msg;
-          dialogueBox.hidden = false;
-          setTimeout(() => { dialogueBox.hidden = true; }, 3200);
-        }
+        let msg = "⚠️ ট্রাফিক পুলিশ নজর রাখছে!";
+        if (num === 2) msg = "🚨 ২ স্টার: ট্রাফিক পুলিশ পিছু নিচ্ছে!";
+        else if (num === 3) msg = "🚨 ৩ স্টার: পুলিশের পিকআপ সাইরেন বাজাচ্ছে!";
+        else if (num === 4) msg = "🚨 ৪ স্টার: পুলিশ চারপাশ ঘিরে ফেলছে!";
+        else if (num === 5) msg = "🔥 ৫ স্টার: সামনে রোড ব্যারিকেড অ্যালার্ট!";
+        showStudioDialogue(msg, 2600);
       }
     },
 
@@ -2865,12 +2919,7 @@
         }
       } catch(e) {}
 
-      const dialogueBox = document.getElementById('dialogue');
-      if (dialogueBox) {
-        dialogueBox.textContent = "👮 সার্জেন্ট: 'আইচ্ছা যান মামা, চা-পানি পাইসি! এইবার মাফ!'";
-        dialogueBox.hidden = false;
-        setTimeout(() => { dialogueBox.hidden = true; }, 3500);
-      }
+      showStudioDialogue("👮 সার্জেন্ট: 'আইচ্ছা যান মামা, চা-পানি পাইসি! এইবার মাফ!'", 2600);
     }
   };
 
@@ -3617,18 +3666,6 @@
         if (typeof DhakaStreetHumorSystem !== 'undefined' && DhakaStreetHumorSystem.sayRandom) {
           DhakaStreetHumorSystem.sayRandom(DhakaStreetHumorSystem.hornDialogues, 'horn');
         }
-
-        const quotes = [
-          "🔊 'মামা সাইড দেন, ব্রেক নাই!'",
-          "🔊 'ডানে চাপেন ওস্তাদ! সোজা গাবতলী!'",
-          "🔊 'প্যাঁক প্যাঁক প্যাঁক! সামনে থাইকা সরেন!'"
-        ];
-        const dialogueBox = document.getElementById('dialogue');
-        if (dialogueBox) {
-          dialogueBox.textContent = quotes[Math.floor(Math.random() * quotes.length)];
-          dialogueBox.hidden = false;
-          setTimeout(() => { dialogueBox.hidden = true; }, 2600);
-        }
       }
     },
 
@@ -3779,35 +3816,22 @@
     },
 
     triggerPickup(type, p) {
-      const dialogueBox = document.getElementById('dialogue');
       const at = window.__at;
 
       if (type === 'shield') {
         this.godModeActive = true;
         this.godModeTimer = 7.0;
-        if (dialogueBox) {
-          dialogueBox.textContent = "🛡️ রাজার ঢাল অ্যাক্টিভ! যেকোনো গাড়ি উড়িয়ে দিন!";
-          dialogueBox.hidden = false;
-          setTimeout(() => { dialogueBox.hidden = true; }, 3200);
-        }
+        showStudioDialogue("🛡️ রাজার ঢাল অ্যাক্টিভ! যেকোনো গাড়ি উড়িয়ে দিন!", 2800);
         if (at && at.sfx && at.sfx.technologia) at.sfx.technologia();
       } else if (type === 'battery') {
         p.charge = 1.0;
-        if (dialogueBox) {
-          dialogueBox.textContent = "⚡ ফুল চার্জ! ব্যাটারি ১০০% রিচার্জড!";
-          dialogueBox.hidden = false;
-          setTimeout(() => { dialogueBox.hidden = true; }, 2600);
-        }
+        showStudioDialogue("⚡ ফুল চার্জ! ব্যাটারি ১০০% রিচার্জড!", 2400);
         if (at && at.sfx && at.sfx.chime) at.sfx.chime();
       } else if (type === 'cash') {
         CockpitHUD.fareAmount += 5000;
         const fareEl = document.getElementById('fareVal');
         if (fareEl) fareEl.textContent = `৳${Math.floor(CockpitHUD.fareAmount).toLocaleString('bn-BD')}`;
-        if (dialogueBox) {
-          dialogueBox.textContent = "💰 নগদ চাঁদা আদায়: ৳৫,০০০ যোগ হয়েছে!";
-          dialogueBox.hidden = false;
-          setTimeout(() => { dialogueBox.hidden = true; }, 2600);
-        }
+        showStudioDialogue("💰 নগদ চাঁদা আদায়: ৳৫,০০০ যোগ হয়েছে!", 2400);
       }
     }
   };
@@ -4341,17 +4365,12 @@
         const dist = Math.hypot(p.x - bus.x, p.z - bus.z);
         if (dist < 6.8 && now - this.lastShoutT > 5500) {
           this.lastShoutT = now;
-          const dialogueBox = document.getElementById('dialogue');
-          if (dialogueBox) {
-            const shouts = [
-              "🔊 বাস হেলপার: 'ওস্তাদ ডানে চাপেন! মিরপুর ১০! গাবতলী সোজা!'",
-              "🔊 বাস হেলপার: 'মামা সাইড দেন! প্যাসেঞ্জার নামবে!'",
-              "🔊 বাস হেলপার: 'এই ড্রাইভার দেইখা চালান! ব্রেক নাই নাকি!'"
-            ];
-            dialogueBox.textContent = shouts[Math.floor(Math.random() * shouts.length)];
-            dialogueBox.hidden = false;
-            setTimeout(() => { dialogueBox.hidden = true; }, 2600);
-          }
+          const shouts = [
+            "🔊 বাস হেলপার: 'ওস্তাদ ডানে চাপেন! মিরপুর ১০! গাবতলী সোজা!'",
+            "🔊 বাস হেলপার: 'মামা সাইড দেন! প্যাসেঞ্জার নামবে!'",
+            "🔊 বাস হেলপার: 'এই ড্রাইভার দেইখা চালান! ব্রেক নাই নাকি!'"
+          ];
+          showStudioDialogue(shouts[Math.floor(Math.random() * shouts.length)], 2400);
         }
       }
     }
@@ -5615,7 +5634,7 @@
       if (this.toastTimer) clearTimeout(this.toastTimer);
       this.toastTimer = setTimeout(() => {
         if (this.toastEl) this.toastEl.classList.remove('active');
-      }, 4200);
+      }, 2200);
     },
 
     update(p, dt, inPlay) {
@@ -7463,6 +7482,10 @@
       const now = performance.now();
       if (now - this.lastSayT < 1800 && category !== 'important') return;
       this.lastSayT = now;
+
+      // Mutual exclusion: dismiss #dialogue so messages never double up
+      const dlg = document.getElementById('dialogue');
+      if (dlg) dlg.hidden = true;
 
       if (this.textEl && this.boxEl) {
         this.textEl.textContent = msg;

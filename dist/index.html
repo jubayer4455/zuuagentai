@@ -275,7 +275,7 @@ button:focus-visible { outline: 3px solid var(--led-cyan); outline-offset: 3px; 
 #ticker .item.still { right: 0; overflow: hidden; text-overflow: ellipsis; } /* reduced motion: no crawl, a line at a time */
 #dialogue, #hint { position: absolute; left: 50%; transform: translateX(-50%); width: max-content; box-sizing: border-box; max-width: min(480px, 88vw); padding: 6px 14px; border-radius: 9px; background: rgba(255, 249, 237, .46); color: #1d2f2b; font-size: 17px; font-weight: 700; text-align: center; pointer-events: none;
   text-shadow: 0 0 6px rgba(255, 252, 244, .9), 0 0 2px rgba(255, 252, 244, .9); } /* see-through: a soft halo keeps the letters readable over any background */
-#dialogue { bottom: calc(var(--band) + 22px + env(safe-area-inset-bottom, 0px)); }
+#dialogue { top: calc(env(safe-area-inset-top, 0px) + 48px); bottom: auto; }
 #hint { top: calc(72px + env(safe-area-inset-top, 0px)); }
 #floaters { top: calc(94px + env(safe-area-inset-top, 0px)); left: 16px; right: auto; bottom: auto; width: 165px; height: 55px; } /* just under the score, which ends at about 90px */
 .floater { position: relative; transform: none; text-align: left; white-space: normal; animation: scoreFade 1.5s ease-out forwards; }
@@ -853,7 +853,7 @@ h1.title { text-shadow: 3px 3px 0 #ae2941, 6px 6px 0 #14372f; }
 }
 /* upright, the two groups leave the spoken line no room between them at the bottom, so it sits above them */
 @media (min-width: 700px) and (min-height: 600px) and (orientation: portrait) {
-  #app:has(#touch:not([hidden])) #dialogue { bottom: calc(var(--band) + 8vh + 270px + env(safe-area-inset-bottom, 0px)); }
+  #app:has(#touch:not([hidden])) #dialogue { top: calc(env(safe-area-inset-top, 0px) + 48px); bottom: auto; }
 }
 /* the masthead's vowel signs (ৈ, ি) rise above its line and the scrolling story clipped their tops: the room comes from
    inside the scroller, taken off the page's own top padding, so the page is no taller */
