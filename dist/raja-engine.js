@@ -643,33 +643,62 @@
         max-width: min(88vw, 420px) !important;
       }
 
-      /* Desktop Driving Controls Hint: Placed at bottom center to keep top center 100% clean for Wanted Stars & Alerts */
+      /* Desktop Driving Controls Hint: Ultra-sleek floating pill bar above the bottom ticker */
       #controls {
         position: fixed !important;
-        bottom: calc(env(safe-area-inset-bottom, 0px) + 52px) !important;
+        bottom: calc(var(--band, 38px) + 10px) !important;
         top: auto !important;
         left: 50% !important;
         transform: translateX(-50%) !important;
         z-index: 95 !important;
-        background: rgba(11, 17, 32, 0.92) !important;
+        background: rgba(11, 17, 32, 0.88) !important;
         border: 1px solid rgba(255, 215, 0, 0.35) !important;
-        border-radius: 12px !important;
-        box-shadow: 0 4px 18px rgba(0, 0, 0, 0.65) !important;
-        font-size: 13px !important;
-        padding: 6px 14px 7px !important;
-        backdrop-filter: blur(10px) !important;
-        transition: opacity 0.35s ease, transform 0.35s ease !important;
+        border-radius: 999px !important;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.7) !important;
+        font-size: 11px !important;
+        padding: 4px 16px !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        gap: 6px 14px !important;
+        max-width: min(92vw, 560px) !important;
+        backdrop-filter: blur(12px) !important;
+        -webkit-backdrop-filter: blur(12px) !important;
+        transition: opacity 0.3s ease, transform 0.3s ease !important;
+        pointer-events: auto !important;
+        cursor: pointer !important;
+      }
+      #controls .t {
+        display: none !important; /* Hide bulky title to keep HUD ultra-sleek */
+      }
+      #controls .row {
+        display: inline-flex !important;
+        align-items: center !important;
+        gap: 3px !important;
+        white-space: nowrap !important;
+        font-size: 11px !important;
+        color: #cbd5e1 !important;
+      }
+      #controls kbd {
+        font-family: inherit !important;
+        font-size: 10px !important;
+        font-weight: 800 !important;
+        background: rgba(255, 255, 255, 0.14) !important;
+        border: 1px solid rgba(255, 255, 255, 0.35) !important;
+        border-radius: 4px !important;
+        padding: 0 4px !important;
+        color: #ffd400 !important;
       }
       #controls.fade {
         opacity: 0 !important;
         pointer-events: none !important;
-        transform: translateX(-50%) translateY(12px) !important;
+        transform: translateX(-50%) translateY(14px) !important;
       }
 
       /* TOP-RIGHT: Ultra-Sleek Circular Mini-Map Radar HUD (AAA Studio Quality) */
       .mini-map-radar {
         position: fixed !important;
-        top: calc(env(safe-area-inset-top, 0px) + 52px) !important;
+        top: calc(env(safe-area-inset-top, 0px) + 14px) !important;
         right: 14px !important;
         left: auto !important;
         width: 88px !important;
@@ -817,31 +846,27 @@
         z-index: 91 !important;
       }
 
-      /* BOTTOM-RIGHT: Digital Cockpit Speedometer Gauge (Desktop Only) */
+      /* BOTTOM-RIGHT: Digital Cockpit Speedometer Gauge */
       .raja-gauge {
         position: fixed !important;
-        bottom: 24px !important;
-        right: 24px !important;
+        bottom: calc(var(--band, 38px) + 14px) !important;
+        right: 20px !important;
         left: auto !important;
-        width: 108px !important;
-        height: 108px !important;
-        background: rgba(11, 17, 32, 0.88) !important;
-        border: 2px solid rgba(255, 203, 31, 0.45) !important;
+        width: 100px !important;
+        height: 100px !important;
+        background: radial-gradient(circle at 50% 50%, rgba(15, 23, 42, 0.95) 50%, rgba(2, 6, 23, 0.98) 100%) !important;
+        border: 2px solid rgba(255, 255, 255, 0.22) !important;
         border-radius: 50% !important;
-        backdrop-filter: blur(10px) !important;
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.7) !important;
+        backdrop-filter: blur(14px) !important;
+        -webkit-backdrop-filter: blur(14px) !important;
+        box-shadow: 0 8px 28px rgba(0, 0, 0, 0.75), 0 0 16px rgba(0, 240, 255, 0.25), inset 0 0 14px rgba(0, 0, 0, 0.9) !important;
         z-index: 90 !important;
         pointer-events: none !important;
-        transition: border-color 0.3s, box-shadow 0.3s !important;
-      }
-      @media (max-width: 899px) {
-        .raja-gauge {
-          display: none !important; /* Hide on mobile so it never covers touch controls! */
-        }
+        transition: border-color 0.25s, box-shadow 0.25s, transform 0.2s !important;
       }
       .raja-gauge.overspeed {
         border-color: #ff0055 !important;
-        box-shadow: 0 0 25px rgba(255, 0, 85, 0.8) !important;
+        box-shadow: 0 8px 28px rgba(0, 0, 0, 0.8), 0 0 25px rgba(255, 0, 85, 0.8), inset 0 0 16px rgba(255, 0, 85, 0.3) !important;
       }
       .gauge-svg {
         width: 100% !important;
@@ -867,27 +892,57 @@
       }
       .gauge-readout {
         position: absolute !important;
-        bottom: 20px !important;
+        bottom: 14px !important;
         left: 0 !important;
         right: 0 !important;
         text-align: center !important;
         display: flex !important;
         flex-direction: column !important;
         align-items: center !important;
+        pointer-events: none !important;
       }
       .speed-number {
         font-family: 'Baloo Da 2', monospace !important;
         font-weight: 800 !important;
         font-size: 22px !important;
-        color: #fff !important;
+        color: #ffffff !important;
         line-height: 1 !important;
         text-shadow: 0 0 10px rgba(255, 203, 31, 0.8) !important;
       }
       .speed-unit {
-        font-size: 8.5px !important;
-        font-weight: 700 !important;
+        font-size: 8px !important;
+        font-weight: 800 !important;
         letter-spacing: 1px !important;
-        color: #4fc3f7 !important;
+        color: #38bdf8 !important;
+        margin-top: 1px !important;
+      }
+      .gauge-gear {
+        font-size: 8.5px !important;
+        font-weight: 800 !important;
+        padding: 0 5px !important;
+        border-radius: 4px !important;
+        margin-top: 2px !important;
+        letter-spacing: 0.5px !important;
+      }
+      .gauge-gear.neutral {
+        color: #94a3b8 !important;
+        background: rgba(255, 255, 255, 0.08) !important;
+      }
+      .gauge-gear.drive {
+        color: #38ef7d !important;
+        background: rgba(56, 239, 125, 0.15) !important;
+        border: 1px solid rgba(56, 239, 125, 0.3) !important;
+      }
+      .gauge-gear.overspeed {
+        color: #ff0055 !important;
+        background: rgba(255, 0, 85, 0.2) !important;
+        border: 1px solid rgba(255, 0, 85, 0.4) !important;
+      }
+      .gauge-gear.boost {
+        color: #ff00ff !important;
+        background: rgba(255, 0, 255, 0.25) !important;
+        border: 1px solid rgba(255, 0, 255, 0.5) !important;
+      }
       }
 
       /* Heritage Architectural Announcement Card (Cleanly positioned at Top Center) */
@@ -1590,12 +1645,12 @@
       /* 16. Unified Top Actions Capsule Bar (Clean HUD, Zero Clutter) */
       .raja-top-action-capsule {
         position: fixed !important;
-        top: calc(env(safe-area-inset-top, 0px) + 12px) !important;
-        right: 14px !important;
-        z-index: 1000 !important;
+        top: calc(env(safe-area-inset-top, 0px) + 14px) !important;
+        right: 112px !important;
+        z-index: 93 !important;
         display: inline-flex !important;
         align-items: center !important;
-        background: rgba(11, 17, 32, 0.88) !important;
+        background: rgba(11, 17, 32, 0.9) !important;
         border: 1px solid rgba(255, 215, 0, 0.45) !important;
         box-shadow: 0 4px 18px rgba(0, 0, 0, 0.55), 0 0 12px rgba(0, 240, 255, 0.2) !important;
         border-radius: 26px !important;
@@ -2365,28 +2420,30 @@
         <svg class="gauge-svg" viewBox="0 0 160 160">
           <defs>
             <linearGradient id="gaugeGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stop-color="#4fc3f7" />
-              <stop offset="60%" stop-color="#ffcb1f" />
+              <stop offset="0%" stop-color="#00f0ff" />
+              <stop offset="55%" stop-color="#ffd400" />
               <stop offset="100%" stop-color="#ff0055" />
             </linearGradient>
           </defs>
           <circle class="gauge-bg" cx="80" cy="80" r="66"></circle>
           <path class="gauge-arc" d="M 28 126 A 66 66 0 1 1 132 126"></path>
           <g class="gauge-ticks">
-            <line x1="28" y1="126" x2="38" y2="116" stroke="#4fc3f7" stroke-width="2"/>
-            <line x1="20" y1="80" x2="32" y2="80" stroke="#4fc3f7" stroke-width="2"/>
-            <line x1="42" y1="42" x2="50" y2="50" stroke="#4fc3f7" stroke-width="2"/>
-            <line x1="80" y1="14" x2="80" y2="28" stroke="#ffcb1f" stroke-width="3"/>
-            <line x1="118" y1="42" x2="110" y2="50" stroke="#ff4b4b" stroke-width="2"/>
-            <line x1="140" y1="80" x2="128" y2="80" stroke="#ff4b4b" stroke-width="2"/>
-            <line x1="132" y1="126" x2="122" y2="116" stroke="#ff0055" stroke-width="3"/>
+            <line x1="28" y1="126" x2="38" y2="116" stroke="#00f0ff" stroke-width="2.5"/>
+            <line x1="20" y1="80" x2="32" y2="80" stroke="#00f0ff" stroke-width="2.5"/>
+            <line x1="42" y1="42" x2="50" y2="50" stroke="#00f0ff" stroke-width="2.5"/>
+            <line x1="80" y1="14" x2="80" y2="28" stroke="#ffd400" stroke-width="3"/>
+            <line x1="118" y1="42" x2="110" y2="50" stroke="#ff4b4b" stroke-width="2.5"/>
+            <line x1="140" y1="80" x2="128" y2="80" stroke="#ff4b4b" stroke-width="2.5"/>
+            <line x1="132" y1="126" x2="122" y2="116" stroke="#ff0055" stroke-width="3.5"/>
           </g>
-          <line id="gaugeNeedle" class="gauge-needle" x1="80" y1="80" x2="80" y2="24"></line>
-          <circle cx="80" cy="80" r="7" fill="#ffd400"></circle>
+          <line id="gaugeNeedle" class="gauge-needle" x1="80" y1="80" x2="80" y2="22"></line>
+          <circle cx="80" cy="80" r="7.5" fill="#ffd400"></circle>
+          <circle cx="80" cy="80" r="3.5" fill="#0b1120"></circle>
         </svg>
         <div class="gauge-readout">
           <span id="speedVal" class="speed-number">০</span>
           <span class="speed-unit">KM/H</span>
+          <span id="gaugeGear" class="gauge-gear drive">⚡ D</span>
         </div>
       `;
       hud.appendChild(gauge);
@@ -2438,6 +2495,24 @@
       const speedValEl = document.getElementById('speedVal');
       if (speedValEl) {
         speedValEl.textContent = kmh;
+      }
+
+      const gearEl = document.getElementById('gaugeGear');
+      if (gearEl) {
+        const isBoost = (window.__isNitroActive || false);
+        if (isBoost) {
+          gearEl.textContent = '🚀 BOOST';
+          gearEl.className = 'gauge-gear boost';
+        } else if (kmh >= 90) {
+          gearEl.textContent = '🔥 TOP';
+          gearEl.className = 'gauge-gear overspeed';
+        } else if (kmh > 0) {
+          gearEl.textContent = '⚡ D';
+          gearEl.className = 'gauge-gear drive';
+        } else {
+          gearEl.textContent = '🅿️ N';
+          gearEl.className = 'gauge-gear neutral';
+        }
       }
 
       const gaugeEl = document.getElementById('cockpitGauge');
@@ -8355,11 +8430,11 @@
       }
     }, { passive: true });
     window.addEventListener('pointerdown', (e) => {
-      if (e.target && (e.target.closest('#touch') || e.target.closest('#hud') || e.target.id === 'playBtn')) {
+      if (e.target && (e.target.closest('#touch') || e.target.closest('#hud') || e.target.id === 'playBtn' || e.target.closest('#controls'))) {
         dismissControls();
       }
     }, { passive: true });
-    setTimeout(dismissControls, 4500);
+    setTimeout(dismissControls, 2800);
   }
 
   // Initialize UI once DOM is ready
