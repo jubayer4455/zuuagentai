@@ -486,16 +486,20 @@
         z-index: 92 !important;
       }
       #lossBox {
-        background: rgba(11, 17, 32, 0.88) !important;
-        border: 1.5px solid rgba(255, 203, 31, 0.5) !important;
-        border-radius: 12px !important;
+        background: rgba(11, 17, 32, 0.92) !important;
+        border: 1.5px solid rgba(255, 203, 31, 0.55) !important;
+        border-radius: 14px !important;
         padding: 6px 12px !important;
-        backdrop-filter: blur(10px) !important;
-        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6) !important;
+        backdrop-filter: blur(14px) !important;
+        -webkit-backdrop-filter: blur(14px) !important;
+        box-shadow: 0 4px 18px rgba(0, 0, 0, 0.65), inset 0 1px 0 rgba(255, 255, 255, 0.08) !important;
         display: flex !important;
         flex-direction: column !important;
         gap: 2px !important;
-        min-width: 160px !important;
+        width: 172px !important;
+        min-width: 172px !important;
+        max-width: 172px !important;
+        box-sizing: border-box !important;
         pointer-events: none !important;
       }
       #lossBox .lbl {
@@ -546,17 +550,20 @@
       }
 
       #battBox {
-        background: rgba(11, 17, 32, 0.88) !important;
-        border: 1.5px solid rgba(46, 230, 255, 0.4) !important;
-        border-radius: 12px !important;
-        padding: 5px 8px !important;
-        backdrop-filter: blur(10px) !important;
-        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6) !important;
+        background: rgba(11, 17, 32, 0.92) !important;
+        border: 1.5px solid rgba(46, 230, 255, 0.45) !important;
+        border-radius: 14px !important;
+        padding: 6px 10px !important;
+        backdrop-filter: blur(14px) !important;
+        -webkit-backdrop-filter: blur(14px) !important;
+        box-shadow: 0 4px 18px rgba(0, 0, 0, 0.65), inset 0 1px 0 rgba(255, 255, 255, 0.08) !important;
         display: flex !important;
         flex-wrap: wrap !important;
         align-items: center !important;
         gap: 4px 6px !important;
-        max-width: 175px !important;
+        width: 172px !important;
+        min-width: 172px !important;
+        max-width: 172px !important;
         pointer-events: auto !important;
         box-sizing: border-box !important;
       }
@@ -567,7 +574,7 @@
         white-space: nowrap !important;
       }
       #battBox .bar {
-        width: 50px !important;
+        width: 52px !important;
         height: 7px !important;
         background: rgba(0, 0, 0, 0.6) !important;
         border: 1px solid rgba(255, 255, 255, 0.3) !important;
@@ -621,6 +628,21 @@
         display: none !important; /* Integrated into #lossBox */
       }
 
+      /* Alert Notifications Stack (Level 2: directly underneath Wanted stars) */
+      #alerts {
+        position: fixed !important;
+        top: calc(env(safe-area-inset-top, 0px) + 44px) !important;
+        left: 50% !important;
+        transform: translateX(-50%) !important;
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+        gap: 4px !important;
+        z-index: 95 !important;
+        pointer-events: none !important;
+        max-width: min(88vw, 420px) !important;
+      }
+
       /* Desktop Driving Controls Hint: Placed at bottom center to keep top center 100% clean for Wanted Stars & Alerts */
       #controls {
         position: fixed !important;
@@ -629,100 +651,104 @@
         left: 50% !important;
         transform: translateX(-50%) !important;
         z-index: 95 !important;
-        background: rgba(11, 17, 32, 0.88) !important;
+        background: rgba(11, 17, 32, 0.92) !important;
         border: 1px solid rgba(255, 215, 0, 0.35) !important;
-        box-shadow: 0 4px 18px rgba(0, 0, 0, 0.55) !important;
+        border-radius: 12px !important;
+        box-shadow: 0 4px 18px rgba(0, 0, 0, 0.65) !important;
         font-size: 13px !important;
         padding: 6px 14px 7px !important;
-        backdrop-filter: blur(8px) !important;
+        backdrop-filter: blur(10px) !important;
+        transition: opacity 0.35s ease, transform 0.35s ease !important;
+      }
+      #controls.fade {
+        opacity: 0 !important;
+        pointer-events: none !important;
+        transform: translateX(-50%) translateY(12px) !important;
       }
 
-      /* TOP-RIGHT: Dedicated Mini-Map Cyber Radar (Cleanly stacked under Top Actions Capsule) */
+      /* TOP-RIGHT: Ultra-Sleek Circular Mini-Map Radar HUD (AAA Studio Quality) */
       .mini-map-radar {
         position: fixed !important;
-        top: calc(env(safe-area-inset-top, 0px) + 54px) !important;
+        top: calc(env(safe-area-inset-top, 0px) + 52px) !important;
         right: 14px !important;
         left: auto !important;
-        width: auto !important;
+        width: 88px !important;
+        height: 88px !important;
         display: flex !important;
         flex-direction: column !important;
         align-items: center !important;
-        background: rgba(11, 17, 32, 0.9) !important;
-        border: 2px solid #00f0ff !important;
-        border-radius: 14px !important;
-        padding: 6px 8px !important;
-        box-shadow: 0 0 20px rgba(0, 240, 255, 0.4), 0 8px 32px rgba(0, 0, 0, 0.8) !important;
-        backdrop-filter: blur(10px) !important;
+        justify-content: center !important;
+        background: radial-gradient(circle at 50% 50%, rgba(15, 23, 42, 0.96) 55%, rgba(2, 6, 23, 0.98) 100%) !important;
+        border: 2px solid rgba(255, 255, 255, 0.22) !important;
+        border-radius: 50% !important;
+        padding: 0 !important;
+        box-shadow: 0 8px 28px rgba(0, 0, 0, 0.75), 0 0 16px rgba(0, 240, 255, 0.25), inset 0 0 14px rgba(0, 0, 0, 0.9) !important;
+        backdrop-filter: blur(14px) !important;
+        -webkit-backdrop-filter: blur(14px) !important;
         z-index: 92 !important;
         cursor: pointer !important;
         pointer-events: auto !important;
-        transition: transform 0.2s ease !important;
+        transition: transform 0.2s ease, border-color 0.2s ease !important;
       }
       .mini-map-radar:hover {
-        transform: scale(1.04) !important;
+        transform: scale(1.05) !important;
+        border-color: rgba(0, 240, 255, 0.6) !important;
       }
-      .mini-map-radar.minimized #radarCanvas,
-      .mini-map-radar.minimized .radar-gps-hint {
-        display: none !important;
-      }
-      .radar-header {
-        display: flex !important;
-        align-items: center !important;
-        justify-content: space-between !important;
-        width: 100% !important;
-        margin-bottom: 4px !important;
-        padding: 0 2px !important;
-      }
-      .radar-live-dot {
-        width: 7px !important;
-        height: 7px !important;
-        background: #00f0ff !important;
-        border-radius: 50% !important;
-        box-shadow: 0 0 8px #00f0ff !important;
-        animation: recBlink 0.9s infinite alternate !important;
-      }
-      .radar-title {
-        font-family: inherit !important;
-        font-size: 11px !important;
-        font-weight: 800 !important;
-        color: #00f0ff !important;
-        letter-spacing: 0.5px !important;
-      }
-      .radar-heading {
-        font-family: monospace !important;
-        font-size: 11px !important;
-        font-weight: 900 !important;
-        color: #ffd400 !important;
+      .mini-map-radar .radar-header,
+      .mini-map-radar .radar-title,
+      .mini-map-radar .radar-live-dot,
+      .mini-map-radar #radarHeading {
+        display: none !important; /* Hide old rectangular prototype header */
       }
       #radarCanvas {
+        width: 84px !important;
+        height: 84px !important;
         border-radius: 50% !important;
-        background: #070d18 !important;
+        background: transparent !important;
+        display: block !important;
       }
+      /* Compact floating surface pill beneath the circular radar */
       .radar-gps-hint {
-        font-size: 10.5px !important;
+        position: absolute !important;
+        bottom: -22px !important;
+        left: 50% !important;
+        transform: translateX(-50%) !important;
+        font-size: 9.5px !important;
         font-weight: 700 !important;
-        color: #ffd400 !important;
-        margin-top: 3px !important;
-        text-shadow: 0 1px 4px rgba(0,0,0,0.9) !important;
+        color: #38bdf8 !important;
+        background: rgba(11, 17, 32, 0.92) !important;
+        border: 1px solid rgba(56, 189, 248, 0.35) !important;
+        border-radius: 12px !important;
+        padding: 2px 8px !important;
+        text-shadow: 0 1px 3px rgba(0,0,0,0.8) !important;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.5) !important;
+        white-space: nowrap !important;
+        pointer-events: none !important;
       }
 
-      /* TOP-CENTER: Wanted Stars & Contextual Bribe */
+      /* TOP-CENTER: Wanted Stars (Slides in on crime, zero clutter at 0 stars) */
       .raja-stars-box {
         position: fixed !important;
         top: calc(env(safe-area-inset-top, 0px) + 12px) !important;
         left: 50% !important;
-        transform: translateX(-50%) !important;
+        transform: translateX(-50%) translateY(-35px) scale(0.9) !important;
+        opacity: 0 !important;
+        pointer-events: none !important;
         display: flex !important;
         flex-direction: column !important;
         align-items: center !important;
-        background: rgba(11, 17, 32, 0.88) !important;
-        border: 1.5px solid rgba(255, 203, 31, 0.4) !important;
-        padding: 3px 12px !important;
+        background: rgba(11, 17, 32, 0.92) !important;
+        border: 1.5px solid rgba(255, 203, 31, 0.5) !important;
+        padding: 2px 14px 4px !important;
         border-radius: 20px !important;
-        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6) !important;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.65) !important;
         z-index: 92 !important;
-        pointer-events: none !important;
-        transition: all 0.3s ease !important;
+        transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease !important;
+      }
+      .raja-stars-box.active {
+        opacity: 1 !important;
+        transform: translateX(-50%) translateY(0) scale(1) !important;
+        pointer-events: auto !important;
       }
       .raja-stars-box .stars-label {
         font-size: 10px !important;
@@ -864,17 +890,17 @@
         color: #4fc3f7 !important;
       }
 
-      /* Heritage Architectural Announcement Card */
+      /* Heritage Architectural Announcement Card (Cleanly positioned at Top Center) */
       .heritage-announcement-card {
         position: fixed !important;
-        top: calc(env(safe-area-inset-top, 0px) + 68px) !important;
+        top: calc(env(safe-area-inset-top, 0px) + 44px) !important;
         left: 50% !important;
-        transform: translateX(-50%) translateY(-20px) scale(0.92) !important;
-        background: rgba(15, 23, 42, 0.94) !important;
-        border: 2px solid #ffd400 !important;
-        border-radius: 20px !important;
-        padding: 10px 24px !important;
-        box-shadow: 0 0 30px rgba(255, 212, 0, 0.5), 0 8px 32px rgba(0, 0, 0, 0.85) !important;
+        transform: translateX(-50%) translateY(-20px) scale(0.94) !important;
+        background: rgba(11, 17, 32, 0.94) !important;
+        border: 1.5px solid #ffd400 !important;
+        border-radius: 16px !important;
+        padding: 6px 20px !important;
+        box-shadow: 0 8px 28px rgba(0, 0, 0, 0.7), 0 0 16px rgba(255, 212, 0, 0.3) !important;
         backdrop-filter: blur(14px) !important;
         z-index: 95 !important;
         display: flex !important;
@@ -884,27 +910,29 @@
         pointer-events: none !important;
         opacity: 0 !important;
         transition: all 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
+        max-width: min(88vw, 420px) !important;
+        text-align: center !important;
       }
       .heritage-announcement-card.active {
         opacity: 1 !important;
         transform: translateX(-50%) translateY(0) scale(1) !important;
       }
       .heritage-announcement-card .h-badge {
-        font-size: 11px !important;
+        font-size: 10px !important;
         font-weight: 800 !important;
         color: #38bdf8 !important;
-        letter-spacing: 1px !important;
+        letter-spacing: 0.8px !important;
         text-transform: uppercase !important;
       }
       .heritage-announcement-card .h-title {
-        font-size: 20px !important;
+        font-size: 17px !important;
         font-weight: 900 !important;
         color: #ffd400 !important;
-        text-shadow: 0 0 14px rgba(255, 212, 0, 0.8) !important;
+        text-shadow: 0 0 12px rgba(255, 212, 0, 0.7) !important;
       }
       .heritage-announcement-card .h-sub {
-        font-size: 12.5px !important;
-        color: #f1f5f9 !important;
+        font-size: 11.5px !important;
+        color: #cbd5e1 !important;
         font-weight: 600 !important;
       }
 
@@ -1295,29 +1323,36 @@
         }
         #lossBox {
           padding: 4px 8px !important;
-          min-width: 135px !important;
+          width: 140px !important;
+          min-width: 140px !important;
+          max-width: 140px !important;
         }
         #loss {
           font-size: 19px !important;
         }
         #battBox {
           padding: 3px 8px !important;
-          gap: 6px !important;
+          gap: 4px 6px !important;
+          width: 140px !important;
+          min-width: 140px !important;
+          max-width: 140px !important;
         }
         #battBox .bar {
-          width: 48px !important;
+          width: 44px !important;
         }
         .mini-map-radar {
           top: calc(env(safe-area-inset-top, 0px) + 46px) !important;
           right: 8px !important;
-          padding: 4px 6px !important;
-          transform: scale(0.85) !important;
+          padding: 0 !important;
+          transform: scale(0.82) !important;
           transform-origin: top right !important;
         }
         .raja-stars-box {
           top: calc(env(safe-area-inset-top, 0px) + 8px) !important;
           padding: 2px 8px !important;
-          transform: translateX(-50%) scale(0.85) !important;
+        }
+        .raja-stars-box.active {
+          transform: translateX(-50%) translateY(0) scale(0.88) !important;
         }
         #controls {
           display: none !important; /* Hide keyboard helper on touch screens */
@@ -1376,30 +1411,30 @@
       /* RASTAR RAJA v3.0: ZONE TOAST, SPEED BLUR & ROAD MICRO TOASTS */
       /* ============================================================ */
       #zoneToast {
-        position: fixed;
-        top: calc(env(safe-area-inset-top, 0px) + 68px);
-        left: 50%;
-        transform: translateX(-50%) translateY(-30px);
-        opacity: 0;
-        pointer-events: none;
-        z-index: 920;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        padding: 9px 24px;
-        border-radius: 9999px;
-        background: rgba(15, 23, 42, 0.94);
-        backdrop-filter: blur(14px);
-        -webkit-backdrop-filter: blur(14px);
-        border: 2px solid #00f0ff;
-        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.65), 0 0 24px rgba(0, 240, 255, 0.4);
-        transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.45s ease;
-        text-align: center;
-        max-width: 90vw;
+        position: fixed !important;
+        top: calc(env(safe-area-inset-top, 0px) + 44px) !important;
+        left: 50% !important;
+        transform: translateX(-50%) translateY(-24px) scale(0.95) !important;
+        opacity: 0 !important;
+        pointer-events: none !important;
+        z-index: 95 !important;
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+        padding: 6px 20px !important;
+        border-radius: 9999px !important;
+        background: rgba(11, 17, 32, 0.94) !important;
+        backdrop-filter: blur(14px) !important;
+        -webkit-backdrop-filter: blur(14px) !important;
+        border: 1.5px solid #00f0ff !important;
+        box-shadow: 0 8px 28px rgba(0, 0, 0, 0.7), 0 0 16px rgba(0, 240, 255, 0.35) !important;
+        transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.35s ease !important;
+        text-align: center !important;
+        max-width: min(90vw, 420px) !important;
       }
       #zoneToast.active {
-        transform: translateX(-50%) translateY(0);
-        opacity: 1;
+        transform: translateX(-50%) translateY(0) scale(1) !important;
+        opacity: 1 !important;
       }
       .zone-header {
         display: flex;
@@ -1470,8 +1505,8 @@
 
       @media (max-width: 768px) {
         #zoneToast {
-          top: calc(env(safe-area-inset-top, 0px) + 54px);
-          padding: 7px 16px;
+          top: calc(env(safe-area-inset-top, 0px) + 40px) !important;
+          padding: 5px 14px !important;
         }
         .zone-header {
           font-size: 13px;
@@ -1486,23 +1521,35 @@
 
       /* 15. Dhaka Humorous Comic Speech Bubble System */
       .dhaka-humor-box {
-        position: fixed;
-        top: 76px;
-        left: 50%;
-        transform: translateX(-50%) translateY(-22px) scale(0.85);
-        background: linear-gradient(135deg, rgba(15, 23, 42, 0.95), rgba(30, 41, 59, 0.98));
-        border: 2px solid #00f0ff;
-        border-radius: 20px;
-        padding: 9px 20px;
-        color: #ffffff;
-        font-family: 'Tiro Bangla', sans-serif;
-        font-size: 15px;
-        font-weight: 700;
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6), 0 0 20px rgba(0, 240, 255, 0.4);
-        pointer-events: none;
-        opacity: 0;
-        visibility: hidden;
-        transition: all 0.28s cubic-bezier(0.34, 1.56, 0.64, 1);
+        position: fixed !important;
+        top: calc(env(safe-area-inset-top, 0px) + 98px) !important;
+        left: 50% !important;
+        transform: translateX(-50%) translateY(-18px) scale(0.9) !important;
+        background: linear-gradient(135deg, rgba(15, 23, 42, 0.96), rgba(30, 41, 59, 0.98)) !important;
+        border: 1.5px solid #00f0ff !important;
+        border-radius: 18px !important;
+        padding: 7px 18px !important;
+        color: #ffffff !important;
+        font-family: 'Tiro Bangla', sans-serif !important;
+        font-size: 14px !important;
+        font-weight: 700 !important;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.65), 0 0 16px rgba(0, 240, 255, 0.3) !important;
+        backdrop-filter: blur(12px) !important;
+        -webkit-backdrop-filter: blur(12px) !important;
+        pointer-events: none !important;
+        opacity: 0 !important;
+        visibility: hidden !important;
+        transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
+        z-index: 94 !important;
+        text-align: center !important;
+        max-width: min(88vw, 420px) !important;
+        white-space: nowrap !important;
+      }
+      .dhaka-humor-box.active {
+        opacity: 1 !important;
+        visibility: visible !important;
+        transform: translateX(-50%) translateY(0) scale(1) !important;
+      }
         z-index: 9999;
         text-align: center;
         max-width: 90vw;
@@ -3705,7 +3752,7 @@
   };
 
   // ----------------------------------------------------
-  // 18. Modern 3D Cyberpunk Mini-Map Radar HUD
+  // 18. Ultra-Sleek Studio-Grade Circular Mini-Map Radar HUD
   // ----------------------------------------------------
   const MiniMapRadar = {
     canvas: null,
@@ -3722,13 +3769,8 @@
       this.container.className = 'mini-map-radar';
       this.container.style.display = 'none'; // Initially hidden when not playing
       this.container.innerHTML = `
-        <div class="radar-header">
-          <span class="radar-live-dot"></span>
-          <span class="radar-title">রাডার জিপিএস</span>
-          <span class="radar-heading" id="radarHeading">N</span>
-        </div>
         <canvas id="radarCanvas" width="96" height="96"></canvas>
-        <div class="radar-gps-hint" id="radarGpsHint">🛣️ রাজপথ ক্লিয়ার, টানেন!</div>
+        <div class="radar-gps-hint" id="radarGpsHint">🛣️ মসৃণ এক্সপ্রেসওয়ে</div>
       `;
       const hud = document.getElementById('hud');
       if (hud) hud.appendChild(this.container);
@@ -3757,69 +3799,91 @@
 
       ctx.clearRect(0, 0, w, h);
 
-      // Radar disc
+      // Save for circular clipping of the entire radar face
+      ctx.save();
       ctx.beginPath();
-      ctx.arc(cx, cy, 45, 0, Math.PI * 2);
-      ctx.fillStyle = 'rgba(11, 17, 32, 0.88)';
+      ctx.arc(cx, cy, 46, 0, Math.PI * 2);
+      ctx.fillStyle = '#060d17';
       ctx.fill();
-      ctx.lineWidth = 1.5;
-      ctx.strokeStyle = '#00f0ff';
-      ctx.stroke();
+      ctx.clip();
 
-      // Range Rings
-      ctx.strokeStyle = 'rgba(0, 240, 255, 0.2)';
+      // Subtle cyber radar grid background
+      ctx.strokeStyle = 'rgba(0, 240, 255, 0.14)';
       ctx.lineWidth = 1;
-      [16, 30, 44].forEach(r => {
+      [14, 28, 42].forEach(r => {
         ctx.beginPath();
         ctx.arc(cx, cy, r, 0, Math.PI * 2);
         ctx.stroke();
       });
 
-      // Crosshairs
+      // Reticle Crosshairs
+      ctx.strokeStyle = 'rgba(0, 240, 255, 0.12)';
       ctx.beginPath();
-      ctx.moveTo(cx, 4); ctx.lineTo(cx, 92);
-      ctx.moveTo(4, cy); ctx.lineTo(92, cy);
-      ctx.strokeStyle = 'rgba(0, 240, 255, 0.15)';
+      ctx.moveTo(cx, 2); ctx.lineTo(cx, 94);
+      ctx.moveTo(2, cy); ctx.lineTo(94, cy);
       ctx.stroke();
 
-      // Forward Road Track Corridor on Radar (Smooth vs Broken Road 25% vs Flyover)
-      const isBroken = window.__isBrokenRoad || false;
-      const isFlyover = (window.__flyoverElevation || 0) > 0.5;
+      // Live 360-degree rotating radar sweep line & phosphor glow trail
+      const sweepAngle = (performance.now() * 0.0022) % (Math.PI * 2);
       ctx.save();
       ctx.beginPath();
-      ctx.rect(cx - 10, cy - 42, 20, 84);
+      ctx.moveTo(cx, cy);
+      ctx.arc(cx, cy, 46, sweepAngle - 0.4, sweepAngle);
+      ctx.closePath();
+      const sweepGrad = ctx.createRadialGradient(cx, cy, 2, cx, cy, 46);
+      sweepGrad.addColorStop(0, 'rgba(0, 240, 255, 0)');
+      sweepGrad.addColorStop(1, 'rgba(0, 240, 255, 0.28)');
+      ctx.fillStyle = sweepGrad;
+      ctx.fill();
+
+      ctx.beginPath();
+      ctx.moveTo(cx, cy);
+      ctx.lineTo(cx + Math.cos(sweepAngle) * 46, cy + Math.sin(sweepAngle) * 46);
+      ctx.strokeStyle = 'rgba(0, 240, 255, 0.7)';
+      ctx.lineWidth = 1.2;
+      ctx.stroke();
+      ctx.restore();
+
+      // Forward Road Track Corridor on Radar (Smooth vs Broken Road 25% vs Flyover vs Monsoon Waterlogging)
+      const isBroken = window.__isBrokenRoad || false;
+      const isFlyover = (window.__flyoverElevation || 0) > 0.5;
+      const isWater = window.__isWaterlogged || false;
+
+      ctx.save();
+      ctx.beginPath();
+      ctx.rect(cx - 9, cy - 44, 18, 88);
       ctx.clip();
 
       // Road background lane
-      ctx.fillStyle = isBroken ? 'rgba(255, 51, 68, 0.22)' : isFlyover ? 'rgba(255, 212, 0, 0.18)' : 'rgba(0, 240, 255, 0.12)';
-      ctx.fillRect(cx - 8, cy - 40, 16, 80);
+      ctx.fillStyle = isBroken ? 'rgba(239, 68, 68, 0.22)' : isFlyover ? 'rgba(255, 215, 0, 0.2)' : isWater ? 'rgba(0, 180, 216, 0.24)' : 'rgba(0, 240, 255, 0.14)';
+      ctx.fillRect(cx - 8, cy - 44, 16, 88);
 
       // Road boundaries
-      ctx.strokeStyle = isBroken ? '#ff3344' : isFlyover ? '#ffd400' : '#00f0ff';
+      ctx.strokeStyle = isBroken ? '#ef4444' : isFlyover ? '#ffd700' : isWater ? '#00b4d8' : '#38bdf8';
       ctx.lineWidth = 1.5;
       ctx.beginPath();
-      ctx.moveTo(cx - 8, cy - 40); ctx.lineTo(cx - 8, cy + 40);
-      ctx.moveTo(cx + 8, cy - 40); ctx.lineTo(cx + 8, cy + 40);
+      ctx.moveTo(cx - 8, cy - 44); ctx.lineTo(cx - 8, cy + 44);
+      ctx.moveTo(cx + 8, cy - 44); ctx.lineTo(cx + 8, cy + 44);
       ctx.stroke();
 
-      // Center dashed line
-      ctx.strokeStyle = isBroken ? '#ffcb1f' : 'rgba(255, 255, 255, 0.5)';
+      // Center dashed road markings
+      ctx.strokeStyle = isBroken ? '#fbbf24' : 'rgba(255, 255, 255, 0.55)';
       ctx.lineWidth = 1;
       ctx.setLineDash([3, 3]);
       ctx.beginPath();
-      ctx.moveTo(cx, cy - 40); ctx.lineTo(cx, cy + 40);
+      ctx.moveTo(cx, cy - 44); ctx.lineTo(cx, cy + 44);
       ctx.stroke();
       ctx.setLineDash([]);
       ctx.restore();
 
-      // Traffic Blips
+      // Traffic Blips (Clean studio rendering)
       const at = window.__at;
       if (at && at.TRAFFIC && at.TRAFFIC.list) {
         for (const v of at.TRAFFIC.list) {
           if (v.dead) continue;
           const dx = v.x - p.x;
           const dz = v.z - p.z;
-          if (Math.hypot(dx, dz) > 95) continue;
+          if (Math.hypot(dx, dz) > 90) continue;
 
           const cos = Math.cos(-p.yaw);
           const sin = Math.sin(-p.yaw);
@@ -3828,36 +3892,45 @@
           const px = cx + rx * scale;
           const py = cy + rz * scale;
 
-          if (px < 5 || px > 125 || py < 5 || py > 125) continue;
+          if (px < 4 || px > 92 || py < 4 || py > 92) continue;
 
           if (v.kind === 'bus') {
-            ctx.fillStyle = '#ff3344';
-            ctx.fillRect(px - 3, py - 6, 6, 12);
+            ctx.fillStyle = '#ef4444';
+            ctx.shadowColor = '#ef4444';
+            ctx.shadowBlur = 4;
+            ctx.fillRect(px - 3, py - 5.5, 6, 11);
+            ctx.shadowBlur = 0;
           } else if (v.kind === 'police') {
             const flash = (performance.now() * 0.008) % 1 < 0.5;
-            ctx.fillStyle = flash ? '#ff0044' : '#0088ff';
+            ctx.fillStyle = flash ? '#ff0033' : '#0088ff';
+            ctx.shadowColor = ctx.fillStyle;
+            ctx.shadowBlur = 6;
             ctx.beginPath();
-            ctx.arc(px, py, 4, 0, Math.PI * 2);
+            ctx.arc(px, py, 3.5, 0, Math.PI * 2);
             ctx.fill();
+            ctx.shadowBlur = 0;
+          } else if (v.kind === 'truck') {
+            ctx.fillStyle = '#f97316';
+            ctx.fillRect(px - 3, py - 6, 6, 12);
           } else if (v.kind === 'leguna' || v.kind === 'micro') {
-            ctx.fillStyle = '#ff9900';
+            ctx.fillStyle = '#fbbf24';
             ctx.fillRect(px - 2.5, py - 4, 5, 8);
           } else {
-            ctx.fillStyle = '#38ef7d';
+            ctx.fillStyle = '#10b981';
             ctx.beginPath();
-            ctx.arc(px, py, 2.5, 0, Math.PI * 2);
+            ctx.arc(px, py, 2.2, 0, Math.PI * 2);
             ctx.fill();
           }
         }
       }
 
       // Pickups on Radar
-      if (SuperPickups && SuperPickups.pickups) {
+      if (typeof SuperPickups !== 'undefined' && SuperPickups.pickups) {
         for (const pk of SuperPickups.pickups) {
-          if (!pk.active) continue;
+          if (!pk.active || !pk.mesh) continue;
           const dx = pk.mesh.position.x - p.x;
           const dz = pk.mesh.position.z - p.z;
-          if (Math.hypot(dx, dz) > 95) continue;
+          if (Math.hypot(dx, dz) > 90) continue;
 
           const cos = Math.cos(-p.yaw);
           const sin = Math.sin(-p.yaw);
@@ -3866,34 +3939,77 @@
           const px = cx + rx * scale;
           const py = cy + rz * scale;
 
-          ctx.fillStyle = pk.type === 'shield' ? '#00f0ff' : pk.type === 'battery' ? '#ffea00' : '#00e676';
+          ctx.fillStyle = pk.type === 'shield' ? '#38bdf8' : pk.type === 'battery' ? '#facc15' : '#4ade80';
+          ctx.shadowColor = ctx.fillStyle;
+          ctx.shadowBlur = 5;
           ctx.beginPath();
-          ctx.arc(px, py, 3.5, 0, Math.PI * 2);
+          ctx.arc(px, py, 3, 0, Math.PI * 2);
           ctx.fill();
+          ctx.shadowBlur = 0;
         }
       }
 
-      // Player Center Arrow
+      // Player Vehicle Icon (Center Chevron & Forward Spotlight Cone)
       ctx.save();
       ctx.translate(cx, cy);
+      ctx.fillStyle = 'rgba(255, 215, 0, 0.12)';
+      ctx.beginPath();
+      ctx.moveTo(0, 0);
+      ctx.lineTo(-12, -26);
+      ctx.lineTo(12, -26);
+      ctx.closePath();
+      ctx.fill();
+
       ctx.fillStyle = '#ffd400';
       ctx.shadowColor = '#ffd400';
-      ctx.shadowBlur = 8;
+      ctx.shadowBlur = 6;
       ctx.beginPath();
-      ctx.moveTo(0, -6);
+      ctx.moveTo(0, -6.5);
       ctx.lineTo(-4.5, 5);
-      ctx.lineTo(0, 2.5);
+      ctx.lineTo(0, 2);
       ctx.lineTo(4.5, 5);
       ctx.closePath();
       ctx.fill();
       ctx.restore();
 
-      // Heading
-      const headingEl = document.getElementById('radarHeading');
-      if (headingEl) {
-        const deg = ((-p.yaw * 180 / Math.PI) % 360 + 360) % 360;
-        const dirs = ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW'];
-        headingEl.textContent = dirs[Math.floor((deg + 22.5) / 45) % 8];
+      // Cardinal North Indicator on radar perimeter (gyro-stabilized)
+      const northAngle = -p.yaw - Math.PI / 2;
+      const nx = cx + Math.cos(northAngle) * 38;
+      const ny = cy + Math.sin(northAngle) * 38;
+
+      ctx.save();
+      ctx.font = 'bold 8.5px "Baloo Da 2", system-ui, sans-serif';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillStyle = '#ef4444';
+      ctx.shadowColor = '#000';
+      ctx.shadowBlur = 3;
+      ctx.fillText('N', nx, ny);
+      ctx.restore();
+
+      // Finish circular radar face
+      ctx.restore();
+
+      // Dynamic surface status badge underneath radar
+      const hintEl = document.getElementById('radarGpsHint');
+      if (hintEl) {
+        if (isFlyover) {
+          hintEl.textContent = '🌉 এলিভেটেড এক্সপ্রেসওয়ে';
+          hintEl.style.borderColor = 'rgba(255, 212, 0, 0.5)';
+          hintEl.style.color = '#ffd400';
+        } else if (isWater) {
+          hintEl.textContent = '🌊 জলাবদ্ধতা এলাকা';
+          hintEl.style.borderColor = 'rgba(0, 210, 255, 0.5)';
+          hintEl.style.color = '#38bdf8';
+        } else if (isBroken) {
+          hintEl.textContent = '⚠️ ভাঙা রাস্তা (২৫% গতি)';
+          hintEl.style.borderColor = 'rgba(255, 60, 60, 0.5)';
+          hintEl.style.color = '#f87171';
+        } else {
+          hintEl.textContent = '🛣️ মসৃণ এক্সপ্রেসওয়ে';
+          hintEl.style.borderColor = 'rgba(56, 189, 248, 0.35)';
+          hintEl.style.color = '#38bdf8';
+        }
       }
     }
   };
@@ -8224,6 +8340,26 @@
     if (tHornBtn) {
       tHornBtn.addEventListener('click', () => HydraulicHorn.blast());
     }
+
+    // Auto-dismiss Desktop Controls hint upon first keypress or timeout (keeps driving screen 100% clean)
+    const dismissControls = () => {
+      const ctrl = document.getElementById('controls');
+      if (ctrl && !ctrl.hidden) {
+        ctrl.classList.add('fade');
+        setTimeout(() => { ctrl.hidden = true; }, 380);
+      }
+    };
+    window.addEventListener('keydown', (e) => {
+      if (['KeyW', 'KeyA', 'KeyS', 'KeyD', 'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Space'].includes(e.code) || ['w','a','s','d','W','A','S','D'].includes(e.key)) {
+        dismissControls();
+      }
+    }, { passive: true });
+    window.addEventListener('pointerdown', (e) => {
+      if (e.target && (e.target.closest('#touch') || e.target.closest('#hud') || e.target.id === 'playBtn')) {
+        dismissControls();
+      }
+    }, { passive: true });
+    setTimeout(dismissControls, 4500);
   }
 
   // Initialize UI once DOM is ready
