@@ -284,8 +284,8 @@ try {
   fs.writeFileSync(path.join(artifactDir, 'v3_passenger_mission.png'), Buffer.from(ssPassenger.data, 'base64'));
   console.log('Saved v3_passenger_mission.png');
 
-  // TEST 5: Traffic Police Sergeant Speed Trap Checkpost
-  console.log('\n--- 5. Testing Traffic Police Speed Trap Checkpost ---');
+  // TEST 5: Traffic Police Sergeant Speed Trap Checkpost (ZERO POPUP VERIFICATION)
+  console.log('\n--- 5. Testing Traffic Police Speed Trap Checkpost (Zero Popup Verification) ---');
   await send('Runtime.evaluate', {
     expression: `
       (() => {
@@ -295,12 +295,6 @@ try {
           at.G.state = 'play';
           at.P.z = -2560; // 40m approaching checkpost at -2600
           at.P.v = 15; // > 55 km/h
-        }
-        const sys = window.RastarRaja && window.RastarRaja.PoliceCheckpostSystem;
-        if (sys) {
-          sys.isTrapped = true;
-          if (sys.barrierArm) sys.barrierArm.rotation.y = 0;
-          if (sys.promptEl) sys.promptEl.style.display = 'flex';
         }
       })()
     `
@@ -314,30 +308,20 @@ try {
         const prompt = document.getElementById('policeTrapPrompt');
         return {
           sysInit: sys ? sys.initialized : false,
-          isTrapped: sys ? sys.isTrapped : false,
-          promptVisible: prompt ? prompt.style.display !== 'none' : false,
+          promptExists: !!prompt,
           hasBribeBtn: !!document.getElementById('trapBribeBtn'),
-          hasSmashBtn: !!document.getElementById('trapSmashBtn')
+          hasSmashBtn: !!document.getElementById('trapSmashBtn'),
+          trapNotified: sys ? sys.trapNotified : false
         };
       })()
     `,
     returnByValue: true
   });
-  console.log('Police Speed Trap State:', policeState.result.value);
+  console.log('Police Speed Trap State (No Popup):', policeState.result.value);
 
   const ssPolice = await send('Page.captureScreenshot');
   fs.writeFileSync(path.join(artifactDir, 'v3_police_speed_trap.png'), Buffer.from(ssPolice.data, 'base64'));
   console.log('Saved v3_police_speed_trap.png');
-
-  // Resolve bribe to safely open checkpost
-  await send('Runtime.evaluate', {
-    expression: `
-      (() => {
-        const sys = window.RastarRaja && window.RastarRaja.PoliceCheckpostSystem;
-        if (sys) sys.resolveBribe();
-      })()
-    `
-  });
   await new Promise(r => setTimeout(r, 300));
 
   // TEST 6: Mobile Ergonomics & Clean Organized UI/UX

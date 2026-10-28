@@ -1746,74 +1746,6 @@
         }
       }
 
-      /* Police Sergeant Speed Trap Modal Prompt */
-      .raja-police-trap-prompt {
-        position: fixed !important;
-        inset: 0 !important;
-        background: rgba(3, 7, 18, 0.75) !important;
-        backdrop-filter: blur(8px) !important;
-        z-index: 99999 !important;
-        display: flex !important;
-        align-items: center !important;
-        justify-content: center !important;
-        padding: 16px !important;
-      }
-      .trap-card {
-        background: linear-gradient(145deg, #0b1329, #1e293b) !important;
-        border: 2.5px solid #e0242b !important;
-        border-radius: 20px !important;
-        padding: 20px 24px !important;
-        max-width: 440px !important;
-        width: 100% !important;
-        text-align: center !important;
-        box-shadow: 0 0 35px rgba(224, 36, 43, 0.7), 0 12px 36px rgba(0,0,0,0.9) !important;
-        animation: trapPulse 1.2s infinite alternate !important;
-      }
-      @keyframes trapPulse {
-        0% { border-color: #e0242b; box-shadow: 0 0 25px rgba(224, 36, 43, 0.6); }
-        100% { border-color: #00f0ff; box-shadow: 0 0 35px rgba(0, 240, 255, 0.6); }
-      }
-      .trap-title {
-        font-size: 22px !important;
-        font-weight: 900 !important;
-        color: #ffd400 !important;
-        margin-bottom: 6px !important;
-        text-shadow: 0 0 12px rgba(255, 212, 0, 0.6) !important;
-      }
-      .trap-msg {
-        font-size: 14px !important;
-        color: #f1f5f9 !important;
-        margin-bottom: 18px !important;
-      }
-      .trap-actions {
-        display: flex !important;
-        flex-direction: column !important;
-        gap: 10px !important;
-      }
-      .trap-btn {
-        padding: 12px 16px !important;
-        font-family: inherit !important;
-        font-size: 14px !important;
-        font-weight: 800 !important;
-        border-radius: 12px !important;
-        cursor: pointer !important;
-        border: none !important;
-        transition: transform 0.1s, box-shadow 0.15s !important;
-      }
-      .trap-btn:active {
-        transform: scale(0.95) !important;
-      }
-      .bribe-choice {
-        background: linear-gradient(135deg, #10b981, #059669) !important;
-        color: #ffffff !important;
-        box-shadow: 0 4px 14px rgba(16, 185, 129, 0.5) !important;
-      }
-      .smash-choice {
-        background: linear-gradient(135deg, #e0242b, #b91c1c) !important;
-        color: #ffffff !important;
-        box-shadow: 0 4px 14px rgba(224, 36, 43, 0.6) !important;
-      }
-
       html, body, #touch, .tbtn, .pedal {
         touch-action: manipulation !important;
         overscroll-behavior: none !important;
@@ -7261,14 +7193,16 @@
     barrierArm: null,
     sergeantMesh: null,
     beaconLight: null,
-    isTrapped: false,
-    trapResolved: false,
-    promptEl: null,
     lastWhistleT: 0,
+    trapNotified: false,
 
     init(THREE, scene) {
       if (this.initialized || !THREE || !scene) return;
       this.initialized = true;
+
+      // Clean up any old popup element from DOM if present
+      const oldPrompt = document.getElementById('policeTrapPrompt');
+      if (oldPrompt) oldPrompt.remove();
 
       try {
         this.group = new THREE.Group();
@@ -7318,7 +7252,7 @@
         this.sergeantMesh.add(new THREE.Mesh(sGeo.build(), vestLimeMat));
         this.group.add(this.sergeantMesh);
 
-        // 3. Swing Police Barricade Arm
+        // 3. Police Barricade Arm (Kept open on driving lane for smooth flow)
         const armPivot = new THREE.Group();
         armPivot.position.set(-6.5, 0.75, 0);
 
@@ -7330,7 +7264,7 @@
           armPivot.add(new THREE.Mesh(segGeo.build(), mat));
         }
         this.barrierArm = armPivot;
-        this.barrierArm.rotation.y = -Math.PI * 0.48; // Initially open
+        this.barrierArm.rotation.y = -Math.PI * 0.48; // Open for road clearance
         this.group.add(armPivot);
 
         // 4. Flashing Police Beacon
@@ -7342,86 +7276,6 @@
         scene.add(this.group);
       } catch (e) {
         console.warn('PoliceCheckpostSystem init error:', e);
-      }
-
-      this.initPromptUI();
-    },
-
-    initPromptUI() {
-      if (document.getElementById('policeTrapPrompt')) return;
-      const el = document.createElement('div');
-      el.id = 'policeTrapPrompt';
-      el.className = 'raja-police-trap-prompt';
-      el.style.display = 'none';
-      el.innerHTML = `
-        <div class="trap-card">
-          <div class="trap-title">🚨 ট্রাফিক পুলিশ স্পিড ট্র্যাপ!</div>
-          <div class="trap-msg" id="trapMsgText">ওভারস্পিড ধরা খাইছেন! ৬০ কিমি সীমার বেশি!</div>
-          <div class="trap-actions">
-            <button id="trapBribeBtn" class="trap-btn bribe-choice">🤝 ২০০৳ চা-নাস্তা দিন (নিরাপদে যান)</button>
-            <button id="trapSmashBtn" class="trap-btn smash-choice">🚀 নাইট্রো দিয়া ব্যারিকেড ভাইঙ্গা ভাগুন!</button>
-          </div>
-        </div>
-      `;
-      document.body.appendChild(el);
-      this.promptEl = el;
-
-      const bribeBtn = document.getElementById('trapBribeBtn');
-      if (bribeBtn) bribeBtn.addEventListener('click', () => this.resolveBribe());
-
-      const smashBtn = document.getElementById('trapSmashBtn');
-      if (smashBtn) smashBtn.addEventListener('click', () => this.resolveSmash());
-
-      window.addEventListener('keydown', (e) => {
-        if (!this.isTrapped || this.trapResolved) return;
-        if (e.key === '1' || e.key === 'e' || e.key === 'E') this.resolveBribe();
-        else if (e.key === '2' || e.code === 'Space') this.resolveSmash();
-      });
-    },
-
-    resolveBribe() {
-      if (this.trapResolved) return;
-      this.trapResolved = true;
-      this.isTrapped = false;
-      if (this.promptEl) this.promptEl.style.display = 'none';
-
-      if (CockpitHUD) {
-        CockpitHUD.fareAmount = Math.max(0, CockpitHUD.fareAmount - 200);
-        const fareEl = document.getElementById('fareVal');
-        if (fareEl) fareEl.textContent = `৳${Math.floor(CockpitHUD.fareAmount).toLocaleString('bn-BD')}`;
-      }
-
-      if (this.barrierArm) this.barrierArm.rotation.y = -Math.PI * 0.48;
-
-      RoadMicroDetailsSystem.spawnMicroToast("🤝 সার্জেন্ট: ঠিক আছে মামা, চা খাওয়ার টাকা পাইসি! সাবধানে যান!");
-      if (DhakaStreetHumorSystem && DhakaStreetHumorSystem.boxEl) {
-        DhakaStreetHumorSystem.sayRandom(['👮 সার্জেন্ট: "আইচ্ছা যান, আগামীতে স্পিড কম রাখবেন!"'], 'normal');
-      }
-    },
-
-    resolveSmash() {
-      if (this.trapResolved) return;
-      this.trapResolved = true;
-      this.isTrapped = false;
-      if (this.promptEl) this.promptEl.style.display = 'none';
-
-      const at = window.__at;
-      if (at && at.P) {
-        at.P.boost = 2.5;
-      }
-      if (at && at.G && typeof at.G.smash === 'function') {
-        at.G.smash(2000);
-      }
-
-      if (this.barrierArm) this.barrierArm.rotation.y = -Math.PI * 0.75;
-
-      if (WantedSystem && typeof WantedSystem.addStar === 'function') {
-        WantedSystem.addStar();
-      }
-
-      RoadMicroDetailsSystem.spawnMicroToast("💥 ব্যারিকেড চুরমার! পুলিশ সাইরেন শুরু!");
-      if (DhakaStreetHumorSystem && DhakaStreetHumorSystem.boxEl) {
-        DhakaStreetHumorSystem.sayRandom(['👮 সার্জেন্ট: "আরে ধর ধর! ব্যারিকেড ভাইঙ্গা পালাইল রে!"'], 'bribe');
       }
     },
 
@@ -7444,22 +7298,22 @@
       // Recycle checkpost along road
       while (this.group.position.z > p.z + 180) {
         this.group.position.z -= this.cycleDist;
-        this.resetCheckpost();
+        this.trapNotified = false;
       }
       while (this.group.position.z < p.z - (this.cycleDist - 180)) {
         this.group.position.z += this.cycleDist;
-        this.resetCheckpost();
+        this.trapNotified = false;
       }
 
       const dist = p.z - this.group.position.z;
       const speedKmh = Math.abs(p.v || 0) * 7.5;
 
-      // Speed Trap Proximity Trigger
-      if (dist > 10 && dist < 68 && !this.trapResolved && !this.isTrapped) {
-        if (speedKmh > 55) {
-          this.isTrapped = true;
-          if (this.barrierArm) this.barrierArm.rotation.y = 0;
+      // Speed Trap Detection (Smooth, non-blocking toast & dialogue - ZERO POPUP!)
+      if (dist > 5 && dist < 65 && !this.trapNotified) {
+        if (speedKmh > 58) {
+          this.trapNotified = true;
 
+          // Sergeant blows whistle
           if (now - this.lastWhistleT > 2000) {
             this.lastWhistleT = now;
             if (window.RastarRaja && window.RastarRaja.DhakaAudioSFX && typeof window.RastarRaja.DhakaAudioSFX.playPoliceWhistle === 'function') {
@@ -7467,26 +7321,23 @@
             }
           }
 
-          if (this.promptEl) {
-            const msgEl = document.getElementById('trapMsgText');
-            if (msgEl) msgEl.textContent = `স্পিডগান: ${Math.round(speedKmh)} KM/H! ওভারস্পিড ধরা খাইছেন!`;
-            this.promptEl.style.display = 'flex';
+          // Non-intrusive floating comic toast
+          RoadMicroDetailsSystem.spawnMicroToast(`🚨 স্পিডগান: ${Math.round(speedKmh)} KM/H! গতিসীমা ৬০ কিমি!`);
+          if (DhakaStreetHumorSystem && DhakaStreetHumorSystem.boxEl) {
+            DhakaStreetHumorSystem.sayRandom([
+              '👮 সার্জেন্ট: "এই রিকশা আস্তে চালান! স্পিড লিমিট ৬০!"',
+              '👮 সার্জেন্ট: "স্পিডগান ধরছে ওস্তাদ! রিকশা কি আকাশে উড়াবেন?!"',
+              '👮 সার্জেন্ট: "বিকাশ পরিবহনের মতো স্পিড দিছেন ক্যান?!"'
+            ], 'warning');
           }
         }
       }
 
       // If player passed checkpost slowly, salute
-      if (dist <= 0 && dist > -15 && !this.trapResolved && speedKmh <= 52) {
-        this.trapResolved = true;
+      if (dist <= 0 && dist > -15 && !this.trapNotified && speedKmh <= 55) {
+        this.trapNotified = true;
         RoadMicroDetailsSystem.spawnMicroToast("👮 সার্জেন্ট: ঠিক আছে মামা, গতি নিয়ন্ত্রিত! সাবধানে যান!");
       }
-    },
-
-    resetCheckpost() {
-      this.isTrapped = false;
-      this.trapResolved = false;
-      if (this.promptEl) this.promptEl.style.display = 'none';
-      if (this.barrierArm) this.barrierArm.rotation.y = -Math.PI * 0.48;
     }
   };
 
