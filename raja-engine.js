@@ -4591,26 +4591,26 @@
         const wireMat = new THREE.BasicMat({ color: 0x18181b });
         const poleMat = new THREE.StandardMat({ color: 0x52525b, roughness: 0.9 });
 
-        // Utility poles and crisscrossing wires
+        // Utility poles and crisscrossing wires (safely positioned on sidewalks at |X| = 9.4m)
         for (let z = -20; z >= -1180; z -= 55) {
           const poleGeo = new THREE.ct();
-          poleGeo.box(-7.8, 3.2, z, 0.28, 6.4, 0.28, null);
-          poleGeo.box(7.8, 3.2, z, 0.28, 6.4, 0.28, null);
-          poleGeo.box(-7.8, 5.9, z, 1.4, 0.12, 0.12, null);
-          poleGeo.box(7.8, 5.9, z, 1.4, 0.12, 0.12, null);
+          poleGeo.box(-9.4, 3.2, z, 0.28, 6.4, 0.28, null);
+          poleGeo.box(9.4, 3.2, z, 0.28, 6.4, 0.28, null);
+          poleGeo.box(-9.4, 5.9, z, 1.4, 0.12, 0.12, null);
+          poleGeo.box(9.4, 5.9, z, 1.4, 0.12, 0.12, null);
           const pMesh = new THREE.Mesh(poleGeo.build(), poleMat);
           this.oldDhakaGroup.add(pMesh);
 
           // Sagging wire spans across the street
           const wireGeo = new THREE.ct();
-          wireGeo.box(0, 5.75, z, 15.6, 0.035, 0.035, null);
-          wireGeo.box(0, 5.95, z, 15.6, 0.035, 0.035, null);
-          wireGeo.box(0, 5.45, z + 6, 15.6, 0.03, 0.03, null);
+          wireGeo.box(0, 5.75, z, 18.8, 0.035, 0.035, null);
+          wireGeo.box(0, 5.95, z, 18.8, 0.035, 0.035, null);
+          wireGeo.box(0, 5.45, z + 6, 18.8, 0.03, 0.03, null);
           const wMesh = new THREE.Mesh(wireGeo.build(), wireMat);
           this.oldDhakaGroup.add(wMesh);
         }
 
-        // Old Dhaka Parody Billboards
+        // Old Dhaka Parody Billboards (safely mounted on footpaths at |X| = 10.8m)
         const odBoards = [
           { title: "হাজী কাচ্চি ঘরাণা", sub: "খাঁটি ঘি ও বাসমতি চাল · রায়সাহেব বাজার", bg: "#78350f" },
           { title: "বাকরখানি পয়েন্ট", sub: "লালবাগ কেল্লা মোড় · গরম মুচমুচে বাকরখানি", bg: "#831843" },
@@ -4640,7 +4640,7 @@
           const tex = new THREE.Tex.glow.constructor(cv);
           tex.needsUpdate = true;
           const bGeo = new THREE.ct();
-          const side = idx % 2 === 0 ? -9.2 : 9.2;
+          const side = idx % 2 === 0 ? -10.8 : 10.8;
           const bZ = -120 - idx * 260;
           bGeo.box(side, 6.2, bZ, 0.2, 2.8, 5.4, null);
           bGeo.box(side, 2.4, bZ, 0.25, 4.8, 0.25, null);
@@ -4768,10 +4768,10 @@
           tex.needsUpdate = true;
 
           const gantryGeo = new THREE.ct();
-          // Overhead bridge spanning road
-          gantryGeo.box(0, 6.8, bz, 15.2, 3.2, 0.4, null);
-          gantryGeo.box(-7.4, 3.4, bz, 0.5, 6.8, 0.5, null);
-          gantryGeo.box(7.4, 3.4, bz, 0.5, 6.8, 0.5, null);
+          // Overhead bridge spanning road (pillars safely positioned on sidewalks at |X| = 9.2m)
+          gantryGeo.box(0, 6.8, bz, 19.2, 3.2, 0.4, null);
+          gantryGeo.box(-9.2, 3.4, bz, 0.5, 6.8, 0.5, null);
+          gantryGeo.box(9.2, 3.4, bz, 0.5, 6.8, 0.5, null);
 
           const gMat = new THREE.BasicMat({ map: tex });
           const gMesh = new THREE.Mesh(gantryGeo.build(), gMat);
@@ -4935,12 +4935,12 @@
         const pierGeo = new THREE.ct();
         for (let pz = 20; pz < this.deckLen; pz += 50) {
           const curZ = -pz;
-          // Left Sidewalk Pier
-          pierGeo.box(-7.6, 3.4, curZ, 1.4, 6.8, 1.4, null);
-          // Right Sidewalk Pier
-          pierGeo.box(7.6, 3.4, curZ, 1.4, 6.8, 1.4, null);
+          // Left Sidewalk Pier (safely on sidewalk at |X| = 9.2m)
+          pierGeo.box(-9.2, 3.4, curZ, 1.4, 6.8, 1.4, null);
+          // Right Sidewalk Pier (safely on sidewalk at |X| = 9.2m)
+          pierGeo.box(9.2, 3.4, curZ, 1.4, 6.8, 1.4, null);
           // Heavy Overhead Crossbeam supporting the deck
-          pierGeo.box(0, 6.7, curZ, 16.6, 0.75, 1.8, null);
+          pierGeo.box(0, 6.7, curZ, 19.8, 0.75, 1.8, null);
         }
         this.flyoverGroup.add(new THREE.Mesh(pierGeo.build(), pierMat));
 
@@ -4968,9 +4968,9 @@
         const gMat = new THREE.BasicMat({ map: gTex });
 
         const gGeo = new THREE.ct();
-        gGeo.box(0, 6.2, 10, 15.6, 2.0, 0.3, null);
-        gGeo.box(-7.6, 3.1, 10, 0.4, 6.2, 0.4, null);
-        gGeo.box(7.6, 3.1, 10, 0.4, 6.2, 0.4, null);
+        gGeo.box(0, 6.2, 10, 19.2, 2.0, 0.3, null);
+        gGeo.box(-9.2, 3.1, 10, 0.4, 6.2, 0.4, null);
+        gGeo.box(9.2, 3.1, 10, 0.4, 6.2, 0.4, null);
         const gMesh = new THREE.Mesh(gGeo.build(), gMat);
         this.flyoverGroup.add(gMesh);
 
@@ -5688,28 +5688,28 @@
         const rwTex = new THREE.Tex.glow.constructor(rwc);
         rwTex.needsUpdate = true;
         const rwGeo = new THREE.ct();
-        rwGeo.box(0, 4.6, -5, 14.8, 2.0, 0.3, null);
-        rwGeo.box(-7.2, 2.3, -5, 0.4, 4.6, 0.4, null);
-        rwGeo.box(7.2, 2.3, -5, 0.4, 4.6, 0.4, null);
+        rwGeo.box(0, 5.0, -5, 19.2, 2.0, 0.3, null);
+        rwGeo.box(-9.2, 2.5, -5, 0.4, 5.0, 0.4, null);
+        rwGeo.box(9.2, 2.5, -5, 0.4, 5.0, 0.4, null);
         const rwMesh = new THREE.Mesh(rwGeo.build(), new THREE.BasicMat({ map: rwTex }));
         this.brokenRoadGroup.add(rwMesh);
 
         scene.add(this.brokenRoadGroup);
 
-        // 2. Pedestrian Foot-Overbridge (পদচারী ফুটওভার ব্রিজ at Z = -420m)
+        // 2. Pedestrian Foot-Overbridge (পদচারী ফুটওভার ব্রিজ safely spanning above road)
         const fobGeo = new THREE.ct();
         const fobMat = new THREE.StandardMat({ color: 0x2563eb, roughness: 0.65 });
 
         // Overpass bridge structure spanning road
-        fobGeo.box(0, 6.2, 0, 16.5, 0.35, 3.2, null);
-        fobGeo.box(0, 7.2, 0, 16.5, 0.08, 3.4, null); // Roof canopy
-        fobGeo.box(0, 6.7, -1.5, 16.5, 0.7, 0.1, null); // Railings
-        fobGeo.box(0, 6.7, 1.5, 16.5, 0.7, 0.1, null);
-        // Vertical support pillars & staircases
-        fobGeo.box(-7.8, 3.1, 0, 0.5, 6.2, 0.5, null);
-        fobGeo.box(7.8, 3.1, 0, 0.5, 6.2, 0.5, null);
-        fobGeo.box(-8.8, 3.1, 2.2, 1.5, 6.2, 2.0, null);
-        fobGeo.box(8.8, 3.1, 2.2, 1.5, 6.2, 2.0, null);
+        fobGeo.box(0, 6.4, 0, 19.6, 0.35, 3.2, null);
+        fobGeo.box(0, 7.4, 0, 19.6, 0.08, 3.4, null); // Roof canopy
+        fobGeo.box(0, 6.9, -1.5, 19.6, 0.7, 0.1, null); // Railings
+        fobGeo.box(0, 6.9, 1.5, 19.6, 0.7, 0.1, null);
+        // Vertical support pillars & staircases on sidewalks (|X| >= 9.2m)
+        fobGeo.box(-9.2, 3.2, 0, 0.5, 6.4, 0.5, null);
+        fobGeo.box(9.2, 3.2, 0, 0.5, 6.4, 0.5, null);
+        fobGeo.box(-10.2, 3.2, 2.2, 1.5, 6.4, 2.0, null);
+        fobGeo.box(10.2, 3.2, 2.2, 1.5, 6.4, 2.0, null);
 
         const fobMesh = new THREE.Mesh(fobGeo.build(), fobMat);
         this.overbridgeGroup.add(fobMesh);
@@ -5731,27 +5731,27 @@
         const fbTex = new THREE.Tex.glow.constructor(fbc);
         fbTex.needsUpdate = true;
         const fbSignGeo = new THREE.ct();
-        fbSignGeo.box(0, 6.2, -1.6, 12.0, 1.2, 0.1, null);
+        fbSignGeo.box(0, 6.4, -1.6, 12.0, 1.2, 0.1, null);
         const fbSignMesh = new THREE.Mesh(fbSignGeo.build(), new THREE.BasicMat({ map: fbTex }));
         this.overbridgeGroup.add(fbSignMesh);
 
         scene.add(this.overbridgeGroup);
 
-        // 3. Roadside Dhaka Tea Stalls (টং দোকান on sidewalks)
+        // 3. Roadside Dhaka Tea Stalls (টং দোকান safely on sidewalks at |X| = 10.5m)
         const tsGeo = new THREE.ct();
         const tsWoodMat = new THREE.StandardMat({ color: 0x78350f, roughness: 0.9 });
 
         // Left sidewalk Tong stall
-        tsGeo.box(-7.6, 1.1, 0, 2.6, 2.2, 2.2, null);
-        tsGeo.box(-7.6, 2.25, 0, 2.9, 0.1, 2.5, null); // Blue tarp roof
-        tsGeo.box(-6.4, 0.85, 0, 0.4, 0.8, 2.0, null); // Wooden counter
-        tsGeo.box(-6.4, 1.35, 0, 0.35, 0.35, 0.35, null); // Aluminium kettle
+        tsGeo.box(-10.5, 1.1, 0, 2.6, 2.2, 2.2, null);
+        tsGeo.box(-10.5, 2.25, 0, 2.9, 0.1, 2.5, null); // Blue tarp roof
+        tsGeo.box(-9.2, 0.85, 0, 0.4, 0.8, 2.0, null); // Wooden counter
+        tsGeo.box(-9.2, 1.35, 0, 0.35, 0.35, 0.35, null); // Aluminium kettle
 
         // Right sidewalk Tong stall
-        tsGeo.box(7.6, 1.1, -40, 2.6, 2.2, 2.2, null);
-        tsGeo.box(7.6, 2.25, -40, 2.9, 0.1, 2.5, null);
-        tsGeo.box(6.4, 0.85, -40, 0.4, 0.8, 2.0, null);
-        tsGeo.box(6.4, 1.35, -40, 0.35, 0.35, 0.35, null);
+        tsGeo.box(10.5, 1.1, -40, 2.6, 2.2, 2.2, null);
+        tsGeo.box(10.5, 2.25, -40, 2.9, 0.1, 2.5, null);
+        tsGeo.box(9.2, 0.85, -40, 0.4, 0.8, 2.0, null);
+        tsGeo.box(9.2, 1.35, -40, 0.35, 0.35, 0.35, null);
 
         const tsMesh = new THREE.Mesh(tsGeo.build(), tsWoodMat);
         this.teaStallGroup.add(tsMesh);
@@ -6206,12 +6206,13 @@
 
   // ----------------------------------------------------
   // 27. Dhaka Roadside Posters, Banners & Wall Graffiti
+  // (Mounted 100% on Footpaths at |X| = 10.8m with 18 Funny Dhaka Pop-Culture Posters)
   // ----------------------------------------------------
   const DhakaRoadsideBannersSystem = {
     initialized: false,
     bannersGroup: null,
     banners: [],
-    cycleDist: 720,
+    cycleDist: 864,
 
     init(THREE, scene) {
       if (this.initialized || !THREE || !scene) return;
@@ -6220,20 +6221,26 @@
       try {
         this.bannersGroup = new THREE.Group();
 
-        // 12 Authentic Dhaka Posters & Banners
+        // 18 Authentic, Hilarious Dhaka Posters & Street Banners
         const postersData = [
-          { text: "⚠️ সাবধান! ময়লা ফেলা নিষেধ!\nজরিমানা ৫০ টাকা ও ছবি তোলা হইবে", bg: "#fef08a", fg: "#dc2626", border: "#b91c1c" },
-          { text: "🛑 ওস্তাদ ডাইনে চাপেন,\nবামে গভীর খাল!", bg: "#b91c1c", fg: "#ffffff", border: "#fef08a" },
-          { text: "👑 ব্রেক ছাড়া গাড়ি, লাইসেন্স ছাড়া বাড়ি\n— রাস্তার আসল রাজা!", bg: "#0f172a", fg: "#38bdf8", border: "#f59e0b" },
-          { text: "🚌 আইতে কষ্ট, যাইতে কষ্ট,\nলোকাল বাসে জীবন নষ্ট!", bg: "#ea580c", fg: "#ffffff", border: "#fef08a" },
-          { text: "🎬 তুফান ৩: শাকিব খানের অ্যাকশন ধামাকা!\nসারা বাংলায় হাউজফুল", bg: "#450a0a", fg: "#fbbf24", border: "#dc2626" },
+          { text: "🎬 তুফান ৪: শাকিব খানের তাণ্ডব!\nসারা বাংলায় সুনামি ধামাকা!", bg: "#450a0a", fg: "#fbbf24", border: "#dc2626" },
           { text: "💥 অনন্ত জলিল:\n'অসম্ভবকে সম্ভব করাই অনন্তর কাজ!'", bg: "#1e1b4b", fg: "#38bdf8", border: "#818cf8" },
-          { text: "☕ মামা টং স্টল: ১০ টাকায় স্পেশাল\nমালাই চা ও বাকরখানি", bg: "#78350f", fg: "#fef08a", border: "#451a03" },
-          { text: "📶 পাসওয়ার্ড ছাড়াই ফ্রি ওয়াইফাই!\nতবে আগে ২ কাপ চা খাইতে হইব", bg: "#065f46", fg: "#a7f3d0", border: "#34d399" },
-          { text: "📱 বিকাশ ও নগদ ক্যাশআউট\nএবং সকল সিমের ফ্লেক্সিলোড", bg: "#831843", fg: "#fbcfe8", border: "#db2777" },
-          { text: "🎙️ হিরো আলম লাইভ কনসার্ট!\nপুরান ঢাকা কাঁপাতে আসছে", bg: "#581c87", fg: "#fde047", border: "#c084fc" },
-          { text: "🚓 নো হর্ন! হাসপাতাল এলাকা!\nশব্দদূষণ আইনত দণ্ডনীয়", bg: "#1e3a8a", fg: "#ffffff", border: "#60a5fa" },
-          { text: "🛺 সিএনজি ও অটো ডেকোরেশন\n'মা-বাবার দোয়া — দূরত্ব রাখুন'", bg: "#14532d", fg: "#fef08a", border: "#22c55e" }
+          { text: "🎙️ হিরো আলম মেগা কনসার্ট!\nপুরান ঢাকা কাঁপাতে আসিছি!", bg: "#581c87", fg: "#fde047", border: "#c084fc" },
+          { text: "☕ মামা টং স্টল: বাকির শর্ত\nবাকি চাহিয়া লজ্জা পাইবেন না!", bg: "#78350f", fg: "#fef08a", border: "#451a03" },
+          { text: "📱 বিকাশ ও নগদ ক্যাশআউট\nরাত ১২টার পর জিএফকে ফ্লেক্সিলোড!", bg: "#831843", fg: "#fbcfe8", border: "#db2777" },
+          { text: "🦷 ডেন্টিস্ট কদম আলী (এমবিবিএস ছাড়া)\nবিনা ব্যথায় হাত দিয়া দাঁত তোলা হয়!", bg: "#065f46", fg: "#a7f3d0", border: "#34d399" },
+          { text: "🔮 কবিরাজ রতন খাঁ: প্রেমের ব্যর্থতা\nও জিন-পরী তাড়াতে ১০০% গ্যারান্টি!", bg: "#312e81", fg: "#facc15", border: "#a855f7" },
+          { text: "👑 ব্রেক ছাড়া গাড়ি, লাইসেন্স ছাড়া বাড়ি\n— রাস্তার আসল রাজা!", bg: "#0f172a", fg: "#38bdf8", border: "#f59e0b" },
+          { text: "🚌 লোকাল বাস ও লেগুনা:\nচাপেন চাপেন, ভেতরে আরো ১৬ সিট খালি!", bg: "#ea580c", fg: "#ffffff", border: "#fef08a" },
+          { text: "🛺 সিএনজি ও অটো ডেকোরেশন:\nহর্ন দিয়া লাভ নাই, ড্রাইভার কানে কালা!", bg: "#14532d", fg: "#fef08a", border: "#22c55e" },
+          { text: "⚠️ সাবধান! ময়লা ফেলা নিষেধ!\nফেললে কুত্তা দিয়া খাওয়ানো হইবে!", bg: "#fef08a", fg: "#dc2626", border: "#b91c1c" },
+          { text: "🚦 মিরপুর ১০ জ্যাম:\nবসে থেকে লাভ নাই, হেটে যান দ্রুত পৌঁছাবেন!", bg: "#b91c1c", fg: "#ffffff", border: "#fef08a" },
+          { text: "🍲 হাজী কাচ্চি ঘরাণা:\nআসল খাসির বিরিয়ানি — স্বাদ না পাইলে টাকা ফেরত!", bg: "#854d0e", fg: "#fef9c3", border: "#ca8a04" },
+          { text: "✂️ নিউ ঢাকা ডিসকো সেলুন:\nহিরো আলম কাটিং ও শাকিব কাটিং দেওয়া হয়!", bg: "#1e3a8a", fg: "#93c5fd", border: "#3b82f6" },
+          { text: "🚨 ওস্তাদ ডাইনে চাপেন,\nবামে ১০০ হাত গভীর খাদ!", bg: "#991b1b", fg: "#ffffff", border: "#facc15" },
+          { text: "👑 মা-বাবার দোয়া স্পেশাল:\n১০ বছর ধইরা চলতাছে, ব্রেক একটু কম ধরে!", bg: "#111827", fg: "#4ade80", border: "#22c55e" },
+          { text: "📶 ফ্রি হাইস্পিড ওয়াইফাই!\nতবে আগে ২ কাপ মালাই চা খাইতে হইব", bg: "#064e3b", fg: "#6ee7b7", border: "#10b981" },
+          { text: "🏋️‍♂️ ভাই ভাই সিক্স-প্যাক জিম:\n৬ মাসে বডি না হইলে ডাবল টাকা ফেরত!", bg: "#701a75", fg: "#f472b6", border: "#ec4899" }
         ];
 
         const frameMat = new THREE.StandardMat({ color: 0x1e293b, roughness: 0.7 });
@@ -6270,12 +6277,21 @@
 
           const bGroup = new THREE.Group();
 
-          // Billboard frame & posts
+          // Billboard frame & posts with footpath mounting base
           const boardGeo = new THREE.ct();
+          // Main signboard backing and frame
           boardGeo.box(0, 3.2, 0, 3.8, 1.9, 0.14, null);
           boardGeo.box(0, 3.2, -0.08, 4.0, 2.1, 0.08, null);
+          // Vertical support pillars
           boardGeo.box(-1.4, 1.6, 0, 0.16, 3.2, 0.16, null);
           boardGeo.box(1.4, 1.6, 0, 0.16, 3.2, 0.16, null);
+          // Footpath mounting foundation concrete blocks
+          boardGeo.box(-1.4, 0.15, 0, 0.5, 0.3, 0.5, null);
+          boardGeo.box(1.4, 0.15, 0, 0.5, 0.3, 0.5, null);
+          // Overhead spotlight fixture brackets
+          boardGeo.box(-1.0, 4.25, 0.45, 0.1, 0.1, 0.8, null);
+          boardGeo.box(1.0, 4.25, 0.45, 0.1, 0.1, 0.8, null);
+          boardGeo.box(0, 4.25, 0.85, 2.2, 0.12, 0.15, null);
 
           const boardMesh = new THREE.Mesh(boardGeo.build(), frameMat);
           bGroup.add(boardMesh);
@@ -6285,10 +6301,10 @@
           signMesh.position.set(0, 3.2, 0.08);
           bGroup.add(signMesh);
 
-          // Position alternating left and right sidewalks
-          const side = (idx % 2 === 0) ? -7.8 : 7.8;
-          const rotY = (idx % 2 === 0) ? 0.35 : -0.35;
-          const zPos = - (40 + idx * 58);
+          // Position alternating left and right sidewalks (safely on footpaths at |X| = 10.8m)
+          const side = (idx % 2 === 0) ? -10.8 : 10.8;
+          const rotY = (idx % 2 === 0) ? 0.38 : -0.38;
+          const zPos = - (30 + idx * 48);
 
           bGroup.position.set(side, 0, zPos);
           bGroup.rotation.y = rotY;
@@ -6311,13 +6327,251 @@
       }
       if (!this.initialized || !inPlay || !p) return;
 
+      const totalSpan = this.banners.length * 48; // 864m
       // Recycle banners smoothly along road
       for (const b of this.banners) {
         if (b.grp.position.z > p.z + 40) {
-          b.grp.position.z -= 700;
-        } else if (b.grp.position.z < p.z - 660) {
-          b.grp.position.z += 700;
+          b.grp.position.z -= totalSpan;
+        } else if (b.grp.position.z < p.z - (totalSpan - 60)) {
+          b.grp.position.z += totalSpan;
         }
+      }
+    }
+  };
+
+  // ----------------------------------------------------
+  // 27B. Dhaka Expressway Graphics Upgrade System
+  // (3D Curbs, Modern Streetlamps, Krishnachura & Palm Trees, Lane Markings & Cat's Eyes)
+  // ----------------------------------------------------
+  const DhakaExpresswayVisualsSystem = {
+    initialized: false,
+    group: null,
+    chunks: [],
+    numChunks: 12,
+    chunkLen: 60, // 12 * 60 = 720m total loop
+    streetLamps: [],
+    lampDecals: [],
+
+    init(THREE, scene) {
+      if (this.initialized || !THREE || !scene) return;
+      this.initialized = true;
+
+      try {
+        this.group = new THREE.Group();
+
+        // 1. High-Performance Materials
+        const curbYellowMat = new THREE.StandardMat({ color: 0xfacc15, roughness: 0.55 });
+        const curbDarkMat   = new THREE.StandardMat({ color: 0x1e293b, roughness: 0.75 });
+        const pavementMat   = new THREE.StandardMat({ color: 0x94a3b8, roughness: 0.88 });
+        const tactileMat    = new THREE.StandardMat({ color: 0xd97706, roughness: 0.65 });
+        const steelMat      = new THREE.StandardMat({ color: 0x64748b, metalness: 0.5, roughness: 0.45 });
+        const luminaireMat  = new THREE.StandardMat({ color: 0x334155, roughness: 0.5 });
+        const lampGlowMat   = new THREE.BasicMat({ color: 0xfffbeb });
+        const barkMat       = new THREE.StandardMat({ color: 0x57534e, roughness: 0.9 });
+        const greenMat      = new THREE.StandardMat({ color: 0x15803d, roughness: 0.85 });
+        const redFlowerMat  = new THREE.StandardMat({ color: 0xdc2626, roughness: 0.7 });
+        const orangeFlwMat  = new THREE.StandardMat({ color: 0xea580c, roughness: 0.7 });
+        const yellowLineMat = new THREE.BasicMat({ color: 0xffd400 });
+        const whiteLineMat  = new THREE.BasicMat({ color: 0xf8fafc });
+        const catsEyeAmber  = new THREE.BasicMat({ color: 0xf59e0b });
+        const catsEyeWhite  = new THREE.BasicMat({ color: 0xffffff });
+
+        // Lamppost ground pool illumination decal texture
+        const lampCvs = document.createElement('canvas');
+        lampCvs.width = 128; lampCvs.height = 128;
+        const lCtx = lampCvs.getContext('2d');
+        const lGrad = lCtx.createRadialGradient(64, 64, 6, 64, 64, 58);
+        lGrad.addColorStop(0, 'rgba(255, 245, 200, 0.48)');
+        lGrad.addColorStop(0.4, 'rgba(255, 230, 160, 0.22)');
+        lGrad.addColorStop(0.8, 'rgba(255, 210, 120, 0.08)');
+        lGrad.addColorStop(1, 'rgba(0, 0, 0, 0)');
+        lCtx.fillStyle = lGrad;
+        lCtx.fillRect(0, 0, 128, 128);
+
+        const lampDecalTex = new THREE.Tex.glow.constructor(lampCvs);
+        lampDecalTex.needsUpdate = true;
+        const lampDecalMat = new THREE.BasicMat({
+          map: lampDecalTex,
+          transparent: true,
+          opacity: 0.75,
+          blending: THREE.AdditiveBlending,
+          depthWrite: false
+        });
+
+        // 2. Build 12 Modular Repeating Chunks
+        for (let c = 0; c < this.numChunks; c++) {
+          const chunkGroup = new THREE.Group();
+          const chunkZ = - c * this.chunkLen;
+
+          // A. 3D Segmented Curbs (Alternating safety yellow and dark slate blocks along |X| = 7.45m)
+          const curbYGeo = new THREE.ct();
+          const curbDGeo = new THREE.ct();
+          const blockLen = 2.0;
+          const numBlocks = Math.floor(this.chunkLen / blockLen); // 30 blocks
+
+          for (let b = 0; b < numBlocks; b++) {
+            const bz = - (b * blockLen + blockLen * 0.5);
+            const targetGeo = (b % 2 === 0) ? curbYGeo : curbDGeo;
+            // Left Curb (X = -7.45m)
+            targetGeo.box(-7.45, 0.11, bz, 0.35, 0.22, blockLen - 0.04, null);
+            // Right Curb (X = +7.45m)
+            targetGeo.box(7.45, 0.11, bz, 0.35, 0.22, blockLen - 0.04, null);
+          }
+          chunkGroup.add(new THREE.Mesh(curbYGeo.build(), curbYellowMat));
+          chunkGroup.add(new THREE.Mesh(curbDGeo.build(), curbDarkMat));
+
+          // B. Raised Footpath Pavements (Left & Right sidewalks)
+          const paveGeo = new THREE.ct();
+          // Left Footpath Slab (|X|: 7.6m to 12.4m, width 4.8m)
+          paveGeo.box(-10.0, 0.09, - this.chunkLen * 0.5, 4.8, 0.18, this.chunkLen, null);
+          // Right Footpath Slab (|X|: 7.6m to 12.4m, width 4.8m)
+          paveGeo.box(10.0, 0.09, - this.chunkLen * 0.5, 4.8, 0.18, this.chunkLen, null);
+          chunkGroup.add(new THREE.Mesh(paveGeo.build(), pavementMat));
+
+          // Tactile guidance warning paver strip down sidewalk center
+          const tactileGeo = new THREE.ct();
+          tactileGeo.box(-10.0, 0.19, - this.chunkLen * 0.5, 0.45, 0.02, this.chunkLen, null);
+          tactileGeo.box(10.0, 0.19, - this.chunkLen * 0.5, 0.45, 0.02, this.chunkLen, null);
+          chunkGroup.add(new THREE.Mesh(tactileGeo.build(), tactileMat));
+
+          // C. Expressway Centerline Double Yellow Lines
+          const yLineGeo = new THREE.ct();
+          yLineGeo.box(-0.12, 0.022, - this.chunkLen * 0.5, 0.12, 0.005, this.chunkLen, null);
+          yLineGeo.box(0.12, 0.022, - this.chunkLen * 0.5, 0.12, 0.005, this.chunkLen, null);
+          chunkGroup.add(new THREE.Mesh(yLineGeo.build(), yellowLineMat));
+
+          // D. White Lane Divider Dashes and Outer Fog Lines
+          const wLineGeo = new THREE.ct();
+          // Solid outer edge fog lines
+          wLineGeo.box(-7.2, 0.022, - this.chunkLen * 0.5, 0.14, 0.005, this.chunkLen, null);
+          wLineGeo.box(7.2, 0.022, - this.chunkLen * 0.5, 0.14, 0.005, this.chunkLen, null);
+          // Dashed white lane dividers (4m dash, 4m gap)
+          for (let lz = 2; lz < this.chunkLen; lz += 8) {
+            wLineGeo.box(-3.7, 0.022, - lz, 0.14, 0.005, 4.0, null);
+            wLineGeo.box(3.7, 0.022, - lz, 0.14, 0.005, 4.0, null);
+          }
+          chunkGroup.add(new THREE.Mesh(wLineGeo.build(), whiteLineMat));
+
+          // E. 3D Cat's Eye Road Stud Reflectors (ক্যাটস আই)
+          const ceAmbGeo = new THREE.ct();
+          const ceWhtGeo = new THREE.ct();
+          for (let cz = 5; cz < this.chunkLen; cz += 10) {
+            ceAmbGeo.box(0, 0.035, - cz, 0.15, 0.04, 0.15, null);
+            ceWhtGeo.box(-7.2, 0.035, - cz, 0.12, 0.04, 0.12, null);
+            ceWhtGeo.box(7.2, 0.035, - cz, 0.12, 0.04, 0.12, null);
+          }
+          chunkGroup.add(new THREE.Mesh(ceAmbGeo.build(), catsEyeAmber));
+          chunkGroup.add(new THREE.Mesh(ceWhtGeo.build(), catsEyeWhite));
+
+          // F. Modern Arched Expressway Streetlamps (Left & Right at Z = -15m)
+          const lampGeo = new THREE.ct();
+          const lumGeo = new THREE.ct();
+          const glowGeo = new THREE.ct();
+
+          [-1, 1].forEach(sideMult => {
+            const lx = sideMult * 8.9;
+            const lz = -15;
+
+            // Concrete base footing on sidewalk
+            lampGeo.box(lx, 0.25, lz, 0.55, 0.5, 0.55, null);
+            // Vertical steel post
+            lampGeo.box(lx, 4.0, lz, 0.18, 7.5, 0.18, null);
+            // Arched curved arm extending over road shoulder
+            const armLen = 2.7;
+            const armX = lx - sideMult * (armLen * 0.5);
+            lampGeo.box(armX, 7.6, lz, armLen, 0.14, 0.14, null);
+            lampGeo.box(lx - sideMult * (armLen * 0.85), 7.4, lz, 0.14, 0.45, 0.14, null);
+
+            // Aerodynamic luminaire head
+            const headX = lx - sideMult * armLen;
+            lumGeo.box(headX, 7.45, lz, 0.7, 0.2, 0.35, null);
+            // Glowing LED lens face
+            glowGeo.box(headX, 7.34, lz, 0.58, 0.04, 0.28, null);
+
+            // Ground light pool decal on asphalt
+            const decPlane = new THREE.Plane(7.0, 7.0);
+            decPlane.rotateX(-THREE.PI / 2);
+            const decMesh = new THREE.Mesh(decPlane, lampDecalMat);
+            decMesh.position.set(headX, 0.024, lz);
+            chunkGroup.add(decMesh);
+            this.lampDecals.push(decMesh);
+          });
+
+          chunkGroup.add(new THREE.Mesh(lampGeo.build(), steelMat));
+          chunkGroup.add(new THREE.Mesh(lumGeo.build(), luminaireMat));
+          const glowMesh = new THREE.Mesh(glowGeo.build(), lampGlowMat);
+          chunkGroup.add(glowMesh);
+          this.streetLamps.push(glowMesh);
+
+          // G. Roadside Lush Krishnachura & Palm Trees (Stationed at |X| = 11.6m on outer sidewalk)
+          const treeTrunkGeo = new THREE.ct();
+          const treeCrownGeo = new THREE.ct();
+          const treeRedGeo   = new THREE.ct();
+          const treeOrgGeo   = new THREE.ct();
+
+          // Left Tree at Z = -35m (Krishnachura)
+          const kx = -11.6, kz = -35;
+          // Trunk & spreading branches
+          treeTrunkGeo.box(kx, 2.4, kz, 0.45, 4.8, 0.45, null);
+          treeTrunkGeo.box(kx + 0.5, 4.5, kz - 0.4, 0.25, 2.0, 0.25, null);
+          treeTrunkGeo.box(kx - 0.5, 4.3, kz + 0.4, 0.25, 2.0, 0.25, null);
+          // Green monsoon canopy layers
+          treeCrownGeo.box(kx, 5.5, kz, 4.4, 1.8, 4.4, null);
+          treeCrownGeo.box(kx + 0.4, 6.4, kz - 0.3, 3.6, 1.6, 3.6, null);
+          // Krishnachura fiery red flower clusters
+          treeRedGeo.box(kx - 0.6, 5.8, kz + 0.5, 2.6, 1.4, 2.6, null);
+          treeRedGeo.box(kx + 0.8, 6.2, kz - 0.5, 2.4, 1.3, 2.4, null);
+          // Orange flower accents
+          treeOrgGeo.box(kx + 0.2, 6.7, kz + 0.2, 2.0, 1.0, 2.0, null);
+
+          // Right Tree at Z = -42m (Tropical Dhaka Palm Tree)
+          const px = 11.6, pz = -42;
+          // Ringed palm trunk
+          treeTrunkGeo.box(px, 3.5, pz, 0.35, 7.0, 0.35, null);
+          // Radiating fan palm fronds
+          treeCrownGeo.box(px, 7.2, pz, 3.8, 0.3, 1.4, null);
+          treeCrownGeo.box(px, 7.2, pz, 1.4, 0.3, 3.8, null);
+          treeCrownGeo.box(px, 7.0, pz, 3.2, 0.4, 3.2, null);
+
+          chunkGroup.add(new THREE.Mesh(treeTrunkGeo.build(), barkMat));
+          chunkGroup.add(new THREE.Mesh(treeCrownGeo.build(), greenMat));
+          chunkGroup.add(new THREE.Mesh(treeRedGeo.build(), redFlowerMat));
+          chunkGroup.add(new THREE.Mesh(treeOrgGeo.build(), orangeFlwMat));
+
+          chunkGroup.position.set(0, 0, chunkZ);
+          this.group.add(chunkGroup);
+          this.chunks.push(chunkGroup);
+        }
+
+        scene.add(this.group);
+      } catch (err) {
+        console.warn('DhakaExpresswayVisualsSystem init error:', err);
+      }
+    },
+
+    update(p, dt, inPlay, isNight, isRain) {
+      const THREE = window.__THREE_EXPORTS;
+      const at = window.__at;
+      if (!this.initialized && THREE && at && at.SCENE) {
+        this.init(THREE, at.SCENE);
+      }
+      if (!this.initialized || !inPlay || !p) return;
+
+      const totalSpan = this.numChunks * this.chunkLen; // 720m
+
+      // Seamlessly recycle chunks around player along Z
+      for (const chunk of this.chunks) {
+        if (chunk.position.z > p.z + 60) {
+          chunk.position.z -= totalSpan;
+        } else if (chunk.position.z < p.z - (totalSpan - 60)) {
+          chunk.position.z += totalSpan;
+        }
+      }
+
+      // Boost streetlight glow and ground pools at Night & Rain
+      const lampIntensity = (isNight || isRain) ? 0.95 : 0.35;
+      for (const decal of this.lampDecals) {
+        decal.material.opacity = lampIntensity;
       }
     }
   };
@@ -7540,6 +7794,7 @@
     // v3.2 Roadside Posters & Dhaka Street Dialogues
     DhakaRoadsideBannersSystem.update(at.P, dt, inPlay);
     DhakaStreetHumorSystem.update(at.P, dt, inPlay);
+    DhakaExpresswayVisualsSystem.update(at.P, dt, inPlay, isNight, isRain);
 
     // v3.4 Monsoon Waterlogging, Level Crossing, Passenger Trips, Police Checkpost & Cockpit FPP
     MonsoonWaterloggingSystem.update(at.P, dt, inPlay, isRain);
@@ -7562,6 +7817,7 @@
     NextGenGraphicsSystem.init();
     DhakaStreetHumorSystem.init();
     FirstPersonCockpitCameraSystem.init();
+    DhakaExpresswayVisualsSystem.init();
 
     // Mobile & Desktop Fullscreen Button Toggle
     const fsBtn = document.createElement('button');
@@ -7610,6 +7866,7 @@
     window.RastarRaja.LivingCitySystem = LivingCitySystem;
     window.RastarRaja.NextGenGraphicsSystem = NextGenGraphicsSystem;
     window.RastarRaja.DhakaRoadsideBannersSystem = DhakaRoadsideBannersSystem;
+    window.RastarRaja.DhakaExpresswayVisualsSystem = DhakaExpresswayVisualsSystem;
     window.RastarRaja.DhakaStreetHumorSystem = DhakaStreetHumorSystem;
     window.RastarRaja.DhakaAudioSFX = DhakaAudioSFX;
     window.RastarRaja.MonsoonWaterloggingSystem = MonsoonWaterloggingSystem;

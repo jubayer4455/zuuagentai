@@ -228,6 +228,18 @@
         "2026-10-24": 2250
       },
       "allTimeBest": 2250
+    },
+    "fd706ef5-5a65-4b83-bcae-d1215335baf9": {
+      "pass": "a4c5940ac6175e23d721a84a26e267ea",
+      "name": "",
+      "weekScores": {},
+      "allTimeBest": 0
+    },
+    "fa4e7776-22de-468c-8c9a-7ad45b90bb13": {
+      "pass": "006164874d74ea42585288889a1a5d56",
+      "name": "",
+      "weekScores": {},
+      "allTimeBest": 0
     }
   },
   "activeRuns": {
@@ -500,6 +512,11 @@
       "device": "fa1d846b-8798-4e38-9155-0ab382f87291",
       "pass": "a062e386eb44bd03569acddd99c02cde",
       "start": 1793104827522
+    },
+    "ceac9155b1b4191aa88e0bc3d3a7f073": {
+      "device": "fd706ef5-5a65-4b83-bcae-d1215335baf9",
+      "pass": "a4c5940ac6175e23d721a84a26e267ea",
+      "start": 1793159722916
     }
   }
 }
