@@ -4578,41 +4578,78 @@
       ctx.fill();
       ctx.restore();
 
-      // Cardinal North Indicator on radar perimeter (gyro-stabilized)
-      const northAngle = -p.yaw - Math.PI / 2;
-      const nx = cx + Math.cos(northAngle) * 38;
-      const ny = cy + Math.sin(northAngle) * 38;
+      // Cardinal North, East, South, West Indicators on radar perimeter (gyro-stabilized)
+      const baseAngle = -p.yaw - Math.PI / 2;
+      const cardinals = [
+        { label: 'N', color: '#ef4444', off: 0 },
+        { label: 'E', color: '#38bdf8', off: Math.PI / 2 },
+        { label: 'S', color: '#94a3b8', off: Math.PI },
+        { label: 'W', color: '#38bdf8', off: -Math.PI / 2 }
+      ];
 
       ctx.save();
       ctx.font = 'bold 8.5px "Baloo Da 2", system-ui, sans-serif';
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
-      ctx.fillStyle = '#ef4444';
-      ctx.shadowColor = '#000';
-      ctx.shadowBlur = 3;
-      ctx.fillText('N', nx, ny);
+      cardinals.forEach(cd => {
+        const ang = baseAngle + cd.off;
+        const cxPos = cx + Math.cos(ang) * 38;
+        const cyPos = cy + Math.sin(ang) * 38;
+        ctx.fillStyle = cd.color;
+        ctx.shadowColor = '#000';
+        ctx.shadowBlur = 3;
+        ctx.fillText(cd.label, cxPos, cyPos);
+      });
       ctx.restore();
+
+      // Proximity Hazard Warning Pulse Ring on Radar if oncoming vehicle is within 22m
+      let hasProximityThreat = false;
+      if (at && at.TRAFFIC && at.TRAFFIC.list) {
+        for (const v of at.TRAFFIC.list) {
+          if (!v.dead && (v.kind === 'bus' || v.kind === 'truck' || v.kind === 'police')) {
+            const dist = Math.hypot(v.x - p.x, v.z - p.z);
+            if (dist < 22 && (v.z - p.z) < 0) {
+              hasProximityThreat = true;
+              break;
+            }
+          }
+        }
+      }
+      if (hasProximityThreat) {
+        const pulseR = 18 + (Math.sin(performance.now() * 0.012) * 0.5 + 0.5) * 26;
+        ctx.save();
+        ctx.strokeStyle = 'rgba(239, 68, 68, 0.75)';
+        ctx.lineWidth = 1.8;
+        ctx.beginPath();
+        ctx.arc(cx, cy, pulseR, 0, Math.PI * 2);
+        ctx.stroke();
+        ctx.restore();
+      }
 
       // Finish circular radar face
       ctx.restore();
 
-      // Dynamic surface status badge underneath radar
+      // Dynamic surface status & Real Dhaka Area badge underneath radar
       const hintEl = document.getElementById('radarGpsHint');
       if (hintEl) {
+        const areaName = (typeof DhakaIconicAreasMapSystem !== 'undefined' && DhakaIconicAreasMapSystem.currentAreaName)
+          ? DhakaIconicAreasMapSystem.currentAreaName
+          : 'পুরান ঢাকা';
+
         if (isFlyover) {
-          hintEl.textContent = '🌉 এলিভেটেড এক্সপ্রেসওয়ে';
+          hintEl.textContent = `🌉 ${areaName} · এলিভেটেড`;
           hintEl.style.borderColor = 'rgba(255, 212, 0, 0.5)';
           hintEl.style.color = '#ffd400';
         } else if (isWater) {
-          hintEl.textContent = '🌊 জলাবদ্ধতা এলাকা';
+          hintEl.textContent = `🌊 ${areaName} · জলাবদ্ধতা`;
           hintEl.style.borderColor = 'rgba(0, 210, 255, 0.5)';
           hintEl.style.color = '#38bdf8';
         } else if (isBroken) {
-          hintEl.textContent = '⚠️ ভাঙা রাস্তা (২৫% গতি)';
+          hintEl.textContent = `⚠️ ${areaName} · সংস্কার কাজ`;
           hintEl.style.borderColor = 'rgba(255, 60, 60, 0.5)';
           hintEl.style.color = '#f87171';
         } else {
-          hintEl.textContent = '🛣️ মসৃণ এক্সপ্রেসওয়ে';
+          hintEl.textContent = `📍 ${areaName}`;
           hintEl.style.borderColor = 'rgba(56, 189, 248, 0.35)';
           hintEl.style.color = '#38bdf8';
         }
@@ -8712,6 +8749,483 @@
   };
 
   // ----------------------------------------------------
+  // 35. Dhaka Realistic Characters System (ওস্তাদ চালক ও যাত্রী রিয়েলিজম)
+  // ----------------------------------------------------
+  const DhakaRealisticCharactersSystem = {
+    initialized: false,
+    customDriverGrp: null,
+    customPassengerGrp: null,
+    pedestrianCrowdsGrp: null,
+    leftLegMesh: null,
+    rightLegMesh: null,
+    driverTorso: null,
+    passengerTorso: null,
+    steerAngle: 0,
+    pedalPhase: 0,
+
+    init(THREE, scene) {
+      if (this.initialized || !THREE || !scene) return;
+      this.initialized = true;
+
+      try {
+        const at = window.__at;
+        const skinTone = 0xb47856; // Authentic South Asian melanin skin tone
+        const skinMat = new THREE.StandardMat({ color: skinTone, roughness: 0.85 });
+        const whiteGenjiMat = new THREE.StandardMat({ color: 0xf8fafc, roughness: 0.9 });
+        const gamchaMat = new THREE.StandardMat({ color: 0xdc2626, roughness: 0.8 });
+        const gamchaWhiteMat = new THREE.BasicMat({ color: 0xffffff });
+        const lungiMat = new THREE.StandardMat({ color: 0x1d4ed8, roughness: 0.85 }); // Tartan Check Lungi
+        const lungiStripeMat = new THREE.BasicMat({ color: 0xfacc15 }); // Gold/Yellow plaid stripe
+        const hairMat = new THREE.BasicMat({ color: 0x09090b });
+        const chromeWatchMat = new THREE.StandardMat({ color: 0xe2e8f0, roughness: 0.35, metalness: 0.8 });
+        const chappalMat = new THREE.BasicMat({ color: 0x1e293b });
+
+        // 1. Build Sculpted Dhaka Rickshaw Puller (ওস্তাদ রিকশাচালক)
+        const driverGrp = new THREE.Group();
+        driverGrp.name = 'dhakaRealisticDriver';
+
+        // Torso & Upper Body Group (tilts into turns, positioned proudly above rickshaw frame)
+        const torsoGrp = new THREE.Group();
+        torsoGrp.position.set(0, 0.96, -0.52);
+
+        const torsoGeo = new THREE.ct();
+        // Muscular chest with ribbed white sleeveless vest (গেঞ্জি)
+        torsoGeo.box(0, 0.32, 0, 0.48, 0.38, 0.30, null);
+        torsoGeo.box(0, 0.10, 0, 0.44, 0.24, 0.28, null); // Lower abdomen
+        // Broad shoulders
+        torsoGeo.box(-0.28, 0.38, 0, 0.14, 0.18, 0.22, null);
+        torsoGeo.box(0.28, 0.38, 0, 0.14, 0.18, 0.22, null);
+        torsoGrp.add(new THREE.Mesh(torsoGeo.build(), whiteGenjiMat));
+
+        // Neck
+        const neckGeo = new THREE.ct();
+        neckGeo.box(0, 0.54, 0, 0.18, 0.14, 0.18, null);
+        torsoGrp.add(new THREE.Mesh(neckGeo.build(), skinMat));
+
+        // Sculpted Head & Face
+        const headGeo = new THREE.ct();
+        headGeo.box(0, 0.72, 0.02, 0.28, 0.30, 0.26, null); // Face base
+        headGeo.box(0, 0.69, -0.13, 0.07, 0.10, 0.06, null); // Nose bridge
+        headGeo.box(-0.16, 0.72, 0.02, 0.04, 0.10, 0.08, null); // Ears
+        headGeo.box(0.16, 0.72, 0.02, 0.04, 0.10, 0.08, null);
+        torsoGrp.add(new THREE.Mesh(headGeo.build(), skinMat));
+
+        // Classic Dhaka Black Hair & Mustache
+        const hairGeo = new THREE.ct();
+        hairGeo.box(0, 0.86, 0.01, 0.30, 0.10, 0.28, null); // Top hair
+        hairGeo.box(0, 0.75, 0.14, 0.29, 0.22, 0.05, null); // Back hair
+        hairGeo.box(0, 0.62, -0.13, 0.20, 0.05, 0.04, null); // Mustache
+        hairGeo.box(0, 0.76, -0.13, 0.24, 0.035, 0.03, null); // Eyebrows
+        torsoGrp.add(new THREE.Mesh(hairGeo.build(), hairMat));
+
+        // Authentic Red-and-White Checkered Gamcha (লাল গামছা) draped over neck
+        const gamchaGeo = new THREE.ct();
+        gamchaGeo.box(0, 0.50, 0.08, 0.36, 0.08, 0.30, null); // Loop around back of neck
+        gamchaGeo.box(-0.16, 0.24, -0.16, 0.11, 0.46, 0.04, null); // Left front drape
+        gamchaGeo.box(0.16, 0.26, -0.16, 0.11, 0.42, 0.04, null); // Right front drape
+        torsoGrp.add(new THREE.Mesh(gamchaGeo.build(), gamchaMat));
+
+        const gamchaStripeGeo = new THREE.ct();
+        gamchaStripeGeo.box(-0.16, 0.24, -0.155, 0.112, 0.04, 0.042, null);
+        gamchaStripeGeo.box(-0.16, 0.12, -0.155, 0.112, 0.04, 0.042, null);
+        gamchaStripeGeo.box(0.16, 0.26, -0.155, 0.112, 0.04, 0.042, null);
+        gamchaStripeGeo.box(0.16, 0.14, -0.155, 0.112, 0.04, 0.042, null);
+        torsoGrp.add(new THREE.Mesh(gamchaStripeGeo.build(), gamchaWhiteMat));
+
+        // Arms gripping chrome handlebars
+        const armGeo = new THREE.ct();
+        armGeo.box(-0.30, 0.28, -0.14, 0.13, 0.24, 0.16, null); // Upper arm
+        armGeo.box(-0.25, 0.18, -0.32, 0.11, 0.12, 0.26, null); // Forearm
+        armGeo.box(-0.22, 0.16, -0.48, 0.10, 0.10, 0.10, null); // Fist on handlebar
+        armGeo.box(0.30, 0.28, -0.14, 0.13, 0.24, 0.16, null);
+        armGeo.box(0.25, 0.18, -0.32, 0.11, 0.12, 0.26, null);
+        armGeo.box(0.22, 0.16, -0.48, 0.10, 0.10, 0.10, null);
+        torsoGrp.add(new THREE.Mesh(armGeo.build(), skinMat));
+
+        // Watch on driver's left wrist
+        const watchGeo = new THREE.ct();
+        watchGeo.box(-0.23, 0.17, -0.42, 0.12, 0.13, 0.035, null);
+        torsoGrp.add(new THREE.Mesh(watchGeo.build(), chromeWatchMat));
+
+        driverGrp.add(torsoGrp);
+        this.driverTorso = torsoGrp;
+
+        // Lower Body: Tucked-up Lungi (কোঁচানো লুঙ্গি) & Legs
+        const lowerGrp = new THREE.Group();
+        lowerGrp.position.set(0, 0, -0.52);
+
+        const lungiGeo = new THREE.ct();
+        lungiGeo.box(0, 0.82, -0.14, 0.16, 0.12, 0.08, null); // Waistband knot
+        lungiGeo.box(0, 0.74, 0, 0.46, 0.22, 0.32, null);
+        lungiGeo.box(-0.15, 0.58, -0.04, 0.22, 0.22, 0.26, null); // Left thigh fold
+        lungiGeo.box(0.15, 0.58, -0.04, 0.22, 0.22, 0.26, null);  // Right thigh fold
+        lowerGrp.add(new THREE.Mesh(lungiGeo.build(), lungiMat));
+
+        const lungiStripeGeo = new THREE.ct();
+        lungiStripeGeo.box(0, 0.74, 0.01, 0.465, 0.03, 0.325, null);
+        lungiStripeGeo.box(-0.15, 0.58, -0.035, 0.225, 0.03, 0.265, null);
+        lungiStripeGeo.box(0.15, 0.58, -0.035, 0.225, 0.03, 0.265, null);
+        lowerGrp.add(new THREE.Mesh(lungiStripeGeo.build(), lungiStripeMat));
+
+        // Pedaling Legs & Feet
+        const leftLegGrp = new THREE.Group();
+        const lLegGeo = new THREE.ct();
+        lLegGeo.box(-0.15, 0.38, -0.08, 0.13, 0.26, 0.14, null); // Calf
+        lLegGeo.box(-0.15, 0.20, -0.14, 0.12, 0.08, 0.24, null); // Foot
+        leftLegGrp.add(new THREE.Mesh(lLegGeo.build(), skinMat));
+        const lChappal = new THREE.ct();
+        lChappal.box(-0.15, 0.16, -0.14, 0.13, 0.025, 0.26, null); // Sandal sole
+        leftLegGrp.add(new THREE.Mesh(lChappal.build(), chappalMat));
+        lowerGrp.add(leftLegGrp);
+        this.leftLegMesh = leftLegGrp;
+
+        const rightLegGrp = new THREE.Group();
+        const rLegGeo = new THREE.ct();
+        rLegGeo.box(0.15, 0.38, -0.08, 0.13, 0.26, 0.14, null);
+        rLegGeo.box(0.15, 0.20, -0.14, 0.12, 0.08, 0.24, null);
+        rightLegGrp.add(new THREE.Mesh(rLegGeo.build(), skinMat));
+        const rChappal = new THREE.ct();
+        rChappal.box(0.15, 0.16, -0.14, 0.13, 0.025, 0.26, null);
+        rightLegGrp.add(new THREE.Mesh(rChappal.build(), chappalMat));
+        lowerGrp.add(rightLegGrp);
+        this.rightLegMesh = rightLegGrp;
+
+        driverGrp.add(lowerGrp);
+        this.customDriverGrp = driverGrp;
+
+        // 2. Build Backseat Passenger (যাত্রী seated inside rickshaw hood)
+        const passGrp = new THREE.Group();
+        passGrp.name = 'dhakaRealisticPassenger';
+        passGrp.position.set(0, 0.12, 0.42); // Seated on backseat sofa
+
+        const passTorsoGrp = new THREE.Group();
+        passTorsoGrp.position.set(0, 0.98, 0);
+
+        const shirtMat = new THREE.StandardMat({ color: 0x0284c7, roughness: 0.85 }); // Sky Blue Shirt
+        const pantMat = new THREE.StandardMat({ color: 0x1e293b, roughness: 0.85 }); // Charcoal Trousers
+
+        const passTorsoGeo = new THREE.ct();
+        passTorsoGeo.box(0, 0.28, 0, 0.44, 0.38, 0.26, null); // Shirt torso
+        passTorsoGeo.box(-0.25, 0.32, 0, 0.12, 0.18, 0.20, null); // Shoulders
+        passTorsoGeo.box(0.25, 0.32, 0, 0.12, 0.18, 0.20, null);
+        passTorsoGrp.add(new THREE.Mesh(passTorsoGeo.build(), shirtMat));
+
+        const passHeadGeo = new THREE.ct();
+        passHeadGeo.box(0, 0.64, 0, 0.24, 0.26, 0.24, null); // Head
+        passHeadGeo.box(0, 0.77, 0, 0.26, 0.08, 0.26, null); // Hair
+        passHeadGeo.box(0, 0.65, -0.125, 0.22, 0.04, 0.02, null); // Spectacles
+        passTorsoGrp.add(new THREE.Mesh(passHeadGeo.build(), skinMat));
+
+        const passHairGeo = new THREE.ct();
+        passHairGeo.box(0, 0.78, 0.01, 0.26, 0.09, 0.26, null);
+        passTorsoGrp.add(new THREE.Mesh(passHairGeo.build(), hairMat));
+
+        // Passenger Arms (holding handrail / smartphone)
+        const passArmsGeo = new THREE.ct();
+        passArmsGeo.box(-0.26, 0.20, -0.12, 0.10, 0.22, 0.14, null);
+        passArmsGeo.box(-0.24, 0.10, -0.22, 0.09, 0.09, 0.20, null); // Gripping handrail
+        passArmsGeo.box(0.26, 0.20, -0.12, 0.10, 0.22, 0.14, null);
+        passArmsGeo.box(0.18, 0.12, -0.20, 0.09, 0.09, 0.18, null); // Holding phone
+        passTorsoGrp.add(new THREE.Mesh(passArmsGeo.build(), skinMat));
+
+        // Smartphone
+        const phoneGeo = new THREE.ct();
+        phoneGeo.box(0.18, 0.15, -0.26, 0.07, 0.12, 0.015, null);
+        passTorsoGrp.add(new THREE.Mesh(phoneGeo.build(), new THREE.BasicMat({ color: 0x00f0ff })));
+
+        passGrp.add(passTorsoGrp);
+        this.passengerTorso = passTorsoGrp;
+
+        // Seated Trousers & Legs
+        const passLegsGeo = new THREE.ct();
+        passLegsGeo.box(0, 0.82, -0.02, 0.42, 0.18, 0.32, null); // Pelvis
+        passLegsGeo.box(-0.13, 0.72, -0.20, 0.16, 0.18, 0.36, null); // Left lap
+        passLegsGeo.box(0.13, 0.72, -0.20, 0.16, 0.18, 0.36, null);  // Right lap
+        passLegsGeo.box(-0.13, 0.44, -0.34, 0.14, 0.38, 0.16, null); // Calves
+        passLegsGeo.box(0.13, 0.44, -0.34, 0.14, 0.38, 0.16, null);
+        passLegsGeo.box(-0.13, 0.22, -0.40, 0.14, 0.08, 0.24, null); // Shoes
+        passLegsGeo.box(0.13, 0.22, -0.40, 0.14, 0.08, 0.24, null);
+        passGrp.add(new THREE.Mesh(passLegsGeo.build(), pantMat));
+
+        this.customPassengerGrp = passGrp;
+
+        // Attach Custom 3D Driver & Passenger to at.PLAYER.o.grp
+        if (at && at.PLAYER && at.PLAYER.o && at.PLAYER.o.grp) {
+          if (at.PLAYER.o.driver) {
+            at.PLAYER.o.driver.visible = false;
+          }
+          at.PLAYER.o.grp.add(driverGrp);
+          at.PLAYER.o.grp.add(passGrp);
+        }
+
+        // 3. Sidewalk Authentic Dhaka Pedestrians & Vendors
+        this.initSidewalkPedestrians(THREE, scene);
+
+      } catch (err) {
+        console.warn('DhakaRealisticCharactersSystem init error:', err);
+      }
+    },
+
+    initSidewalkPedestrians(THREE, scene) {
+      this.pedestrianCrowdsGrp = new THREE.Group();
+      this.pedestrianCrowdsGrp.name = 'dhakaPedestrianCrowds';
+
+      const lungiGreenMat = new THREE.StandardMat({ color: 0x15803d, roughness: 0.85 });
+      const whitePanjabiMat = new THREE.StandardMat({ color: 0xf1f5f9, roughness: 0.9 });
+      const woodBenchMat = new THREE.StandardMat({ color: 0x78350f, roughness: 0.9 });
+      const basketMat = new THREE.StandardMat({ color: 0xd97706, roughness: 0.9 });
+      const bananaGreenMat = new THREE.BasicMat({ color: 0x84cc16 });
+      const guavaMat = new THREE.BasicMat({ color: 0xa3e635 });
+      const glassCupMat = new THREE.BasicMat({ color: 0x38bdf8 });
+
+      // Group A: Roadside Tea Stall Adda Crowd (চা এর দোকানে আড্ডা)
+      [-110, -510, -910].forEach(zPos => {
+        const addaGrp = new THREE.Group();
+        addaGrp.position.set(-9.2, 0.02, zPos);
+
+        const benchGeo = new THREE.ct();
+        benchGeo.box(0, 0.35, 0, 0.6, 0.08, 2.2, null); // Bench seat
+        benchGeo.box(-0.25, 0.70, 0, 0.08, 0.65, 2.2, null); // Backrest
+        benchGeo.box(-0.22, 0.17, -0.9, 0.08, 0.34, 0.08, null); // Legs
+        benchGeo.box(0.22, 0.17, -0.9, 0.08, 0.34, 0.08, null);
+        benchGeo.box(-0.22, 0.17, 0.9, 0.08, 0.34, 0.08, null);
+        benchGeo.box(0.22, 0.17, 0.9, 0.08, 0.34, 0.08, null);
+        addaGrp.add(new THREE.Mesh(benchGeo.build(), woodBenchMat));
+
+        [-0.55, 0.55].forEach((offZ, idx) => {
+          const personGeo = new THREE.ct();
+          personGeo.box(0, 0.72, offZ, 0.34, 0.42, 0.30, null);
+          personGeo.box(0, 1.04, offZ, 0.22, 0.24, 0.22, null);
+          personGeo.box(0.18, 0.50, offZ, 0.36, 0.18, 0.26, null);
+          personGeo.box(0.36, 0.25, offZ, 0.14, 0.34, 0.16, null);
+          personGeo.box(0.22, 0.75, offZ - 0.15, 0.10, 0.10, 0.24, null);
+          addaGrp.add(new THREE.Mesh(personGeo.build(), idx === 0 ? whitePanjabiMat : lungiGreenMat));
+
+          const cupGeo = new THREE.ct();
+          cupGeo.box(0.22, 0.82, offZ - 0.28, 0.06, 0.10, 0.06, null);
+          addaGrp.add(new THREE.Mesh(cupGeo.build(), glassCupMat));
+        });
+
+        this.pedestrianCrowdsGrp.add(addaGrp);
+      });
+
+      // Group B: Roadside Fruit Hawker (ফল ও ঝালমুড়ি বিক্রেতা)
+      [-160, -660].forEach(zPos => {
+        const vendorGrp = new THREE.Group();
+        vendorGrp.position.set(9.2, 0.02, zPos);
+
+        const hGeo = new THREE.ct();
+        hGeo.box(0, 0.85, 0, 0.36, 0.54, 0.26, null); // Torso
+        hGeo.box(0, 1.25, 0, 0.22, 0.24, 0.22, null); // Head
+        hGeo.box(0, 0.32, -0.08, 0.14, 0.64, 0.14, null); // Standing legs
+        hGeo.box(0, 0.32, 0.08, 0.14, 0.64, 0.14, null);
+        vendorGrp.add(new THREE.Mesh(hGeo.build(), lungiGreenMat));
+
+        const dGeo = new THREE.ct();
+        dGeo.box(-0.55, 0.65, 0, 0.75, 0.12, 0.75, null); // Round woven basket
+        dGeo.box(-0.55, 0.30, 0, 0.12, 0.60, 0.12, null); // Tripod stand
+        vendorGrp.add(new THREE.Mesh(dGeo.build(), basketMat));
+
+        const fGeo = new THREE.ct();
+        fGeo.box(-0.62, 0.74, -0.12, 0.25, 0.10, 0.35, null);
+        vendorGrp.add(new THREE.Mesh(fGeo.build(), bananaGreenMat));
+        const gGeo = new THREE.ct();
+        gGeo.box(-0.48, 0.74, 0.12, 0.22, 0.10, 0.25, null);
+        vendorGrp.add(new THREE.Mesh(gGeo.build(), guavaMat));
+
+        this.pedestrianCrowdsGrp.add(vendorGrp);
+      });
+
+      scene.add(this.pedestrianCrowdsGrp);
+    },
+
+    update(p, dt, inPlay) {
+      const THREE = window.__THREE_EXPORTS;
+      const at = window.__at;
+      if (!this.initialized && THREE && at && at.SCENE) {
+        this.init(THREE, at.SCENE);
+      }
+      if (!this.initialized || !p || !inPlay) return;
+
+      // 1. Keep default low-poly driver hidden so our realistic driver is the only one visible
+      if (at && at.PLAYER && at.PLAYER.o) {
+        if (at.PLAYER.o.driver && at.PLAYER.o.driver.visible) {
+          at.PLAYER.o.driver.visible = false;
+        }
+      }
+
+      // 2. Realistic Steering IK and Leaning Physics
+      const steer = p.steer || 0;
+      this.steerAngle += (steer - this.steerAngle) * Math.min(1.0, dt * 10.0);
+
+      if (this.driverTorso) {
+        this.driverTorso.rotation.z = -this.steerAngle * 0.16;
+        this.driverTorso.rotation.y = this.steerAngle * 0.08;
+      }
+
+      // 3. Dynamic Pedaling Cadence (legs pumping with wheel rotation)
+      const speed = Math.abs(p.v || 0);
+      if (speed > 0.2) {
+        this.pedalPhase += speed * dt * 4.2;
+        const lY = Math.sin(this.pedalPhase) * 0.045;
+        const rY = Math.sin(this.pedalPhase + Math.PI) * 0.045;
+        if (this.leftLegMesh) this.leftLegMesh.position.y = lY;
+        if (this.rightLegMesh) this.rightLegMesh.position.y = rY;
+        if (this.driverTorso) {
+          this.driverTorso.position.y = 0.88 + Math.abs(Math.sin(this.pedalPhase)) * 0.02;
+        }
+      }
+
+      // 4. Passenger Near-Miss and Boost Reaction
+      if (this.passengerTorso) {
+        const isBoost = !!(p.boost || (window.__isNitroActive));
+        const nearMissTime = (NearMissSystem && NearMissSystem.lastNearMissT) || 0;
+        const isNearMiss = (performance.now() - nearMissTime) < 800;
+
+        if (isNearMiss || isBoost) {
+          this.passengerTorso.rotation.x = -0.18;
+          this.passengerTorso.position.y = 0.94;
+        } else {
+          this.passengerTorso.rotation.x = Math.sin(performance.now() * 0.003) * 0.03;
+          this.passengerTorso.position.y = 0.98;
+        }
+      }
+    }
+  };
+
+  // ----------------------------------------------------
+  // 36. Dhaka Iconic Areas & Landmarks System (বাস্তব ঢাকার চত্বর ও ল্যান্ডমার্ক)
+  // ----------------------------------------------------
+  const DhakaIconicAreasMapSystem = {
+    initialized: false,
+    landmarksGroup: null,
+    metroTrainMesh: null,
+    currentAreaName: 'পুরান ঢাকা · চকবাজার',
+
+    init(THREE, scene) {
+      if (this.initialized || !THREE || !scene) return;
+      this.initialized = true;
+
+      try {
+        this.landmarksGroup = new THREE.Group();
+        this.landmarksGroup.name = 'dhakaLandmarksGroup';
+
+        const whiteMarbleMat = new THREE.StandardMat({ color: 0xf8fafc, roughness: 0.3, metalness: 0.1 });
+        const crimsonSunMat = new THREE.BasicMat({ color: 0xdc2626 });
+        const curzonBrickMat = new THREE.StandardMat({ color: 0x991b1b, roughness: 0.85 }); // Deep Terracotta Red Brick
+        const colonialWhiteMat = new THREE.StandardMat({ color: 0xfef08a, roughness: 0.7 });
+        const bankGlassMat = new THREE.StandardMat({ color: 0x0284c7, roughness: 0.2, metalness: 0.6 });
+        const concretePillarMat = new THREE.StandardMat({ color: 0x64748b, roughness: 0.85 });
+        const metroGreenMat = new THREE.StandardMat({ color: 0x15803d, roughness: 0.5 });
+        const metroRedMat = new THREE.BasicMat({ color: 0xdc2626 });
+
+        // 1. শহীদ মিনার (Shaheed Minar Monument) at X = -14.5m, Z = -380m (Shahbagh Cultural Hub)
+        const smGeo = new THREE.ct();
+        const smBaseX = -14.5, smZ = -380;
+        smGeo.box(smBaseX, 0.40, smZ, 12.0, 0.80, 10.0, null);
+        smGeo.box(smBaseX, 0.90, smZ, 10.0, 0.40, 8.0, null);
+        smGeo.box(smBaseX, 5.2, smZ + 2.0, 1.4, 8.2, 0.6, null); // Central curved column
+        smGeo.box(smBaseX, 9.2, smZ + 1.2, 1.4, 0.6, 2.2, null); // Forward cantilever
+        smGeo.box(smBaseX - 2.8, 4.0, smZ + 2.0, 1.0, 6.0, 0.5, null); // Flanking columns
+        smGeo.box(smBaseX + 2.8, 4.0, smZ + 2.0, 1.0, 6.0, 0.5, null);
+        smGeo.box(smBaseX - 4.6, 3.0, smZ + 2.0, 0.8, 4.2, 0.5, null);
+        smGeo.box(smBaseX + 4.6, 3.0, smZ + 2.0, 0.8, 4.2, 0.5, null);
+        this.landmarksGroup.add(new THREE.Mesh(smGeo.build(), whiteMarbleMat));
+
+        // Crimson Blood-Red Sun Disk
+        const sunGeo = new THREE.ct();
+        sunGeo.box(smBaseX, 5.8, smZ + 2.8, 4.2, 4.2, 0.2, null);
+        this.landmarksGroup.add(new THREE.Mesh(sunGeo.build(), crimsonSunMat));
+
+        // 2. কার্জন হল ও ঐতিহ্যবাহী তোরণ (Curzon Hall Mughal Heritage) at X = 15.0m, Z = -450m
+        const chGeo = new THREE.ct();
+        const chX = 15.0, chZ = -450;
+        chGeo.box(chX, 4.5, chZ, 14.0, 9.0, 6.0, null);
+        chGeo.box(chX, 7.8, chZ - 2.8, 4.6, 2.8, 1.2, null);
+        chGeo.box(chX - 6.5, 6.0, chZ - 2.5, 1.4, 12.0, 1.4, null); // Minarets
+        chGeo.box(chX + 6.5, 6.0, chZ - 2.5, 1.4, 12.0, 1.4, null);
+        this.landmarksGroup.add(new THREE.Mesh(chGeo.build(), curzonBrickMat));
+
+        const chDomeGeo = new THREE.ct();
+        chDomeGeo.box(chX - 6.5, 12.4, chZ - 2.5, 1.8, 1.4, 1.8, null);
+        chDomeGeo.box(chX + 6.5, 12.4, chZ - 2.5, 1.8, 1.4, 1.8, null);
+        chDomeGeo.box(chX, 9.4, chZ, 14.4, 0.45, 6.4, null);
+        this.landmarksGroup.add(new THREE.Mesh(chDomeGeo.build(), colonialWhiteMat));
+
+        // 3. ফার্মগেট মেট্রো রেল করিডোর (Dhaka Metro Rail Viaduct & Gliding Train)
+        const metroGeo = new THREE.ct();
+        for (let mz = -750; mz >= -1250; mz -= 60) {
+          metroGeo.box(0, 4.8, mz, 1.8, 9.6, 1.8, null); // Pier
+          metroGeo.box(0, 9.8, mz, 7.2, 0.9, 2.8, null); // Cap
+        }
+        metroGeo.box(0, 10.4, -1000, 7.6, 0.6, 500, null); // Track deck
+        metroGeo.box(-3.7, 11.1, -1000, 0.35, 1.0, 500, null); // Parapets
+        metroGeo.box(3.7, 11.1, -1000, 0.35, 1.0, 500, null);
+        this.landmarksGroup.add(new THREE.Mesh(metroGeo.build(), concretePillarMat));
+
+        // Animated Dhaka Metro Rail Train (Green & Red Line 6)
+        const trainGrp = new THREE.Group();
+        trainGrp.position.set(-1.8, 11.6, -850);
+
+        const trainBodyGeo = new THREE.ct();
+        trainBodyGeo.box(0, 1.4, 0, 3.2, 2.6, 48.0, null);
+        trainGrp.add(new THREE.Mesh(trainBodyGeo.build(), whiteMarbleMat));
+
+        const greenStripeGeo = new THREE.ct();
+        greenStripeGeo.box(0, 1.2, 0, 3.25, 0.55, 48.2, null);
+        trainGrp.add(new THREE.Mesh(greenStripeGeo.build(), metroGreenMat));
+
+        const redNoseGeo = new THREE.ct();
+        redNoseGeo.box(0, 1.3, -24.1, 1.8, 0.6, 0.15, null);
+        trainGrp.add(new THREE.Mesh(redNoseGeo.build(), metroRedMat));
+
+        this.metroTrainMesh = trainGrp;
+        this.landmarksGroup.add(trainGrp);
+
+        // 4. মতিঝিল বাণিজ্যিক ডাউনটাউন স্কাইস্ক্র্যাপার (Motijheel Banking High-Rises) at Z = -1350m to -1750m
+        const bankGeo = new THREE.ct();
+        bankGeo.box(-18.0, 16.0, -1450, 14.0, 32.0, 14.0, null);
+        bankGeo.box(18.0, 18.0, -1550, 15.0, 36.0, 15.0, null);
+        this.landmarksGroup.add(new THREE.Mesh(bankGeo.build(), bankGlassMat));
+
+        scene.add(this.landmarksGroup);
+
+      } catch (err) {
+        console.warn('DhakaIconicAreasMapSystem init error:', err);
+      }
+    },
+
+    update(p, dt, inPlay) {
+      const THREE = window.__THREE_EXPORTS;
+      const at = window.__at;
+      if (!this.initialized && THREE && at && at.SCENE) {
+        this.init(THREE, at.SCENE);
+      }
+      if (!this.initialized || !p) return;
+
+      if (this.metroTrainMesh) {
+        this.metroTrainMesh.position.z -= 18.0 * dt;
+        if (this.metroTrainMesh.position.z < -1320) {
+          this.metroTrainMesh.position.z = -700;
+        }
+      }
+
+      const z = p.z;
+      if (z > -350) {
+        this.currentAreaName = 'পুরান ঢাকা · চকবাজার';
+      } else if (z > -750) {
+        this.currentAreaName = 'শাহবাগ · চারুকলা ও শহীদ মিনার';
+      } else if (z > -1250) {
+        this.currentAreaName = 'ফার্মগেট · মেট্রো রেল করিডোর';
+      } else if (z > -1700) {
+        this.currentAreaName = 'মতিঝিল বাণিজ্যিক ডাউনটাউন';
+      } else {
+        this.currentAreaName = 'হাতিরঝিল লেকফ্রন্ট ওভারপাস';
+      }
+    }
+  };
+
+  // ----------------------------------------------------
   // 11. Real-time Engine Loop (Synchronous 60 FPS)
   // ----------------------------------------------------
   let lastTime = performance.now();
@@ -8797,6 +9311,10 @@
     PoliceCheckpostSystem.update(at.P, dt, inPlay);
     FirstPersonCockpitCameraSystem.update(at.P, dt, inPlay);
     RenderQualityUpgrade.update();
+
+    // v3.9 Authentic Dhaka Characters, Real Areas & Landmarks
+    DhakaRealisticCharactersSystem.update(at.P, dt, inPlay);
+    DhakaIconicAreasMapSystem.update(at.P, dt, inPlay);
   }
   requestAnimationFrame(engineLoop);
 
@@ -8974,6 +9492,8 @@
     window.RastarRaja.TopActionBar = TopActionBar;
     window.RastarRaja.RastarRajaOfflineSystem = RastarRajaOfflineSystem;
     window.RastarRaja.OfflineSystem = RastarRajaOfflineSystem;
+    window.RastarRaja.DhakaRealisticCharactersSystem = DhakaRealisticCharactersSystem;
+    window.RastarRaja.DhakaIconicAreasMapSystem = DhakaIconicAreasMapSystem;
 
     // Global User-Gesture Audio Unlocker for Mobile & Desktop
     const unlockAudio = () => {

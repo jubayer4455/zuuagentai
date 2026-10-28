@@ -1,7 +1,7 @@
-﻿// Rastar Raja Complete Offline Service Worker v3.5
+// Rastar Raja Complete Offline Service Worker v3.5
 // Creator & Concept: Abdul Al Jubayer
 // 100% Offline-Capable PWA Cache Architecture
-const CACHE_VERSION = 'rastar-raja-offline-v3.8';
+const CACHE_VERSION = 'rastar-raja-offline-v3.9';
 
 const OFFLINE_URLS = [
   './',
