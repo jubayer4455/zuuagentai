@@ -245,10 +245,10 @@ button:focus-visible { outline: 3px solid var(--led-cyan); outline-offset: 3px; 
 
 /* Messages live at the edges, never over a projected vehicle. */
 /* ---------- the run's place, as a TV channel captions a live report: a red সরাসরি tag and the name (G.placeCard) ---------- */
-#placeCard { position: absolute; left: 50%; top: 23%; transform: translateX(-50%); z-index: 3; display: flex; align-items: stretch; pointer-events: none; opacity: 0;
+#placeCard { position: fixed; left: 50%; top: calc(env(safe-area-inset-top, 0px) + 52px); transform: translateX(-50%); z-index: 92; display: flex; align-items: stretch; pointer-events: none; opacity: 0;
   white-space: nowrap; filter: drop-shadow(0 4px 10px rgba(0, 0, 0, .35)); }
-#placeCard.low { top: 33%; }
-@media (orientation: portrait) and (max-width: 759px) { #placeCard { top: 29%; } } /* under the hint on a phone */
+#placeCard.low { top: calc(env(safe-area-inset-top, 0px) + 52px); }
+@media (orientation: portrait) and (max-width: 759px) { #placeCard { top: calc(env(safe-area-inset-top, 0px) + 118px); transform: translateX(-50%) scale(0.85); } } /* Safe in sky clear of road & rickshaw */
 #placeCard .live { display: flex; align-items: center; gap: 7px; padding: 0 20px 0 12px; margin-right: -10px; position: relative; z-index: 1; background: var(--breaking);
   color: #fff; font-family: var(--f-ticker); font-weight: 700; font-size: 16px; clip-path: polygon(0 0, 100% 0, calc(100% - 13px) 100%, 0 100%); }
 #placeCard .live::before { content: ''; width: 7px; height: 7px; border-radius: 50%; background: #fff; animation: onAir 1.6s ease-in-out infinite; }
@@ -769,7 +769,7 @@ h1.title { text-shadow: 3px 3px 0 #ae2941, 6px 6px 0 #14372f; }
   #floaters { left: 10px; top: 76px; width: 155px; }
   #hintText i { display: none; } /* on a phone the pill keeps the icon, distance and direction: ৳ ৫০ মি ডানে */
   #alerts { left: 10px; top: calc(132px + env(safe-area-inset-top, 0px)); transform: none; max-width: calc(100vw - 135px); align-items: flex-start; }
-  #hint { top: 176px; left: 10px; transform: none; max-width: calc(100vw - 150px); text-align: left; padding: 3px 8px; font-size: 12.5px; background: rgba(255, 249, 237, .38); }
+  #hint { display: none !important; }
   :root { --band: 30px; }
   #ticker .track { font-size: 14.5px; }
   #ticker .tag { font-size: 13px; padding: 0 19px 0 10px; }

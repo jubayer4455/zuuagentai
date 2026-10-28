@@ -846,7 +846,7 @@
         z-index: 91 !important;
       }
 
-      /* BOTTOM-RIGHT: Digital Cockpit Speedometer Gauge */
+      /* BOTTOM-RIGHT: Digital Cockpit Speedometer Gauge (Desktop) */
       .raja-gauge {
         position: fixed !important;
         bottom: calc(var(--band, 38px) + 14px) !important;
@@ -943,12 +943,94 @@
         background: rgba(255, 0, 255, 0.25) !important;
         border: 1px solid rgba(255, 0, 255, 0.5) !important;
       }
+
+      /* Sleek Mobile Digital Speedometer Pill (Hidden on desktop) */
+      .mobile-speed-hud {
+        display: none !important;
+        align-items: center !important;
+        gap: 5px !important;
+        background: rgba(11, 17, 32, 0.92) !important;
+        border: 1.5px solid rgba(0, 240, 255, 0.5) !important;
+        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.6), 0 0 12px rgba(0, 240, 255, 0.25) !important;
+        border-radius: 999px !important;
+        padding: 3px 10px !important;
+        backdrop-filter: blur(12px) !important;
+        -webkit-backdrop-filter: blur(12px) !important;
+        z-index: 92 !important;
+        user-select: none !important;
+        pointer-events: none !important;
+        font-family: 'Baloo Da 2', monospace !important;
+        transition: border-color 0.2s, box-shadow 0.2s !important;
+      }
+      .mobile-speed-hud.overspeed {
+        border-color: #ff0055 !important;
+        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.7), 0 0 16px rgba(255, 0, 85, 0.7) !important;
+      }
+      .mobile-speed-hud.boosting {
+        border-color: #ff00ff !important;
+        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.7), 0 0 16px rgba(255, 0, 255, 0.7) !important;
+      }
+      .m-speed-icon {
+        font-size: 11px !important;
+      }
+      .m-speed-val {
+        font-size: 15px !important;
+        font-weight: 800 !important;
+        color: #ffffff !important;
+        text-shadow: 0 0 8px rgba(0, 240, 255, 0.8) !important;
+        min-width: 18px !important;
+        text-align: right !important;
+      }
+      .m-speed-unit {
+        font-size: 8px !important;
+        font-weight: 800 !important;
+        color: #38bdf8 !important;
+        letter-spacing: 0.5px !important;
+      }
+      .m-speed-div {
+        color: rgba(255, 255, 255, 0.3) !important;
+        font-size: 10px !important;
+      }
+      .m-gear-val {
+        font-size: 9.5px !important;
+        font-weight: 800 !important;
+        padding: 1px 4px !important;
+        border-radius: 4px !important;
+      }
+      .m-gear-val.drive {
+        color: #38ef7d !important;
+        background: rgba(56, 239, 125, 0.2) !important;
+      }
+      .m-gear-val.overspeed {
+        color: #ff0055 !important;
+        background: rgba(255, 0, 85, 0.25) !important;
+      }
+      .m-gear-val.boost {
+        color: #ff00ff !important;
+        background: rgba(255, 0, 255, 0.3) !important;
+      }
+      .m-gear-val.neutral {
+        color: #94a3b8 !important;
+        background: rgba(255, 255, 255, 0.1) !important;
+      }
+
+      /* Clean Road & Sky Alignment for Place Card and Hints */
+      #placeCard {
+        position: fixed !important;
+        top: calc(env(safe-area-inset-top, 0px) + 52px) !important;
+        left: 50% !important;
+        transform: translateX(-50%) !important;
+        z-index: 92 !important;
+        transition: opacity 0.4s ease, transform 0.4s ease !important;
+      }
+      #hint {
+        display: none !important; /* Eliminate stray tutorial text bleed */
       }
 
       /* Heritage Architectural Announcement Card (Cleanly positioned at Top Center) */
       .heritage-announcement-card {
         position: fixed !important;
-        top: calc(env(safe-area-inset-top, 0px) + 44px) !important;
+        top: calc(env(safe-area-inset-top, 0px) + 52px) !important;
         left: 50% !important;
         transform: translateX(-50%) translateY(-20px) scale(0.94) !important;
         background: rgba(11, 17, 32, 0.94) !important;
@@ -1369,37 +1451,78 @@
         100% { transform: translateX(-100%) !important; }
       }
 
-      /* MOBILE RESPONSIVE OVERRIDES (PERFECT TOUCH CLEARANCE) */
+      /* MOBILE RESPONSIVE OVERRIDES (STUDIO-GRADE CLEAN HUD & CONTROLS) */
       @media (max-width: 768px) {
         .hud-top {
-          top: calc(env(safe-area-inset-top, 0px) + 8px) !important;
-          left: 8px !important;
-          gap: 4px !important;
+          top: calc(env(safe-area-inset-top, 0px) + 6px) !important;
+          left: 6px !important;
+          gap: 3px !important;
         }
         #lossBox {
-          padding: 4px 8px !important;
-          width: 140px !important;
-          min-width: 140px !important;
-          max-width: 140px !important;
+          padding: 3px 6px !important;
+          width: 118px !important;
+          min-width: 118px !important;
+          max-width: 118px !important;
+          border-radius: 10px !important;
+        }
+        #lossBox .lbl {
+          font-size: 9px !important;
+          letter-spacing: 0.3px !important;
         }
         #loss {
-          font-size: 19px !important;
+          font-size: 16px !important;
         }
+        .raja-fare-inline {
+          padding-top: 1px !important;
+          margin-top: 1px !important;
+          gap: 4px !important;
+        }
+        .raja-fare-inline .fare-badge {
+          font-size: 9.5px !important;
+        }
+        .raja-fare-inline .fare-num {
+          font-size: 11px !important;
+        }
+
         #battBox {
-          padding: 3px 8px !important;
-          gap: 4px 6px !important;
-          width: 140px !important;
-          min-width: 140px !important;
-          max-width: 140px !important;
+          padding: 3px 6px !important;
+          gap: 2px 4px !important;
+          width: 118px !important;
+          min-width: 118px !important;
+          max-width: 118px !important;
+          border-radius: 10px !important;
+        }
+        #battBox .battery-label {
+          font-size: 9px !important;
         }
         #battBox .bar {
-          width: 44px !important;
+          width: 36px !important;
+          height: 5px !important;
         }
+        #battBox #chargeHint {
+          font-size: 8px !important;
+          padding: 1px 4px !important;
+          margin-top: 1px !important;
+        }
+        #battBox #muteBtn {
+          width: 20px !important;
+          height: 20px !important;
+        }
+        #battBox #muteBtn svg {
+          width: 11px !important;
+          height: 11px !important;
+        }
+        #radioBtn {
+          height: 20px !important;
+          font-size: 8.5px !important;
+          padding: 1px 4px !important;
+        }
+
         .mini-map-radar {
-          top: calc(env(safe-area-inset-top, 0px) + 46px) !important;
-          right: 8px !important;
+          top: calc(env(safe-area-inset-top, 0px) + 40px) !important;
+          right: 6px !important;
           padding: 0 !important;
-          transform: scale(0.82) !important;
+          transform: scale(0.78) !important;
           transform-origin: top right !important;
         }
         .raja-stars-box {
@@ -1418,47 +1541,212 @@
           padding: 6px 16px !important;
           white-space: nowrap !important;
         }
-        /* Speedometer lifted safely above left steering touch pedals */
+
+        /* 1. SPEEDOMETER: Switch to sleek Top-Right Digital HUD Pill on Mobile */
         .raja-gauge {
-          bottom: calc(var(--band) + 148px) !important;
-          left: 10px !important;
-          width: 72px !important;
-          height: 72px !important;
-          transform: none !important;
+          display: none !important; /* 100% remove circular dial from bottom so controls never collide! */
         }
-        .speed-number {
-          font-size: 18px !important;
+        .mobile-speed-hud {
+          display: flex !important;
+          position: fixed !important;
+          top: calc(env(safe-area-inset-top, 0px) + 120px) !important;
+          right: 6px !important;
         }
-        .gauge-readout {
-          bottom: 14px !important;
+
+        /* 2. TOP ANNOUNCEMENTS & ZONE TOASTS: Position safely in sky below top status boxes */
+        .heritage-announcement-card, #zoneToast {
+          top: calc(env(safe-area-inset-top, 0px) + 210px) !important;
+          max-width: min(84vw, 280px) !important;
+          padding: 4px 12px !important;
         }
+        .heritage-announcement-card .h-title {
+          font-size: 13px !important;
+        }
+        .heritage-announcement-card .h-sub {
+          font-size: 9.5px !important;
+        }
+        #placeCard {
+          top: calc(env(safe-area-inset-top, 0px) + 210px) !important;
+          transform: translateX(-50%) scale(0.85) !important;
+        }
+        #dialogue {
+          top: calc(env(safe-area-inset-top, 0px) + 265px) !important;
+          font-size: 12px !important;
+          padding: 4px 10px !important;
+        }
+
         .cta {
           font-size: 22px !important;
           padding: 10px 30px !important;
         }
-        #touch .tbtn {
-          touch-action: manipulation !important;
+
+        /* 3. STUDIO-GRADE MOBILE TOUCH CONTROLS (AAA RACING ERGONOMICS) */
+        #touch {
+          position: fixed !important;
+          left: 0 !important;
+          right: 0 !important;
+          bottom: calc(var(--band, 30px) + 8px + env(safe-area-inset-bottom, 0px)) !important;
+          padding: 0 12px !important;
+          display: flex !important;
+          justify-content: space-between !important;
+          align-items: flex-end !important;
+          pointer-events: none !important;
+          z-index: 80 !important;
+        }
+        #touch .grp {
+          pointer-events: none !important;
+        }
+        #touch .tbtn, #touch .pedal {
+          pointer-events: auto !important;
+          user-select: none !important;
+          -webkit-user-select: none !important;
+          touch-action: none !important;
           -webkit-tap-highlight-color: transparent !important;
+          background: rgba(15, 23, 42, 0.72) !important;
+          backdrop-filter: blur(12px) !important;
+          -webkit-backdrop-filter: blur(12px) !important;
+          box-shadow: 0 4px 14px rgba(0, 0, 0, 0.6) !important;
+          transition: transform 0.08s, background 0.12s, box-shadow 0.12s !important;
         }
-        #touch .pedal {
-          font-weight: 900 !important;
-          letter-spacing: 0.5px !important;
+
+        /* Left Thumb Cluster: Symmetrical 120px Column */
+        #touch .left {
+          display: flex !important;
+          flex-direction: column !important;
+          align-items: flex-start !important;
+          gap: 7px !important;
         }
-        #touch #tGas {
-          border: 2px solid #38ef7d !important;
-          box-shadow: 0 0 15px rgba(56, 239, 125, 0.4) !important;
+        #touch .left .row {
+          display: flex !important;
+          gap: 7px !important;
         }
-        #touch #tBrake {
-          border: 2px solid #ff3344 !important;
-          box-shadow: 0 0 15px rgba(255, 51, 68, 0.4) !important;
+        #touch .chip {
+          width: 56px !important;
+          height: 36px !important;
+          border-radius: 14px !important;
+          font-size: 10px !important;
+          flex-direction: row !important;
+          gap: 3px !important;
+          padding: 0 4px !important;
         }
-        #touch #tBoost {
-          border: 2px solid #00f0ff !important;
-          box-shadow: 0 0 15px rgba(0, 240, 255, 0.5) !important;
+        #touch .chip svg {
+          width: 16px !important;
+          height: 16px !important;
         }
         #touch #tHorn {
-          border: 2px solid #ffd400 !important;
-          box-shadow: 0 0 15px rgba(255, 212, 0, 0.4) !important;
+          border: 1.5px solid #ffd400 !important;
+          box-shadow: 0 0 12px rgba(255, 212, 0, 0.35) !important;
+        }
+        #touch #tHorn.on, #touch #tHorn:active {
+          transform: scale(0.92) !important;
+          background: rgba(255, 212, 0, 0.35) !important;
+          box-shadow: 0 0 20px rgba(255, 212, 0, 0.75) !important;
+        }
+        #touch #tBomb {
+          border: 1.5px solid #ff5722 !important;
+          box-shadow: 0 0 12px rgba(255, 87, 34, 0.35) !important;
+        }
+        #touch #tBomb.on, #touch #tBomb:active {
+          transform: scale(0.92) !important;
+          background: rgba(255, 87, 34, 0.4) !important;
+          box-shadow: 0 0 20px rgba(255, 87, 34, 0.75) !important;
+        }
+        #touch .round {
+          width: 56px !important;
+          height: 56px !important;
+          border-radius: 18px !important;
+          border: 2px solid #00f0ff !important;
+          box-shadow: 0 0 12px rgba(0, 240, 255, 0.35) !important;
+        }
+        #touch .round svg {
+          width: 28px !important;
+          height: 28px !important;
+        }
+        #touch .round.on, #touch .round:active {
+          transform: scale(0.92) !important;
+          background: rgba(0, 240, 255, 0.35) !important;
+          box-shadow: 0 0 22px rgba(0, 240, 255, 0.8) !important;
+        }
+
+        /* Right Thumb Cluster: Compact 120px Column (Zero spill into center road!) */
+        #touch .right {
+          display: grid !important;
+          grid-template-columns: 54px 58px !important;
+          grid-template-rows: 38px 82px !important;
+          grid-template-areas:
+            ".     boost"
+            "brake gas" !important;
+          gap: 6px 7px !important;
+          align-items: end !important;
+          justify-items: end !important;
+        }
+        #touch .pedalcol {
+          display: contents !important;
+        }
+        #touch #tBoost {
+          grid-area: boost !important;
+          width: 58px !important;
+          height: 38px !important;
+          border-radius: 14px !important;
+          border: 1.8px solid #f59e0b !important;
+          box-shadow: 0 0 12px rgba(245, 158, 11, 0.4) !important;
+          background: rgba(30, 20, 10, 0.7) !important;
+          font-size: 11px !important;
+          display: flex !important;
+          flex-direction: row !important;
+          gap: 3px !important;
+          padding: 0 4px !important;
+        }
+        #touch #tBoost svg {
+          width: 17px !important;
+          height: 17px !important;
+        }
+        #touch #tBoost.on, #touch #tBoost:active {
+          transform: scale(0.92) !important;
+          background: rgba(245, 158, 11, 0.45) !important;
+          box-shadow: 0 0 22px rgba(245, 158, 11, 0.85) !important;
+        }
+        #touch #tBrake {
+          grid-area: brake !important;
+          width: 54px !important;
+          height: 72px !important;
+          border-radius: 18px !important;
+          border: 2px solid #ef4444 !important;
+          box-shadow: 0 0 14px rgba(239, 68, 68, 0.45) !important;
+          background: rgba(35, 10, 15, 0.7) !important;
+          font-size: 12px !important;
+          font-weight: 800 !important;
+          letter-spacing: 0.5px !important;
+        }
+        #touch #tBrake svg {
+          width: 26px !important;
+          height: 26px !important;
+        }
+        #touch #tBrake.on, #touch #tBrake:active {
+          transform: scale(0.92) !important;
+          background: rgba(239, 68, 68, 0.45) !important;
+          box-shadow: 0 0 24px rgba(239, 68, 68, 0.85) !important;
+        }
+        #touch #tGas {
+          grid-area: gas !important;
+          width: 58px !important;
+          height: 82px !important;
+          border-radius: 18px !important;
+          border: 2px solid #10b981 !important;
+          box-shadow: 0 0 14px rgba(16, 185, 129, 0.45) !important;
+          background: rgba(10, 35, 20, 0.7) !important;
+          font-size: 13px !important;
+          font-weight: 800 !important;
+          letter-spacing: 0.5px !important;
+        }
+        #touch #tGas svg {
+          width: 28px !important;
+          height: 28px !important;
+        }
+        #touch #tGas.on, #touch #tGas:active {
+          transform: scale(0.92) !important;
+          background: rgba(16, 185, 129, 0.45) !important;
+          box-shadow: 0 0 24px rgba(16, 185, 129, 0.85) !important;
         }
       }
 
@@ -1467,7 +1755,7 @@
       /* ============================================================ */
       #zoneToast {
         position: fixed !important;
-        top: calc(env(safe-area-inset-top, 0px) + 44px) !important;
+        top: calc(env(safe-area-inset-top, 0px) + 54px) !important;
         left: 50% !important;
         transform: translateX(-50%) translateY(-24px) scale(0.95) !important;
         opacity: 0 !important;
@@ -1520,6 +1808,28 @@
         max-width: 82vw;
       }
 
+      /* Studio Dialogue Subtitle Capsule */
+      #dialogue {
+        position: fixed !important;
+        top: calc(env(safe-area-inset-top, 0px) + 168px) !important;
+        left: 50% !important;
+        transform: translateX(-50%) !important;
+        max-width: min(88vw, 360px) !important;
+        background: rgba(11, 17, 32, 0.88) !important;
+        border: 1.5px solid rgba(255, 212, 0, 0.6) !important;
+        border-radius: 16px !important;
+        color: #ffd400 !important;
+        text-shadow: 0 1px 4px rgba(0, 0, 0, 0.8) !important;
+        padding: 5px 14px !important;
+        font-size: 13.5px !important;
+        font-weight: 700 !important;
+        text-align: center !important;
+        backdrop-filter: blur(10px) !important;
+        -webkit-backdrop-filter: blur(10px) !important;
+        box-shadow: 0 4px 18px rgba(0, 0, 0, 0.6) !important;
+        z-index: 93 !important;
+      }
+
       /* High-Speed Radial Motion Blur Overlay */
       #speedBlurOverlay {
         position: fixed;
@@ -1559,18 +1869,19 @@
       }
 
       @media (max-width: 768px) {
-        #zoneToast {
-          top: calc(env(safe-area-inset-top, 0px) + 40px) !important;
-          padding: 5px 14px !important;
+        #zoneToast, .heritage-announcement-card {
+          top: calc(env(safe-area-inset-top, 0px) + 210px) !important;
+          max-width: min(84vw, 280px) !important;
+          padding: 4px 12px !important;
         }
         .zone-header {
-          font-size: 13px;
+          font-size: 13px !important;
         }
         .zone-icon {
-          font-size: 17px;
+          font-size: 16px !important;
         }
         .zone-sub {
-          font-size: 10px;
+          font-size: 9.5px !important;
         }
       }
 
@@ -1752,7 +2063,7 @@
           padding: 5px 12px !important;
         }
         .dhaka-humor-box {
-          top: 72px !important;
+          top: calc(env(safe-area-inset-top, 0px) + 168px) !important;
           font-size: 12.5px !important;
           padding: 6px 14px !important;
         }
@@ -2170,9 +2481,23 @@
       const whereSpan = placeCard.querySelector('.where');
       if (whereSpan) whereSpan.textContent = landmark;
       placeCard.hidden = false;
-      setTimeout(() => { placeCard.hidden = true; }, 4000);
+      setTimeout(() => { placeCard.hidden = true; }, 3200);
     }
   }, 16000);
+
+  // PlaceCard Auto-Dismiss Watchdog: ensures zone card never sticks indefinitely
+  const pCard = document.getElementById('placeCard');
+  if (pCard) {
+    const observer = new MutationObserver(() => {
+      if (!pCard.hidden) {
+        clearTimeout(pCard._dismissTimer);
+        pCard._dismissTimer = setTimeout(() => {
+          pCard.hidden = true;
+        }, 3200);
+      }
+    });
+    observer.observe(pCard, { attributes: true, attributeFilter: ['hidden'] });
+  }
 
   // Periodically pop funny dialogues during play
   setInterval(() => {
@@ -2448,6 +2773,21 @@
       `;
       hud.appendChild(gauge);
 
+      // Sleek Mobile Digital Speedometer Pill (Top Right under radar)
+      if (!document.getElementById('mobileSpeedHud')) {
+        const mobSpeed = document.createElement('div');
+        mobSpeed.id = 'mobileSpeedHud';
+        mobSpeed.className = 'mobile-speed-hud';
+        mobSpeed.innerHTML = `
+          <span class="m-speed-icon">⚡</span>
+          <span id="mobileSpeedVal" class="m-speed-val">০</span>
+          <span class="m-speed-unit">KM/H</span>
+          <span class="m-speed-div">·</span>
+          <span id="mobileGearVal" class="m-gear-val drive">D</span>
+        `;
+        hud.appendChild(mobSpeed);
+      }
+
       // Integrate Fare readout into #lossBox for zero-clutter top-left status capsule
       const lossBox = document.getElementById('lossBox');
       if (lossBox && !document.getElementById('fareVal')) {
@@ -2495,6 +2835,34 @@
       const speedValEl = document.getElementById('speedVal');
       if (speedValEl) {
         speedValEl.textContent = kmh;
+      }
+
+      // Live update mobile digital speed HUD
+      const mobSpeedVal = document.getElementById('mobileSpeedVal');
+      if (mobSpeedVal) {
+        mobSpeedVal.textContent = kmh;
+      }
+      const mobGearVal = document.getElementById('mobileGearVal');
+      if (mobGearVal) {
+        const isBoost = (window.__isNitroActive || false);
+        if (isBoost) {
+          mobGearVal.textContent = '🚀 BOOST';
+          mobGearVal.className = 'm-gear-val boost';
+        } else if (kmh >= 90) {
+          mobGearVal.textContent = '🔥 TOP';
+          mobGearVal.className = 'm-gear-val overspeed';
+        } else if (kmh > 0) {
+          mobGearVal.textContent = '⚡ D';
+          mobGearVal.className = 'm-gear-val drive';
+        } else {
+          mobGearVal.textContent = '🅿️ N';
+          mobGearVal.className = 'm-gear-val neutral';
+        }
+      }
+      const mobSpeedHud = document.getElementById('mobileSpeedHud');
+      if (mobSpeedHud) {
+        mobSpeedHud.classList.toggle('overspeed', kmh >= 90);
+        mobSpeedHud.classList.toggle('boosting', !!(window.__isNitroActive));
       }
 
       const gearEl = document.getElementById('gaugeGear');
