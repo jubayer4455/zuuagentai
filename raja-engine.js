@@ -621,11 +621,27 @@
         display: none !important; /* Integrated into #lossBox */
       }
 
-      /* TOP-RIGHT: Dedicated Mini-Map Cyber Radar */
+      /* Desktop Driving Controls Hint: Placed at bottom center to keep top center 100% clean for Wanted Stars & Alerts */
+      #controls {
+        position: fixed !important;
+        bottom: calc(env(safe-area-inset-bottom, 0px) + 52px) !important;
+        top: auto !important;
+        left: 50% !important;
+        transform: translateX(-50%) !important;
+        z-index: 95 !important;
+        background: rgba(11, 17, 32, 0.88) !important;
+        border: 1px solid rgba(255, 215, 0, 0.35) !important;
+        box-shadow: 0 4px 18px rgba(0, 0, 0, 0.55) !important;
+        font-size: 13px !important;
+        padding: 6px 14px 7px !important;
+        backdrop-filter: blur(8px) !important;
+      }
+
+      /* TOP-RIGHT: Dedicated Mini-Map Cyber Radar (Cleanly stacked under Top Actions Capsule) */
       .mini-map-radar {
         position: fixed !important;
-        top: calc(env(safe-area-inset-top, 0px) + 12px) !important;
-        right: 12px !important;
+        top: calc(env(safe-area-inset-top, 0px) + 54px) !important;
+        right: 14px !important;
         left: auto !important;
         width: auto !important;
         display: flex !important;
@@ -1292,7 +1308,7 @@
           width: 48px !important;
         }
         .mini-map-radar {
-          top: calc(env(safe-area-inset-top, 0px) + 8px) !important;
+          top: calc(env(safe-area-inset-top, 0px) + 46px) !important;
           right: 8px !important;
           padding: 4px 6px !important;
           transform: scale(0.85) !important;
@@ -1524,95 +1540,66 @@
       .dhaka-humor-box.warning .dhaka-humor-tail { border-top-color: #ff3344; }
       .dhaka-humor-box.speed .dhaka-humor-tail { border-top-color: #a855f7; }
 
-      /* 16. Mobile Fullscreen Mode & Native App Polish */
-      .raja-fs-btn {
-        position: fixed;
-        top: 14px;
-        right: 120px;
-        z-index: 1000;
-        display: flex;
-        align-items: center;
-        gap: 6px;
-        background: rgba(15, 23, 42, 0.88);
-        border: 1px solid rgba(0, 240, 255, 0.45);
-        border-radius: 999px;
-        padding: 6px 12px;
-        color: #00f0ff;
-        font-family: 'Tiro Bangla', sans-serif;
-        font-size: 13px;
-        font-weight: 700;
-        cursor: pointer;
-        backdrop-filter: blur(8px);
-        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
-        transition: all 0.2s ease;
-        user-select: none;
-        touch-action: manipulation;
-      }
-      .raja-fs-btn:active {
-        transform: scale(0.92);
-        background: #00f0ff;
-        color: #000;
-      }
-      @media (max-width: 640px) {
-        .raja-fs-btn {
-          top: 8px;
-          right: 106px;
-          padding: 5px 9px;
-          font-size: 11px;
-        }
-        .dhaka-humor-box {
-          top: 68px;
-          font-size: 13px;
-          padding: 8px 16px;
-        }
-      }
-
-      /* ============================================================ */
-      /* RASTAR RAJA v3.4: COCKPIT FPP, PASSENGER HUD & POLICE TRAP   */
-      /* ============================================================ */
-
-      /* Camera View Toggle Button (Desktop & Mobile) */
-      .raja-cam-btn {
+      /* 16. Unified Top Actions Capsule Bar (Clean HUD, Zero Clutter) */
+      .raja-top-action-capsule {
         position: fixed !important;
-        top: 14px !important;
-        right: 215px !important;
+        top: calc(env(safe-area-inset-top, 0px) + 12px) !important;
+        right: 14px !important;
         z-index: 1000 !important;
-        display: flex !important;
+        display: inline-flex !important;
         align-items: center !important;
-        gap: 6px !important;
-        background: rgba(15, 23, 42, 0.88) !important;
-        border: 1px solid rgba(255, 203, 31, 0.5) !important;
-        border-radius: 999px !important;
-        padding: 6px 12px !important;
-        color: #ffcb1f !important;
-        font-family: inherit !important;
-        font-size: 13px !important;
-        font-weight: 700 !important;
-        cursor: pointer !important;
-        backdrop-filter: blur(8px) !important;
-        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4) !important;
-        transition: all 0.2s ease !important;
+        background: rgba(11, 17, 32, 0.88) !important;
+        border: 1px solid rgba(255, 215, 0, 0.45) !important;
+        box-shadow: 0 4px 18px rgba(0, 0, 0, 0.55), 0 0 12px rgba(0, 240, 255, 0.2) !important;
+        border-radius: 26px !important;
+        padding: 3px 6px !important;
+        backdrop-filter: blur(10px) !important;
+        -webkit-backdrop-filter: blur(10px) !important;
+        user-select: none !important;
         touch-action: manipulation !important;
       }
-      .raja-cam-btn:hover {
-        background: rgba(255, 203, 31, 0.2) !important;
-        border-color: #ffd400 !important;
+      .raja-capsule-btn {
+        background: transparent !important;
+        border: none !important;
+        outline: none !important;
+        color: #f1f5f9 !important;
+        font-family: inherit !important;
+        font-size: 12px !important;
+        font-weight: 700 !important;
+        padding: 5px 10px !important;
+        border-radius: 20px !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        gap: 5px !important;
+        cursor: pointer !important;
+        transition: all 0.18s ease !important;
+        white-space: nowrap !important;
       }
-      .raja-cam-btn.active {
+      .raja-capsule-btn:hover {
+        background: rgba(255, 255, 255, 0.14) !important;
+        color: #ffd400 !important;
+      }
+      .raja-capsule-btn:active {
+        transform: scale(0.94) !important;
+      }
+      .raja-capsule-btn.active {
         background: #ffd400 !important;
         color: #0b0f19 !important;
-        box-shadow: 0 0 16px rgba(255, 212, 0, 0.7) !important;
+        box-shadow: 0 0 12px rgba(255, 212, 0, 0.7) !important;
       }
-      @media (max-width: 640px) {
-        .raja-cam-btn {
-          top: 8px !important;
-          right: 175px !important;
-          padding: 5px 9px !important;
-          font-size: 11px !important;
-        }
+      .raja-capsule-divider {
+        width: 1px !important;
+        height: 16px !important;
+        background: rgba(255, 255, 255, 0.22) !important;
+        margin: 0 2px !important;
       }
 
-      /* 17. Offline PWA Mode Badge & Install Button */
+      /* Backward-compatibility classes */
+      .raja-fs-btn, .raja-cam-btn, .raja-install-btn {
+        /* Handled inside .raja-top-action-capsule */
+      }
+
+      /* 17. Offline PWA Mode Badge */
       .raja-offline-badge {
         position: fixed !important;
         top: 14px !important;
@@ -1645,45 +1632,27 @@
         color: #4ade80 !important;
         box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6), 0 0 15px rgba(34, 197, 94, 0.3) !important;
       }
-      .raja-install-btn {
-        position: fixed !important;
-        top: 14px !important;
-        right: 310px !important;
-        z-index: 1000 !important;
-        display: flex !important;
-        align-items: center !important;
-        gap: 6px !important;
-        background: rgba(15, 23, 42, 0.88) !important;
-        border: 1px solid rgba(34, 197, 94, 0.55) !important;
-        border-radius: 999px !important;
-        padding: 6px 12px !important;
-        color: #4ade80 !important;
-        font-family: 'Tiro Bangla', sans-serif !important;
-        font-size: 13px !important;
-        font-weight: 700 !important;
-        cursor: pointer !important;
-        backdrop-filter: blur(8px) !important;
-        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35) !important;
-        transition: all 0.2s ease !important;
-        user-select: none !important;
-        touch-action: manipulation !important;
-      }
-      .raja-install-btn:active {
-        transform: scale(0.92) !important;
-        background: #22c55e !important;
-        color: #000 !important;
-      }
+
       @media (max-width: 640px) {
-        .raja-install-btn {
-          top: 8px !important;
-          right: 244px !important;
-          padding: 5px 8px !important;
+        .raja-top-action-capsule {
+          top: calc(env(safe-area-inset-top, 0px) + 8px) !important;
+          right: 8px !important;
+          padding: 2px 4px !important;
+        }
+        .raja-capsule-btn {
           font-size: 10px !important;
+          padding: 4px 6px !important;
+          gap: 3px !important;
         }
         .raja-offline-badge {
           top: 8px !important;
           font-size: 11px !important;
           padding: 5px 12px !important;
+        }
+        .dhaka-humor-box {
+          top: 72px !important;
+          font-size: 12.5px !important;
+          padding: 6px 14px !important;
         }
       }
 
@@ -6450,6 +6419,8 @@
         const whiteLineMat  = new THREE.BasicMat({ color: 0xf8fafc });
         const catsEyeAmber  = new THREE.BasicMat({ color: 0xf59e0b });
         const catsEyeWhite  = new THREE.BasicMat({ color: 0xffffff });
+        const bougainvilleaMat = new THREE.StandardMat({ color: 0xdb2777, roughness: 0.75 });
+        const grassVergeMat    = new THREE.StandardMat({ color: 0x166534, roughness: 0.9 });
 
         // Lamppost ground pool illumination decal texture
         const lampCvs = document.createElement('canvas');
@@ -6537,6 +6508,56 @@
           }
           chunkGroup.add(new THREE.Mesh(ceAmbGeo.build(), catsEyeAmber));
           chunkGroup.add(new THREE.Mesh(ceWhtGeo.build(), catsEyeWhite));
+
+          // E1. Lush Green Grass Verge (Between Road Curbs X=±7.45m & Footpath X=±8.5m)
+          const grassGeo = new THREE.ct();
+          grassGeo.box(-7.95, 0.10, - this.chunkLen * 0.5, 0.65, 0.02, this.chunkLen, null);
+          grassGeo.box(7.95, 0.10, - this.chunkLen * 0.5, 0.65, 0.02, this.chunkLen, null);
+          chunkGroup.add(new THREE.Mesh(grassGeo.build(), grassVergeMat));
+
+          // E2. Bougainvillea & Hedge Shrub Planters
+          const shrubGeo = new THREE.ct();
+          const blmGeo   = new THREE.ct();
+          for (let sbz = -6; sbz > -this.chunkLen; sbz -= 15) {
+            const sbx = (sbz % 30 === 0) ? -7.95 : 7.95;
+            shrubGeo.box(sbx, 0.28, sbz, 0.52, 0.35, 1.8, null);
+            blmGeo.box(sbx, 0.38, sbz, 0.44, 0.22, 1.4, null);
+          }
+          chunkGroup.add(new THREE.Mesh(shrubGeo.build(), greenMat));
+          chunkGroup.add(new THREE.Mesh(blmGeo.build(), bougainvilleaMat));
+
+          // E3. Roads & Highways Department (RHD / সওজ) Concrete Milestones
+          if (c % 2 === 0) {
+            const milestoneGeo = new THREE.ct();
+            const crownGeo     = new THREE.ct();
+            const mx = (c % 4 === 0) ? -7.9 : 7.9;
+            const mz = -22;
+            milestoneGeo.box(mx, 0.40, mz, 0.44, 0.75, 0.34, null);
+            crownGeo.box(mx, 0.82, mz, 0.42, 0.18, 0.32, null);
+            chunkGroup.add(new THREE.Mesh(milestoneGeo.build(), whiteLineMat));
+            chunkGroup.add(new THREE.Mesh(crownGeo.build(), greenMat));
+          }
+
+          // E4. Directional Highway Lane Arrows (Painted ⬆️ on Asphalt)
+          const arrowGeo = new THREE.ct();
+          [-14, -44].forEach(az => {
+            [-3.7, 3.7].forEach(ax => {
+              arrowGeo.box(ax, 0.024, az, 0.24, 0.005, 2.4, null);
+              arrowGeo.box(ax - 0.28, 0.024, az - 1.0, 0.20, 0.005, 0.85, null);
+              arrowGeo.box(ax + 0.28, 0.024, az - 1.0, 0.20, 0.005, 0.85, null);
+            });
+          });
+          chunkGroup.add(new THREE.Mesh(arrowGeo.build(), whiteLineMat));
+
+          // E5. Pedestrian Zebra Crossings (Stripes across road in alternating chunks)
+          if (c % 3 === 0) {
+            const zebraGeo = new THREE.ct();
+            const zZ = -30;
+            for (let zx = -6.4; zx <= 6.4; zx += 1.0) {
+              zebraGeo.box(zx, 0.024, zZ, 0.58, 0.005, 3.6, null);
+            }
+            chunkGroup.add(new THREE.Mesh(zebraGeo.build(), whiteLineMat));
+          }
 
           // F. Modern Arched Expressway Streetlamps (Left & Right at Z = -15m)
           const lampGeo = new THREE.ct();
@@ -7671,6 +7692,120 @@
   };
 
   // ----------------------------------------------------
+  // 32B. Unified Top Actions Capsule Bar Manager (Clean HUD)
+  // ----------------------------------------------------
+  const TopActionBar = {
+    capsuleEl: null,
+    camBtn: null,
+    fsBtn: null,
+    installBtn: null,
+    installDivider: null,
+
+    getOrCreate() {
+      if (this.capsuleEl && document.getElementById('rajaTopActionCapsule')) return this.capsuleEl;
+      let el = document.getElementById('rajaTopActionCapsule');
+      if (!el) {
+        el = document.createElement('div');
+        el.id = 'rajaTopActionCapsule';
+        el.className = 'raja-top-action-capsule';
+        document.body.appendChild(el);
+      }
+      this.capsuleEl = el;
+      return el;
+    },
+
+    init() {
+      const capsule = this.getOrCreate();
+
+      // 1. Camera Toggle Button (Cockpit / 3rd Person)
+      if (!document.getElementById('camToggleBtn')) {
+        const btn = document.createElement('button');
+        btn.id = 'camToggleBtn';
+        btn.className = 'raja-capsule-btn raja-cam-btn';
+        btn.innerHTML = `🎥 <span class="btn-text">ভিউ</span>`;
+        btn.title = "ক্যামেরা মোড পরিবর্তন (ককপিট / ৩য় ব্যক্তি - C)";
+        btn.addEventListener('click', () => {
+          if (FirstPersonCockpitCameraSystem) FirstPersonCockpitCameraSystem.toggle();
+        });
+        capsule.appendChild(btn);
+        this.camBtn = btn;
+      } else {
+        this.camBtn = document.getElementById('camToggleBtn');
+      }
+
+      // Divider 1
+      let div1 = document.getElementById('capsuleDiv1');
+      if (!div1) {
+        div1 = document.createElement('div');
+        div1.id = 'capsuleDiv1';
+        div1.className = 'raja-capsule-divider';
+        capsule.appendChild(div1);
+      }
+
+      // 2. Fullscreen Button Toggle
+      if (!document.getElementById('rajaFullscreenBtn')) {
+        const btn = document.createElement('button');
+        btn.id = 'rajaFullscreenBtn';
+        btn.className = 'raja-capsule-btn raja-fs-btn';
+        btn.innerHTML = `⛶ <span class="btn-text">ফুলস্ক্রিন</span>`;
+        btn.title = "ফুলস্ক্রিন অ্যাপ মোড (Fullscreen)";
+        btn.addEventListener('click', () => {
+          if (!document.fullscreenElement) {
+            document.documentElement.requestFullscreen().catch(() => {});
+            btn.innerHTML = `✖ <span class="btn-text">ছোট</span>`;
+          } else {
+            document.exitFullscreen().catch(() => {});
+            btn.innerHTML = `⛶ <span class="btn-text">ফুলস্ক্রিন</span>`;
+          }
+          if (typeof navigator !== 'undefined' && navigator.vibrate) {
+            try { navigator.vibrate(20); } catch (_) {}
+          }
+        });
+        capsule.appendChild(btn);
+        this.fsBtn = btn;
+      } else {
+        this.fsBtn = document.getElementById('rajaFullscreenBtn');
+      }
+
+      // Divider 2
+      let div2 = document.getElementById('capsuleDiv2');
+      if (!div2) {
+        div2 = document.createElement('div');
+        div2.id = 'capsuleDiv2';
+        div2.className = 'raja-capsule-divider';
+        capsule.appendChild(div2);
+      }
+      this.installDivider = div2;
+
+      // 3. Offline App Install Button
+      if (!document.getElementById('rajaInstallBtn')) {
+        const btn = document.createElement('button');
+        btn.id = 'rajaInstallBtn';
+        btn.className = 'raja-capsule-btn raja-install-btn';
+        btn.innerHTML = `📲 <span class="btn-text">অফলাইন</span>`;
+        btn.title = "গেমটি ইনস্টল করে নেট ছাড়াই খেলুন (PWA App)";
+        btn.addEventListener('click', () => {
+          if (RastarRajaOfflineSystem) RastarRajaOfflineSystem.handleInstall();
+        });
+        capsule.appendChild(btn);
+        this.installBtn = btn;
+      } else {
+        this.installBtn = document.getElementById('rajaInstallBtn');
+      }
+
+      document.addEventListener('fullscreenchange', () => {
+        if (this.fsBtn) {
+          if (document.fullscreenElement) {
+            this.fsBtn.innerHTML = `✖ <span class="btn-text">ছোট</span>`;
+          } else {
+            this.fsBtn.innerHTML = `⛶ <span class="btn-text">ফুলস্ক্রিন</span>`;
+          }
+        }
+      });
+    }
+  };
+
+  // ----------------------------------------------------
   // 33. First-Person Interior Cockpit View System (প্রথম ব্যক্তি ককপিট ভিউ)
   // ----------------------------------------------------
   const FirstPersonCockpitCameraSystem = {
@@ -7727,21 +7862,32 @@
           const p = at.P;
           const bump = p.bumpY || 0;
           const bounce = (SuspensionDynamics && SuspensionDynamics.bounceY) || 0;
-          const camY = 1.34 + bump + bounce * 0.35;
+          const camY = 1.36 + bump + bounce * 0.35;
+          const eyeDist = 0.35;
 
+          // In this engine, forward driving direction is (+p.fx, +p.fz) because p.fz = -1 during forward travel
           at.CAM.position.set(
-            p.x + (p.fx || 0) * 0.32,
+            p.x + (p.fx || 0) * eyeDist,
             camY,
-            p.z + (p.fz || 0) * 0.32
+            p.z + (p.fz !== undefined ? p.fz : -1) * eyeDist
           );
 
+          // Look 50m straight forward along the highway in the direction of travel
           at.CAM.lookAt(
-            p.x + (p.fx || 0) * 35.0,
-            1.22 + bump * 0.2,
-            p.z + (p.fz || 0) * 35.0
+            p.x + (p.fx || 0) * 50.0,
+            1.25 + bump * 0.15,
+            p.z + (p.fz !== undefined ? p.fz : -1) * 50.0
           );
 
-          at.CAM.rotation.z = -(p.steer || 0) * 0.06;
+          // Subtle realistic leaning into turn
+          at.CAM.rotation.z = (p.steer || 0) * 0.045;
+
+          // Hide exterior player 3D mesh (at.PLAYER.o.grp) to eliminate geometry clipping
+          if (at.PLAYER && at.PLAYER.o && at.PLAYER.o.grp && at.PLAYER.o.grp.visible) {
+            at.PLAYER.o.grp.visible = false;
+          }
+        } else if (!self.active && at.PLAYER && at.PLAYER.o && at.PLAYER.o.grp && !at.PLAYER.o.grp.visible) {
+          at.PLAYER.o.grp.visible = true;
         }
 
         return origRender(scene, camera);
@@ -7755,26 +7901,22 @@
         }
       });
 
-      if (!document.getElementById('camToggleBtn')) {
-        const btn = document.createElement('button');
-        btn.id = 'camToggleBtn';
-        btn.className = 'raja-cam-btn';
-        btn.innerHTML = `🎥 <span>ভিউ</span>`;
-        btn.title = "ক্যামেরা মোড পরিবর্তন (ককপিট / ৩য় ব্যক্তি - C)";
-        btn.addEventListener('click', () => this.toggle());
-        document.body.appendChild(btn);
-        this.camBtn = btn;
-      }
+      this.camBtn = document.getElementById('camToggleBtn');
     },
 
     toggle() {
       this.active = !this.active;
+      const at = window.__at;
+      if (at && at.PLAYER && at.PLAYER.o && at.PLAYER.o.grp) {
+        at.PLAYER.o.grp.visible = !this.active;
+      }
       if (this.cockpitOverlay) {
         this.cockpitOverlay.style.display = this.active ? 'block' : 'none';
       }
+      if (!this.camBtn) this.camBtn = document.getElementById('camToggleBtn');
       if (this.camBtn) {
         this.camBtn.classList.toggle('active', this.active);
-        this.camBtn.innerHTML = this.active ? `🎥 <span>ককপিট</span>` : `🎥 <span>ভিউ</span>`;
+        this.camBtn.innerHTML = this.active ? `🎥 <span class="btn-text">ককপিট</span>` : `🎥 <span class="btn-text">ভিউ</span>`;
       }
       if (window.RastarRaja && window.RastarRaja.DhakaAudioSFX && typeof window.RastarRaja.DhakaAudioSFX.playClickSound === 'function') {
         window.RastarRaja.DhakaAudioSFX.playClickSound();
@@ -7809,6 +7951,10 @@
     if (!at || !at.G) return;
 
     const inPlay = at.G.state === 'play';
+    if (inPlay) {
+      const menuEl = document.getElementById('menu');
+      if (menuEl && !menuEl.hidden) menuEl.hidden = true;
+    }
     const isAlive = at.P ? at.P.alive : false;
     const damage = at.G.loss || 0;
     const speed = at.P ? at.P.v : 0;
@@ -7902,14 +8048,9 @@
         this.badgeEl.className = 'raja-offline-badge';
         document.body.appendChild(this.badgeEl);
 
-        // 2. Create Offline App Install Button
-        this.installBtnEl = document.createElement('button');
-        this.installBtnEl.id = 'rajaInstallBtn';
-        this.installBtnEl.className = 'raja-install-btn';
-        this.installBtnEl.innerHTML = `📲 <span>অফলাইন অ্যাপ</span>`;
-        this.installBtnEl.title = "গেমটি ইনস্টল করে নেট ছাড়াই যেকোনো সময় খেলুন (Install for Offline Play)";
-        this.installBtnEl.addEventListener('click', () => this.handleInstall());
-        document.body.appendChild(this.installBtnEl);
+        // 2. Offline App Install Button (Integrated inside TopActionBar capsule)
+        TopActionBar.init();
+        this.installBtnEl = document.getElementById('rajaInstallBtn');
 
         // 3. Listen to PWA beforeinstallprompt
         window.addEventListener('beforeinstallprompt', (e) => {
@@ -8008,6 +8149,7 @@
   function setupInteractiveHooks() {
     injectStyles();
     injectUI();
+    TopActionBar.init();
     WantedSystem.init();
     CockpitHUD.init();
     GameOverEnhancer.init();
@@ -8019,26 +8161,6 @@
     FirstPersonCockpitCameraSystem.init();
     DhakaExpresswayVisualsSystem.init();
     RastarRajaOfflineSystem.init();
-
-    // Mobile & Desktop Fullscreen Button Toggle
-    const fsBtn = document.createElement('button');
-    fsBtn.id = 'rajaFullscreenBtn';
-    fsBtn.className = 'raja-fs-btn';
-    fsBtn.innerHTML = `⛶ <span>ফুলস্ক্রিন</span>`;
-    fsBtn.title = "ফুলস্ক্রিন অ্যাপ মোড (Fullscreen App Mode)";
-    fsBtn.addEventListener('click', () => {
-      if (!document.fullscreenElement) {
-        document.documentElement.requestFullscreen().catch(() => {});
-        fsBtn.innerHTML = `✖ <span>ছোট স্ক্রিন</span>`;
-      } else {
-        document.exitFullscreen().catch(() => {});
-        fsBtn.innerHTML = `⛶ <span>ফুলস্ক্রিন</span>`;
-      }
-      if (typeof navigator !== 'undefined' && navigator.vibrate) {
-        try { navigator.vibrate(20); } catch (_) {}
-      }
-    });
-    document.body.appendChild(fsBtn);
 
     // Mobile Touch Haptic Feedback
     const triggerHaptic = (ms = 18) => {
@@ -8075,6 +8197,7 @@
     window.RastarRaja.DhakaPassengerMissionSystem = DhakaPassengerMissionSystem;
     window.RastarRaja.PoliceCheckpostSystem = PoliceCheckpostSystem;
     window.RastarRaja.FirstPersonCockpitCameraSystem = FirstPersonCockpitCameraSystem;
+    window.RastarRaja.TopActionBar = TopActionBar;
     window.RastarRaja.RastarRajaOfflineSystem = RastarRajaOfflineSystem;
     window.RastarRaja.OfflineSystem = RastarRajaOfflineSystem;
 
